@@ -1,13 +1,22 @@
 <?php
-	echo "
-	<html>
-	<head>
-		<link rel='stylesheet' type='text/css' href='stylesheet.css'>
-	</head>
-	<body>
-		<div>
-	";
+	require_once("dbutils.php");
+	require_once("loginutils.php");
+	$conn = connect();
 	
+	if (!isCookieValidLoginWithType($conn, "admin")) {
+		header("Location: home.php");
+	}
+?>
+<html>
+<head>
+	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
+</head>
+<header>
+	<a href="logout.php">Logout</a>
+</header>
+<body>
+	<div>
+<?php
 	if (!isset($_FILES["file"])) {
 		echo "Error with file uploading. Exiting...<br>";
 		exit();
@@ -498,13 +507,13 @@
 			// $zip->extractTo($dest, array($name));
 		// }
 	}
-	
-	echo "
-		</div>
-	</body>
-	<footer>
-		<a href='home.php'>Back to Home</a>
-	</footer>
-	</html>
-	";
 ?>
+	</div>
+</body>
+<?php
+	$conn->close();
+?>
+<footer>
+	<a href='home.php'>Back to Home</a>
+</footer>
+</html>

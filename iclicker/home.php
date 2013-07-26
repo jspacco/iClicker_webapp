@@ -1,47 +1,57 @@
 <?php
 	require_once("dbutils.php");
+	require_once("loginutils.php");
 	$conn = connect();
 
-	echo "
-		<html>
-		<head>
-			<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-		</head>
-		<body>
-			<div>
-				<table class='collection'>
-					<tr>
-						<th colspan='2'>Courses</th>
-					</tr>
-					<tr>
-						<th>Name</th>
-						<th>Number</th>
-					</tr>
-	";
+	$redirect;
 	
-	$query = "
-		SELECT course_id, course_name, course_number FROM courses;
-	";
-	
-	$result = $conn->query($query) or die("Couldn't execute query. " . $conn->error);
-	
-	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-		echo "
-			<tr>
-				<td><a href='course.php?course_id=" . $row["course_id"] . "'>" . $row["course_name"] . "</a></td>
-				<td><a href='course.php?course_id=" . $row["course_id"] . "'>" . $row["course_number"] . "</a></td>
-			</tr>
-		";
+	if (isCookieValidLogin($conn)) {
+		switch ($_COOKIE["LoginType"]) {
+			case "admin":
+				$redirect = "courses.php";
+				break;
+			case "student":
+				$redirect = "studentpage.php";
+				break;
+		}
+		
+		header("Location: " . $redirect);
 	}
-	
-	echo "
-				</table>
-				<br>
-				<a href='upload.html'>Upload session data</a>
-			</div>
-		</body>
-		</html>
-	";
-	
+?>
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel='stylesheet' type='text/css' href='stylesheet.css'>
+</head>
+<body>
+	<div>
+		<h1>Online i>Clicker Questions</h1>
+		<p>Login to access the student/administration tools.<br></p>
+		<a href="register.html">Student Registration</a><br>
+		<form action='endlogin.php' method='post'>
+			<table>
+				<tr>
+					<td>Login as </td>
+					<td><input type='radio' name='logintype' value='admin'>Administrator</td>
+					<td><input type='radio' name='logintype' value='student' checked>Student</td>
+				</tr>
+				<tr>
+					<td>Username: </td>
+					<td><input type='text' name='username'></td>
+				</tr>
+				<tr>
+					<td>Password: </td>
+					<td><input type='password' name='password'></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><input type='submit' value='Login'></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+<?php
 	$conn->close();
 ?>
+</html>

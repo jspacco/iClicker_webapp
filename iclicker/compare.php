@@ -1,7 +1,30 @@
 <?php
 	require_once("dbutils.php");
+	require_once("loginutils.php");
 	$conn = connect();
-	
+
+	if (!isCookieValidLoginWithType($conn, "admin")) {
+		header("Location: home.php");
+	}
+?>
+<html>
+<head>
+	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
+</head>
+<header>
+	<a href="logout.php">Logout</a>
+</header>
+<body>
+	<div>
+		<h1>Comparison</h1>
+		<table>
+			<tr>
+				<th>Vote Type</th>
+				<th>Screen Picture</th>
+				<th>Chart Picture</th>
+				<th>Student Scores</th>
+			</tr>
+<?php
 	$iv_id = $_GET["iv"];
 	$gv_id = $_GET["gv"];
 	
@@ -59,36 +82,21 @@
 	}
 	
 	echo "
-		<html>
-		<head>
-			<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-		</head>
-		<body>
-			<div>
-				<h1>Comparison</h1>
-				<table>
-					<tr>
-						<th>Vote Type</th>
-						<th>Screen Picture</th>
-						<th>Chart Picture</th>
-						<th>Student Scores</th>
-					</tr>
-					<tr>
-						<td>Individual Vote</td>
-						<td><img src='pictures/" . $iv_row["screen_picture"] . "' alt='Picture of screen' width='175' height='100'></td>
-						<td><img src='pictures/" . $iv_row["chart_picture"] . "' alt='Chart of responses' width='175' height='100'></td>
-						<td>" . $iv_correct . "/" . count($iv_votes) . "</td>
-					</tr>
-					<tr>
-						<td>Group Vote</td>
-						<td><img src='pictures/" . $gv_row["screen_picture"] . "' alt='Picture of screen' width='175' height='100'></td>
-						<td><img src='pictures/" . $gv_row["chart_picture"] . "' alt='Chart of responses' width='175' height='100'></td>
-						<td>" . $gv_correct . "/" . count($gv_votes) . "</td>
-					</tr>
-				</table>
+			<tr>
+				<td>Individual Vote</td>
+				<td><img src='pictures/" . $iv_row["screen_picture"] . "' alt='Picture of screen' width='175' height='100'></td>
+				<td><img src='pictures/" . $iv_row["chart_picture"] . "' alt='Chart of responses' width='175' height='100'></td>
+				<td>" . $iv_correct . "/" . count($iv_votes) . "</td>
+			</tr>
+			<tr>
+				<td>Group Vote</td>
+				<td><img src='pictures/" . $gv_row["screen_picture"] . "' alt='Picture of screen' width='175' height='100'></td>
+				<td><img src='pictures/" . $gv_row["chart_picture"] . "' alt='Chart of responses' width='175' height='100'></td>
+				<td>" . $gv_correct . "/" . count($gv_votes) . "</td>
+			</tr>
+		</table>
 	";
-	
-	echo "
+?>
 		<h2>Vote Changes</h2>
 		<table class='votechanges'>
 			<tr>
@@ -103,6 +111,8 @@
 				<th>D</th>
 				<th>E</th>
 			</tr>
+<?php	
+	echo "
 			<tr>
 				<th>A</th>
 				<td>" . countFromTo("A", "A", $iv_votes, $gv_votes) . "</td>
@@ -146,15 +156,6 @@
 		</table>
 	";
 	
-	echo "
-			</div>
-		</body>
-		<footer>
-			<a href='home.php'>Back to Home</a>
-		</footer>
-		</html>
-	";
-	
 	function countFromTo($from, $to, $iv, $gv) {
 		$num = 0;
 		
@@ -172,3 +173,12 @@
 			return $num;
 	}
 ?>
+	</div>
+</body>
+<?php
+	$conn->close();
+?>
+<footer>
+	<a href='home.php'>Back to Home</a>
+</footer>
+</html>

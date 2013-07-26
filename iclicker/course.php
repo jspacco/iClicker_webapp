@@ -1,24 +1,30 @@
 <?php
 	require_once("dbutils.php");
+	require_once("loginutils.php");
 	$conn = connect();
 	
-	echo "
-		<html>
-		<head>
-			<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-		</head>
-		<body>
-			<div>
-				<table class='collection'>
-					<tr>
-						<th colspan='2'>Sections</th>
-					</tr>
-					<tr>
-						<th>Section Number</th>
-						<th>Year Offered</th>
-					</tr>
-	";
-
+	if (!isCookieValidLoginWithType($conn, "admin")) {
+		header("Location: home.php");
+	}
+?>
+<html>
+<head>
+	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
+</head>
+<header>
+	<a href="logout.php">Logout</a>
+</header>
+<body>
+	<div>
+		<table class='collection'>
+			<tr>
+				<th colspan='2'>Sections</th>
+			</tr>
+			<tr>
+				<th>Section Number</th>
+				<th>Year Offered</th>
+			</tr>
+<?php
 	$course_id = $_GET["course_id"];
 	
 	$query = "
@@ -40,16 +46,14 @@
 			</tr>
 		";
 	}
-	
-	echo "
-				</table>
-			</div>
-		</body>
-		<footer>
-			<a href='home.php'>Back to Home</a>
-		</footer>
-		</html>
-	";
-	
+?>
+		</table>
+	</div>
+</body>
+<?php
 	$conn->close();
 ?>
+<footer>
+	<a href='home.php'>Back to Home</a>
+</footer>
+</html>

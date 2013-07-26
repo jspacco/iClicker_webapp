@@ -12,6 +12,23 @@ h1, h2
 	text-align: left;
 }
 
+.error
+{
+	color: #CC0000;
+	margin-left: 10px;
+}
+
+.container
+{
+	width: 500px;
+	clear: both;
+}
+.container input
+{
+	width: 100%;
+	clear: both;
+}
+
 table.votechanges
 {
 	margin: auto;
@@ -51,7 +68,7 @@ table.collection tr a
 table.collection td a
 {
 	text-decoration: none;
-	color: #444;
+	color: #00a0b0;
 }
 
 table.tablesorter {

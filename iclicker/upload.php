@@ -16,9 +16,11 @@
 </header>
 <body>
 	<div>
-		<!--
-			Content goes here
-		!-->
+		<form action="endupload.php" method="post" enctype="multipart/form-data">
+			<label>Filename:</label>
+			<input name="file" type="file">
+			<input type="submit" value="Submit">
+		</form>
 	</div>
 </body>
 <?php

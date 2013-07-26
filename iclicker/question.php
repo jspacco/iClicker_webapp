@@ -1,38 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>
-	<script type='text/javascript' src='jquery-1.10.2.min.js'></script>
-	<script type='text/javascript' src='jquery.tablesorter.min.js'></script>
-</head>
-<body>
-	<script type='text/javascript'>
-		$(document).ready(function() {
-				$('#responsestable').tablesorter();
-			}
-		);
-	</script>
-	<div>
 <?php
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
 	
-	$login = isValidLogin($conn, "", "");
-
+	if (!isCookieValidLoginWithType($conn, "admin")) {
+		header("Location: home.php");
+	}
+?>
+<html>
+<head>
+	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
+	<script type='text/javascript' src='jquery-1.10.2.min.js'></script>
+	<script type='text/javascript' src='jquery.tablesorter.min.js'></script>	
+</head>
+<header>
+	<a href="logout.php">Logout</a>
+</header>
+<body>
+	<script type='text/javascript'>
+		$(document).ready(function() {
+			$('#responsestable').tablesorter();
+		});
+	</script>
+	<div>
+<?php
 	$question_id = $_GET["question_id"];
-
+	
 	$query = "
 		SELECT question_number, question_name, screen_picture, chart_picture, correct_answer, start_time, stop_time FROM questions WHERE
 		question_id = ?;
 	";
-
+	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare questions query. " . $conn->error);
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute questions query. " . $conn->error);
-
+	
 	$result = $stmt->get_result();
-
+	
 	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 		echo "
 			<h1>" . $row["question_name"] . "</h1>
@@ -56,37 +60,37 @@
 		";
 	}
 ?>
-		<table id='responsestable' class='tablesorter' cellspacing='1'>
-		<thead>
-			<tr>
-				<th colspan='3'>Student</th>
-				<th colspan='5'>Response</th>
-			</tr>
-			<tr>
-				<th>School ID</th>
-				<th>iClicker ID</th>
-				<th>Name</th>
-				<th>Number of Attempts</th>
-				<th>First Response</th>
-				<th>Time</th>
-				<th>Response</th>
-				<th>Final Answer Time</th>
-			</tr>
-		</thead>
-		<tbody>
+<table id='responsestable' class='tablesorter' cellspacing='1'>
+	<thead>
+		<tr>
+			<th colspan='3'>Student</th>
+			<th colspan='5'>Response</th>
+		</tr>
+		<tr>
+			<th>School ID</th>
+			<th>iClicker ID</th>
+			<th>Name</th>
+			<th>Number of Attempts</th>
+			<th>First Response</th>
+			<th>Time</th>
+			<th>Response</th>
+			<th>Final Answer Time</th>
+		</tr>
+	</thead>
+	<tbody>
 <?php
 	$query = "
 		SELECT school_id, iclicker_id, last_name, first_name, number_of_attempts, first_response, time, response, final_answer_time FROM students, responses WHERE
 		students.student_id = responses.student_id AND
 		responses.question_id = ?;
 	";
-
+	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare responses query. " . $conn->error);
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute responses query. " . $conn->error);
-
+	
 	$result = $stmt->get_result();
-
+	
 	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 		echo "
 			<tr>
@@ -102,9 +106,11 @@
 		";
 	}
 ?>
-		</table>
 	</div>
 </body>
+<?php
+	$conn->close();
+?>
 <footer>
 	<a href='home.php'>Back to Home</a>
 </footer>

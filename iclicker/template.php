@@ -1,9 +1,12 @@
+<!--
+	This page serves a template for other pages
+!-->
 <?php
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
 	
-	if (!isCookieValidLoginWithType($conn, "admin")) {
+	if (!isCookieValidLogin($conn)) {
 		header("Location: home.php");
 	}
 ?>

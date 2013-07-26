@@ -11,7 +11,11 @@
 	
 	// We can't use the cookie variables because they won't be sent to the page without a refresh
 	// see: http://stackoverflow.com/questions/3230133/accessing-cookie-immediately-after-setcookie
-	$pass = crypt($pass, 'a8hd9j2');
+	$pass = getEncrypted($pass);
+	
+	if (isValidLogin($conn, $user, $pass, $type)) {
+		header("Location: home.php");
+	}
 ?>
 <!DOCTYPE html>
 <html>
@@ -20,13 +24,13 @@
 </head>
 <body>
 	<div>
-<?php
-	if (isValidLogin($conn, $user, $pass, $type)) {
-		echo "Login successful!";
-	} else {
-		echo "Login failed.";
-	}
-?>
+		<p>Login Failed!</p>
 	</div>
 </body>
+<?php
+	$conn->close();
+?>
+<footer>
+	<a href='home.php'>Back to Home</a>
+</footer>
 </html>
