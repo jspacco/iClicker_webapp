@@ -18,7 +18,7 @@
 	<div>
 <?php
 	$query = "
-	UPDATE questions SET ignore_question = 0;
+		UPDATE questions SET ignore_question = 0;
 	";
 	
 	$conn->query($query) or die("Couldn't execute 'unignore' query. " . $conn->error);

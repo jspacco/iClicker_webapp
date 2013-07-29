@@ -16,9 +16,10 @@
 </header>
 <body>
 	<div>
+		<h2>Sessions</h2>
 		<table class='collection'>
 			<tr>
-				<th>Sessions</th>
+				<th>Date</th>
 			</tr>
 <?php
 	$section_id = $_GET["section_id"];
@@ -32,12 +33,13 @@
 	$stmt->bind_param("i", $section_id);
 	$stmt->execute() or die("Couldn't execute sessions query. " . $conn->error);
 	
-	$result = $stmt->get_result();
+	$stmt->bind_result($session_id, $session_date);
+	// $result = $stmt->get_result();
 	
-	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		echo "
 			<tr>
-				<td><a href='session.php?session_id=" . $row["session_id"] . "'>" . $row["session_date"] . "</a></td>
+				<td><a href='session.php?session_id=" . $session_id . "'>" . $session_date . "</a></td>
 			</tr>
 		";
 	}
@@ -48,10 +50,8 @@
 	";
 	
 	echo "
+		<h2>Students</h2>
 		<table class='collection'>
-			<tr>
-				<th colspan='3'>Students</th>
-			</tr>
 			<tr>
 				<th>School ID</th>
 				<th>iClicker ID</th>
@@ -72,14 +72,16 @@
 	$stmt->bind_param("i", $section_id);
 	$stmt->execute() or die("Couldn't execute students query. " . $conn->error);
 	
-	$result = $stmt->get_result();
+	$stmt->bind_result($student_id, $iclicker_id, $school_id, $first_name, $last_name);
 	
-	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	// $result = $stmt->get_result();
+	
+	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		echo "
 			<tr>
-				<td><a href='student.php?student_id=" . $row["student_id"] . "'>" . $row["school_id"] . "</a></td>
-				<td><a href='student.php?student_id=" . $row["student_id"] . "'>" . $row["iclicker_id"] . "</a></td>
-				<td><a href='student.php?student_id=" . $row["student_id"] . "'>" . $row["last_name"] . ", " . $row["first_name"] . "</a></td>
+				<td><a href='student.php?student_id=" . $student_id . "'>" . $school_id . "</a></td>
+				<td><a href='student.php?student_id=" . $student_id . "'>" . $iclicker_id . "</a></td>
+				<td><a href='student.php?student_id=" . $student_id . "'>" . $last_name . ", " . $first_name . "</a></td>
 			</tr>
 		";
 	}

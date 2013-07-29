@@ -42,12 +42,14 @@
 	$stmt->bind_param("i", $session_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	
-	$result = $stmt->get_result();
+	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $ignore_question);
+	
+	// $result = $stmt->get_result();
 	
 	$q = 1;
 	$num = 1;
 	$iv_id;
-	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		$type = "IV";
 		if ($q % 2 === 0) {
 			$type = "GV";
@@ -55,15 +57,15 @@
 		
 		echo "<tr>";
 		$checked = "";
-		if ($row["ignore_question"] == 1) {
+		if ($ignore_question == 1) {
 			$checked = "checked";
 		}
 		echo "
-			<td><input type='checkbox' name='ignore[]' value='" . $row["question_id"] . "'" . $checked . "></td>
-			<td><a href='question.php?question_id=" . $row["question_id"] . "'>Question " . $num . "</a></td>
+			<td><input type='checkbox' name='ignore[]' value='" . $question_id . "'" . $checked . "></td>
+			<td><a href='question.php?question_id=" . $question_id . "'>Question " . $num . "</a></td>
 		";
 		
-		if ($row["ignore_question"] == 1) {
+		if ($ignore_question == 1) {
 			echo "
 				<td>Ignored</td>
 			";
@@ -73,23 +75,23 @@
 			";
 		}
 		echo "
-			<td><img src='pictures/" . $row["screen_picture"] . "' alt='Picture of screen' width='175' height='100'></td>
-			<td><img src='pictures/" . $row["chart_picture"] . "' alt='Chart of responses' width='175' height='100'></td>
+			<td><img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+			<td><img src='pictures/" . $chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
 			<td>
-				<input type='checkbox' name='A[]' value='" . $row["question_id"] . "'>A
-				<input type='checkbox' name='B[]' value='" . $row["question_id"] . "'>B
-				<input type='checkbox' name='C[]' value='" . $row["question_id"] . "'>C
-				<input type='checkbox' name='D[]' value='" . $row["question_id"] . "'>D
-				<input type='checkbox' name='E[]' value='" . $row["question_id"] . "'>E
+				<input type='checkbox' name='A[]' value='" . $question_id . "'>A
+				<input type='checkbox' name='B[]' value='" . $question_id . "'>B
+				<input type='checkbox' name='C[]' value='" . $question_id . "'>C
+				<input type='checkbox' name='D[]' value='" . $question_id . "'>D
+				<input type='checkbox' name='E[]' value='" . $question_id . "'>E
 			</td>
 		";
 		
-		if ($row["ignore_question"] != 1) {
+		if ($ignore_question != 1) {
 			if ($q % 2 === 1) {
-				$iv_id = $row["question_id"];
+				$iv_id = $question_id;
 			} else {
 				echo "
-					<td><a href='compare.php?iv=" . $iv_id . "&gv=" . $row["question_id"] . "'>Compare</a></td>
+					<td><a href='compare.php?iv=" . $iv_id . "&gv=" . $question_id . "'>Compare</a></td>
 				";
 				$num++;
 			}

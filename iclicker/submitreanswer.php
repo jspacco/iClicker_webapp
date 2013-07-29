@@ -23,25 +23,28 @@
 	$pass = $_COOKIE["Password"];
 	
 	$query = "
-	SELECT student_id FROM students WHERE
-	username = ? AND
-	password = ?;
+		SELECT student_id FROM students WHERE
+		username = ? AND
+		password = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'select' query. " . $conn->error);
 	$stmt->bind_param("ss", $user, $pass);
 	$stmt->execute() or die("Couldn't execute 'select' query. " . $conn->error);
 	
-	$result = $stmt->get_result();
+	$stmt->bind_result($student_id);
+	$stmt->fetch();
 	
-	$row = $result->fetch_array(MYSQLI_ASSOC);
+	// $result = $stmt->get_result();
 	
-	$student_id = $row["student_id"];
+	// $row = $result->fetch_array(MYSQLI_ASSOC);
+	
+	// $student_id = $row["student_id"];
 	
 	$query = "
-	DELETE FROM onlineresponses WHERE
-	question_id = ? AND
-	student_id = ?;
+		DELETE FROM onlineresponses WHERE
+		question_id = ? AND
+		student_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'delete' query. " . $conn->error);
@@ -49,7 +52,7 @@
 	$stmt->execute() or die("Couldn't execute 'delete' query. " . $conn->error);
 	
 	$query = "
-	INSERT INTO onlineresponses (question_id, student_id, response) VALUES (?, ?, ?);
+		INSERT INTO onlineresponses (question_id, student_id, response) VALUES (?, ?, ?);
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'insert' query. " . $conn->error);
@@ -57,8 +60,8 @@
 	$stmt->execute() or die("Couldn't execute 'insert' query. " . $conn->error);
 	
 	echo "
-	Answer submitted successfully!<br>
-	<a href='reanswerquestion.php?question_id=" . $question_id . "'>Go back</a>
+		Answer submitted successfully!<br>
+		<a href='reanswerquestion.php?question_id=" . $question_id . "'>Go back</a>
 	";
 ?>
 	</div>

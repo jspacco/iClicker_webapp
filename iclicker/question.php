@@ -35,11 +35,13 @@
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute questions query. " . $conn->error);
 	
-	$result = $stmt->get_result();
+	$stmt->bind_result($question_number, $question_name, $screen_picture, $chart_picture, $correct_answer, $start_time, $stop_time);
 	
-	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	// $result = $stmt->get_result();
+	
+	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		echo "
-			<h1>" . $row["question_name"] . "</h1>
+			<h1>" . $question_name . "</h1>
 			<table>
 				<tr>
 					<th>Number</th>
@@ -48,21 +50,21 @@
 					<th>Stop Time</th>
 				</tr>
 				<tr>
-					<td>" . $row["question_number"] . "</td>
-					<td>" . $row["correct_answer"] . "</td>
-					<td>" . $row["start_time"] . "</td>
-					<td>" . $row["stop_time"] . "</td>
+					<td>" . $question_number . "</td>
+					<td>" . $correct_answer . "</td>
+					<td>" . $start_time . "</td>
+					<td>" . $stop_time . "</td>
 				</tr>
 			</table>
 			<br>
-			<img src='pictures/" . $row["chart_picture"] . "' alt='Chart of responses' width='350' height='200'>
-			<img src='pictures/" . $row["screen_picture"] . "' alt='Picture of screen' width='350' height='200'>
+			<img src='pictures/" . $chart_picture . "' alt='Chart of responses' width='350' height='200'>
+			<img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='350' height='200'>
 		";
 	}
 ?>
 <table id='responsestable' class='tablesorter' cellspacing='1'>
 	<thead>
-		<tr>
+		<tr class="">
 			<th colspan='3'>Student</th>
 			<th colspan='5'>Response</th>
 		</tr>
@@ -89,23 +91,27 @@
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute responses query. " . $conn->error);
 	
-	$result = $stmt->get_result();
+	$stmt->bind_result($school_id, $iclicker_id, $last_name, $first_name, $number_of_attempts, $first_response, $time, $response, $final_answer_time);
 	
-	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	// $result = $stmt->get_result();
+	
+	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		echo "
 			<tr>
-				<td>" . $row["school_id"] . "</td>
-				<td>" . $row["iclicker_id"] . "</td>
-				<td>" . $row["last_name"] . ", " . $row["first_name"] . "</td>
-				<td>" . $row["number_of_attempts"] . "</td>
-				<td>" . $row["first_response"] . "</td>
-				<td>" . $row["time"] . "</td>
-				<td>" . $row["response"] . "</td>
-				<td>" . $row["final_answer_time"] . "</td>
+				<td>" . $school_id . "</td>
+				<td>" . $iclicker_id . "</td>
+				<td>" . $last_name . ", " . $first_name . "</td>
+				<td>" . $number_of_attempts . "</td>
+				<td>" . $first_response . "</td>
+				<td>" . $time . "</td>
+				<td>" . $response . "</td>
+				<td>" . $final_answer_time . "</td>
 			<tr>
 		";
 	}
 ?>
+		</tbody>
+		</table>
 	</div>
 </body>
 <?php

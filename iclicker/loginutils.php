@@ -38,9 +38,11 @@
 		$stmt->bind_param("ss", $user, $pass);
 		$stmt->execute() or die("Couldn't execute 'login check' query. " . $conn->error);
 		
-		$result = $stmt->get_result();
+		$stmt->store_result();
 		
-		return mysqli_num_rows($result) > 0;
+		// $result = $stmt->get_result();
+		
+		return $stmt->num_rows > 0;
 	}
 	
 	function setLoginCookie($conn, $user, $pass, $type) {

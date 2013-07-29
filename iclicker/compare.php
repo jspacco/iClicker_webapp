@@ -41,12 +41,16 @@
 	$stmt->bind_param("i", $iv_id);
 	$stmt->execute() or die("Couldn't execute IV query. " . $conn->error);
 	
-	$iv_result = $stmt->get_result();
-	$iv_row = $iv_result->fetch_array(MYSQLI_ASSOC);
-	$iv_votes[$iv_row["student_id"]] = $iv_row["response"];
+	$stmt->bind_result($iv_screen_picture, $iv_chart_picture, $iv_correct_answer, $iv_response, $iv_student_id);
+	$stmt->fetch();
+	
+	// $iv_result = $stmt->get_result();
+	// $iv_row = $iv_result->fetch_array(MYSQLI_ASSOC);
+	
+	$iv_votes[$iv_student_id] = $iv_response;
 
-	while ($row = $iv_result->fetch_array(MYSQLI_ASSOC)) {
-		$iv_votes[$row["student_id"]] = $row["response"];
+	while ($stmt->fetch()/*$row = $iv_result->fetch_array(MYSQLI_ASSOC)*/) {
+		$iv_votes[$iv_student_id] = $iv_response;
 	}
 	
 	$query = "
@@ -59,24 +63,28 @@
 	$stmt->bind_param("i", $gv_id);
 	$stmt->execute() or die("Couldn't execute GV query. " . $conn->error);
 
-	$gv_result = $stmt->get_result();
-	$gv_row = $gv_result->fetch_array(MYSQLI_ASSOC);
-	$gv_votes[$gv_row["student_id"]] = $gv_row["response"];
+	$stmt->bind_result($gv_screen_picture, $gv_chart_picture, $gv_correct_answer, $gv_response, $gv_student_id);
+	$stmt->fetch();
+	
+	// $gv_result = $stmt->get_result();
+	// $gv_row = $gv_result->fetch_array(MYSQLI_ASSOC);
+	
+	$gv_votes[$gv_student_id] = $gv_response;
 
-	while($row = $gv_result->fetch_array(MYSQLI_ASSOC)) {
-		$gv_votes[$row["student_id"]] = $row["response"];
+	while($stmt->fetch()/*$row = $gv_result->fetch_array(MYSQLI_ASSOC)*/) {
+		$gv_votes[$gv_student_id] = $gv_response;
 	}
 	
 	$iv_correct = 0;
 	$gv_correct = 0;
 	
 	foreach ($iv_votes as $key => $value) {
-		if (trim($value) == trim($iv_row["correct_answer"])) {
+		if (trim($value) == trim($iv_correct_answer)) {
 			$iv_correct++;
 		}
 	}
 	foreach ($gv_votes as $key => $value) {
-		if (trim($value) == trim($gv_row["correct_answer"])) {
+		if (trim($value) == trim($gv_correct_answer)) {
 			$gv_correct++;
 		}
 	}
@@ -84,14 +92,14 @@
 	echo "
 			<tr>
 				<td>Individual Vote</td>
-				<td><img src='pictures/" . $iv_row["screen_picture"] . "' alt='Picture of screen' width='175' height='100'></td>
-				<td><img src='pictures/" . $iv_row["chart_picture"] . "' alt='Chart of responses' width='175' height='100'></td>
+				<td><img src='pictures/" . $iv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+				<td><img src='pictures/" . $iv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
 				<td>" . $iv_correct . "/" . count($iv_votes) . "</td>
 			</tr>
 			<tr>
 				<td>Group Vote</td>
-				<td><img src='pictures/" . $gv_row["screen_picture"] . "' alt='Picture of screen' width='175' height='100'></td>
-				<td><img src='pictures/" . $gv_row["chart_picture"] . "' alt='Chart of responses' width='175' height='100'></td>
+				<td><img src='pictures/" . $gv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+				<td><img src='pictures/" . $gv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
 				<td>" . $gv_correct . "/" . count($gv_votes) . "</td>
 			</tr>
 		</table>

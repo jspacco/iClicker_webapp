@@ -172,9 +172,11 @@
 								$stmt->bind_param("ss", $course_name, $course_number);
 								$stmt->execute() or die("Couldn't execute 'courses' statement. " . $conn->error);
 								
-								$result = $stmt->get_result();
-								$stmt->close();
-								if (mysqli_num_rows($result) == 0) {
+								$stmt->store_result();
+								
+								// $result = $stmt->get_result();
+								
+								if ($stmt->num_rows == 0) {
 									// this course is new, need to insert it into the database
 									$query = "
 										INSERT INTO courses (course_name, course_number) 
@@ -197,14 +199,20 @@
 									$stmt->bind_param("ss", $course_name, $course_number);
 									$stmt->execute() or die("Couldn't execute 'courses id select' statement. " . $conn->error);
 									
-									$result = $stmt->get_result();
-									$row = $result->fetch_array(MYSQLI_ASSOC);
-									$course_id = $row["course_id"];
+									$stmt->bind_result($course_id);
+									$stmt->fetch();
+									
+									// $result = $stmt->get_result();
+									// $row = $result->fetch_array(MYSQLI_ASSOC);
+									// $course_id = $row["course_id"];
 									
 									$stmt->close();
 								} else {
-									$row = $result->fetch_array(MYSQLI_ASSOC);
-									$course_id = $row["course_id"];
+									$stmt->bind_result($course_id);
+									$stmt->fetch();
+									
+									// $row = $result->fetch_array(MYSQLI_ASSOC);
+									// $course_id = $row["course_id"];
 								}
 								
 								//
@@ -223,9 +231,11 @@
 								$stmt->bind_param("ii", $course_id, $section_number);
 								$stmt->execute() or die("Couldn't execute 'sections' statement. " . $conn->error);
 								
-								$result = $stmt->get_result();
-								$stmt->close();
-								if (mysqli_num_rows($result) == 0) {
+								$stmt->store_result();
+								
+								// $result = $stmt->get_result();
+								
+								if ($stmt->num_rows == 0) {
 									$query = "
 										INSERT INTO sections (course_id, section_number, year_offered)
 										VALUES (?, ?, ?);
@@ -248,14 +258,20 @@
 									$stmt->bind_param("iii", $course_id, $section_number, $session_year);
 									$stmt->execute() or die("Couldn't execute 'sections select id' statement. " . $conn->error);
 									
-									$result = $stmt->get_result();
-									$row = $result->fetch_array(MYSQLI_ASSOC);
-									$section_id = $row["section_id"];
+									$stmt->bind_result($section_id);
+									$stmt->fetch();
+									
+									// $result = $stmt->get_result();
+									// $row = $result->fetch_array(MYSQLI_ASSOC);
+									// $section_id = $row["section_id"];
 									
 									$stmt->close();
 								} else {
-									$row = $result->fetch_array(MYSQLI_ASSOC);
-									$section_id = $row["section_id"];
+									$stmt->bind_result($section_id);
+									$stmt->fetch();
+									
+									// $row = $result->fetch_array(MYSQLI_ASSOC);
+									// $section_id = $row["section_id"];
 								}
 								
 								//
@@ -272,9 +288,11 @@
 								$stmt->bind_param("i", $section_id);
 								$stmt->execute() or die("Couldn't execute 'sessions' statement. " . $conn->error);
 								
-								$result = $stmt->get_result();
-								$stmt->close();
-								if (mysqli_num_rows($result) == 0) {
+								$stmt->store_result();
+								
+								// $result = $stmt->get_result();
+								
+								if ($stmt->num_rows == 0) {
 									$query = "
 										INSERT INTO sessions (section_id, session_date)
 										VALUES (?, ?);
@@ -294,12 +312,18 @@
 									$stmt->bind_param("i", $section_id);
 									$stmt->execute() or die("Couldn't execute 'sessions select id' statement. " . $conn->error);
 									
-									$result = $stmt->get_result();
-									$row = $result->fetch_array(MYSQLI_ASSOC);
-									$session_id = $row["session_id"];
+									$stmt->bind_result($session_id);
+									$stmt->fetch();
+									
+									// $result = $stmt->get_result();
+									// $row = $result->fetch_array(MYSQLI_ASSOC);
+									// $session_id = $row["session_id"];
 								} else {
-									$row = $result->fetch_array(MYSQLI_ASSOC);
-									$session_id = $row["session_id"];
+									$stmt->bind_result($session_id);
+									$stmt->fetch();
+									
+									// $row = $result->fetch_array(MYSQLI_ASSOC);
+									// $session_id = $row["session_id"];
 									
 									// data for this session already exists, delete current session data and upload new session data
 									
@@ -313,9 +337,11 @@
 									$stmt->bind_param("i", $session_id);
 									$stmt->execute() or die("Couldn't execute 'questions select session id' statement. " . $conn->error);
 									
-									$result = $stmt->get_result();
-									$stmt->close();
-									while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+									$stmt->bind_result($question_id);
+									
+									// $result = $stmt->get_result();
+									
+									while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 										// remove all information about each question
 										
 										// delete from responses
@@ -325,7 +351,7 @@
 										";
 										
 										$stmt = $conn->prepare($query) or die("Couldn't prepare 'responses delete' statement. " . $conn->error);
-										$stmt->bind_param("i", $row["question_id"]);
+										$stmt->bind_param("i", $question_id);
 										$stmt->execute() or die("Couldn't prepare 'responses delete' statement. " . $conn->error);
 										$stmt->close();
 										
@@ -336,7 +362,7 @@
 										";
 										
 										$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions delete' statement. " . $conn->error);
-										$stmt->bind_param("i", $row["question_id"]);
+										$stmt->bind_param("i", $question_id);
 										$stmt->execute() or die("Couldn't prepare 'questions delete' statement. " . $conn->error);
 										$stmt->close();
 										
@@ -384,9 +410,11 @@
 									$stmt->bind_param("s", $responses[$i]["iclicker_id"]);
 									$stmt->execute() or die("Couldn't prepare 'students' statement. " . $conn->error);
 									
-									$result = $stmt->get_result();
-									$stmt->close();
-									if (mysqli_num_rows($result) == 0) {
+									$stmt->store_result();
+									
+									// $result = $stmt->get_result();
+									
+									if ($stmt->num_rows == 0) {
 										// no record for this student, have to create one
 										$query = "
 											INSERT INTO students (iclicker_id)
@@ -407,13 +435,19 @@
 										$stmt->bind_param("i", $responses[$i]["iclicker_id"]);
 										$stmt->execute() or die("Couldn't prepare 'students' statement. " . $conn->error);
 										
-										$result = $stmt->get_result();
-										$stmt->close();
-										$row = $result->fetch_array(MYSQLI_ASSOC);
-										$student_id = $row["student_id"];
+										$stmt->bind_result($student_id);
+										$stmt->fetch();
+										
+										// $result = $stmt->get_result();
+										
+										// $row = $result->fetch_array(MYSQLI_ASSOC);
+										// $student_id = $row["student_id"];
 									} else {
-										$row = $result->fetch_array(MYSQLI_ASSOC);
-										$student_id = $row["student_id"];
+										$stmt->bind_result($student_id);
+										$stmt->fetch();
+										
+										// $row = $result->fetch_array(MYSQLI_ASSOC);
+										// $student_id = $row["student_id"];
 									}
 									
 									// have to select the question_id
@@ -429,9 +463,12 @@
 									$stmt->bind_param("ii", $session_id, $question_number);
 									$stmt->execute() or die("Couldn't prepare 'questions select' statement. " . $conn->error);
 									
-									$result = $stmt->get_result();
-									$row = $result->fetch_array(MYSQLI_ASSOC);
-									$question_id = $row["question_id"];
+									$stmt->bind_result($question_id);
+									$stmt->fetch();
+									
+									// $result = $stmt->get_result();
+									// $row = $result->fetch_array(MYSQLI_ASSOC);
+									// $question_id = $row["question_id"];
 									$stmt->close();
 									
 									$query = "

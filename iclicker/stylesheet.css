@@ -59,6 +59,10 @@ table.collection tr:hover
 { 
 	background-color: #9cf;
 }
+table.collection tr:first-child:hover
+{
+	background-color: #eee;
+}
 table.collection tr a 
 {
 	display: block;

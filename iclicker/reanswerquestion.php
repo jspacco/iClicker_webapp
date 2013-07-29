@@ -26,13 +26,17 @@
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute 'select' query. " . $conn->error);
 	
-	$result = $stmt->get_result();
+	$stmt->bind_result($question_name, $screen_picture);
 	
-	$row = $result->fetch_array(MYSQLI_ASSOC);
+	$stmt->fetch();
+	
+	// $result = $stmt->get_result();
+	
+	// $row = $result->fetch_array(MYSQLI_ASSOC);
 	
 	echo "
-		<h1>" . $row["question_name"] . "</h1>
-		<img src='pictures/" . $row["screen_picture"] . "' width='700px' height='500px'>
+		<h1>" . $question_name . "</h1>
+		<img src='pictures/" . $screen_picture . "' width='700px' height='500px'>
 		<form action='submitreanswer.php?question_id=" . $question_id . "' method='post'>
 			<fieldset>
 				<legend>Answer</legend>

@@ -16,10 +16,8 @@
 </header>
 <body>
 	<div>
+		<h2>Courses</h2>
 		<table class='collection'>
-			<tr>
-				<th colspan='2'>Courses</th>
-			</tr>
 			<tr>
 				<th>Name</th>
 				<th>Number</th>

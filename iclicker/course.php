@@ -16,10 +16,8 @@
 </header>
 <body>
 	<div>
+		<h2>Sections</h2>
 		<table class='collection'>
-			<tr>
-				<th colspan='2'>Sections</th>
-			</tr>
 			<tr>
 				<th>Section Number</th>
 				<th>Year Offered</th>
@@ -36,13 +34,15 @@
 	$stmt->bind_param("i", $course_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	
-	$result = $stmt->get_result();
+	$stmt->bind_result($section_id, $section_number, $year_offered);
+
+	// $result = $stmt->get_result();
 	
-	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		echo "
 			<tr>
-				<td><a href='section.php?section_id=" . $row["section_id"] . "'>" . $row["section_number"] . "</a></td>
-				<td><a href='section.php?section_id=" . $row["section_id"] . "'>" . $row["year_offered"] . "</a></td>
+				<td><a href='section.php?section_id=" . $section_id . "'>" . $section_number . "</a></td>
+				<td><a href='section.php?section_id=" . $section_id . "'>" . $year_offered . "</a></td>
 			</tr>
 		";
 	}

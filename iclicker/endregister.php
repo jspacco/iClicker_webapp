@@ -26,11 +26,16 @@
 	$stmt->bind_param("ss", $iclicker, $iclicker_alt);
 	$stmt->execute() or die("Couldn't execute 'select' query. " . $conn->error);
 	
-	$result = $stmt->get_result();
+	$stmt->store_result();
 	
-	if (mysqli_num_rows($result) > 0) {
-		$row = $result->fetch_array(MYSQLI_ASSOC);
-		$student_id = $row["student_id"];
+	// $result = $stmt->get_result();
+	
+	if ($stmt->num_rows > 0) {
+		$stmt->bind_result($student_id);
+		$stmt->fetch();
+		
+		// $row = $result->fetch_array(MYSQLI_ASSOC);
+		// $student_id = $row["student_id"];
 		$username = $_POST["username"];
 		$password = $_POST["password"];
 		$password = getEncrypted($password);
