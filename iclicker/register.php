@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-	<script type='text/javascript' src='jquery-1.10.2.min.js'></script>
-</head>
+<?php
+	require_once("pageutils.php");
+	createHeader("Register", false, "<script type='text/javascript' src='jquery-1.10.2.min.js'></script>");
+?>
 <body>
 	<script type="text/javascript">
 		jQuery(function(){
@@ -66,7 +64,6 @@
 		</form>
 	</div>
 </body>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>
+<?php
+	createFooter();
+?>

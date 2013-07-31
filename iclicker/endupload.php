@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -6,14 +7,9 @@
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
+	
+	createHeader("Submitting upload...");
 ?>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-</head>
-<header>
-	<a href="logout.php">Logout</a>
-</header>
 <body>
 	<div>
 <?php
@@ -549,8 +545,5 @@
 </body>
 <?php
 	$conn->close();
+	createFooter();
 ?>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>

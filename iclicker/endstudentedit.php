@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -38,14 +39,9 @@
 	if ($result) {
 		header("Location: home.php");
 	}
+	
+	createHeader("End Edit");
 ?>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-</head>
-<header>
-	<a href="logout.php">Logout</a>
-</header>
 <body>
 	<div>
 		<p>Edit was not successful!<br></p>
@@ -53,8 +49,5 @@
 </body>
 <?php
 	$conn->close();
+	createFooter();
 ?>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>

@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -6,14 +7,9 @@
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
+	
+	createHeader("Compare");
 ?>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-</head>
-<header>
-	<a href="logout.php">Logout</a>
-</header>
 <body>
 	<div>
 		<h1>Comparison</h1>
@@ -22,7 +18,9 @@
 				<th>Vote Type</th>
 				<th>Screen Picture</th>
 				<th>Chart Picture</th>
-				<th>Student Scores</th>
+				<th>Answers</th>
+				<th>In-Class Scores</th>
+				<th>Online Scores</th>
 			</tr>
 <?php
 	$iv_id = $_GET["iv"];
@@ -75,17 +73,89 @@
 		$gv_votes[$gv_student_id] = $gv_response;
 	}
 	
+	$stmt->close();
+	
 	$iv_correct = 0;
 	$gv_correct = 0;
 	
 	foreach ($iv_votes as $key => $value) {
-		if (trim($value) == trim($iv_correct_answer)) {
-			$iv_correct++;
+		foreach (explode(",", $iv_correct_answer) as $answer) {
+			if (trim($value) == trim($answer)) {
+				$iv_correct++;
+				break;
+			}
 		}
 	}
 	foreach ($gv_votes as $key => $value) {
-		if (trim($value) == trim($gv_correct_answer)) {
-			$gv_correct++;
+		foreach (explode(",", $gv_correct_answer) as $answer) {
+			if (trim($value) == trim($answer)) {
+				$gv_correct++;
+				break;
+			}
+		}
+	}
+	
+	$iv_online = array();
+	$gv_online = array();
+	
+	$query = "
+		SELECT student_id, response FROM onlineresponses WHERE
+		question_id = ?;
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'online responses' query. " . $conn->error);
+	$stmt->bind_param("i", $iv_id);
+	$stmt->execute() or die("Couldn't execute 'online responses' query. " . $conn->error);
+	
+	$stmt->bind_result($online_id, $onlineresponse);
+	
+	while ($stmt->fetch()) {
+		$iv_online[$online_id] = $onlineresponse;
+	}
+	
+	$stmt->close();
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'online responses' query. " . $conn->error);
+	$stmt->bind_param("i", $gv_id);
+	$stmt->execute() or die("Couldn't execute 'online responses' query. " . $conn->error);
+	
+	$stmt->bind_result($online_id, $onlineresponse);
+	
+	while ($stmt->fetch()) {
+		$gv_online[$online_id] = $onlineresponse;
+	}
+	
+	$stmt->close();
+	
+	$iv_online_correct = 0;
+	$gv_online_correct = 0;
+	
+	foreach ($iv_online as $key => $value) {
+		$exit = false;
+		foreach (explode(",", $value) as $response) {
+			if ($exit == true)
+				break;
+			foreach (explode(",", $iv_correct_answer) as $answer) {
+				if (trim($response) == trim($answer)) {
+					$iv_online_correct++;
+					$exit = true;
+					break;
+				}
+			}
+		}
+	}
+	foreach ($gv_online as $key => $value) {
+		$exit = false;
+		foreach (explode(",", $value) as $response) {
+			if ($exit == true)
+			break;
+			foreach (explode(",", $gv_correct_answer) as $answer) {
+				if (trim($response) == trim($answer)) {
+					$gv_online_correct++;
+					$exit = true;
+					break;
+				}
+			}
 		}
 	}
 	
@@ -94,13 +164,17 @@
 				<td>Individual Vote</td>
 				<td><img src='pictures/" . $iv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
 				<td><img src='pictures/" . $iv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
+				<td>" . $iv_correct_answer . "</td>
 				<td>" . $iv_correct . "/" . count($iv_votes) . "</td>
+				<td>" . $iv_online_correct . "/" . count($iv_online) . "</td>
 			</tr>
 			<tr>
 				<td>Group Vote</td>
 				<td><img src='pictures/" . $gv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
 				<td><img src='pictures/" . $gv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
+				<td>" . $gv_correct_answer . "</td>
 				<td>" . $gv_correct . "/" . count($gv_votes) . "</td>
+				<td>" . $gv_online_correct . "/" . count($gv_online) . "</td>
 			</tr>
 		</table>
 	";
@@ -185,8 +259,5 @@
 </body>
 <?php
 	$conn->close();
+	createFooter();
 ?>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>

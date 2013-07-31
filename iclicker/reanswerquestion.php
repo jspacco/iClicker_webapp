@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -6,12 +7,9 @@
 	if (!isCookieValidLoginWithType($conn, "student")) {
 		header("Location: login.php");
 	}
+	
+	createHeader("Question Reanswer");
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>
-</head>
 <body>
 	<div>
 <?php
@@ -39,26 +37,26 @@
 		<img src='pictures/" . $screen_picture . "' width='700px' height='500px'>
 		<form action='submitreanswer.php?question_id=" . $question_id . "' method='post'>
 			<fieldset>
-				<legend>Answer</legend>
+				<legend>Select all correct answers</legend>
 				<table>
 					<tr>
-						<td><input type='radio' name='answer' value='A'>A</td>
+						<td><input type='checkbox' name='answers[]' value='A'>A</td>
 						<td></td>
 					</tr>
 					<tr>
-						<td><input type='radio' name='answer' value='B'>B</td>
+						<td><input type='checkbox' name='answers[] value='B'>B</td>
 						<td></td>
 					</tr>
 					<tr>
-						<td><input type='radio' name='answer' value='C'>C</td>
+						<td><input type='checkbox' name='answers[]' value='C'>C</td>
 						<td></td>
 					</tr>
 					<tr>
-						<td><input type='radio' name='answer' value='D'>D</td>
+						<td><input type='checkbox' name='answers[]' value='D'>D</td>
 						<td></td>
 					</tr>
 					<tr>
-						<td><input type='radio' name='answer' value='E'>E</td>
+						<td><input type='checkbox' name='answers[]' value='E'>E</td>
 						<td></td>
 					</tr>
 					<tr>
@@ -74,8 +72,5 @@
 </body>
 <?php
 	$conn->close();
+	createFooter();
 ?>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>

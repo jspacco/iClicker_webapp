@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -16,12 +17,9 @@
 	if (isValidLogin($conn, $user, $pass, $type)) {
 		header("Location: home.php");
 	}
+	
+	createHeader("End Login", false);
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>
-</head>
 <body>
 	<div>
 		<p>Login Failed!</p>
@@ -29,8 +27,5 @@
 </body>
 <?php
 	$conn->close();
+	createFooter();
 ?>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>

@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -17,17 +18,15 @@
 		
 		header("Location: " . $redirect);
 	}
+	
+	createHeader("Online i<Clicker Questions", false);
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>
-</head>
 <body>
-	<div>
+	<div style="text-align: left;">
 		<h1>Online i>Clicker Questions</h1>
+		<img style="float: right;" src="logo.jpg"><br>
 		<p>Login to access the student/administration tools.<br></p>
-		<a href="register.html">Student Registration</a><br>
+		<a href="register.php">Student Registration</a><br>
 		<form action='endlogin.php' method='post'>
 			<table>
 				<tr>
@@ -53,5 +52,5 @@
 </body>
 <?php
 	$conn->close();
+	createFooter();
 ?>
-</html>

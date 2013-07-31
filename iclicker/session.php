@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -6,14 +7,9 @@
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
+	
+	createHeader("Session");
 ?>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-</head>
-<header>
-	<a href="logout.php">Logout</a>
-</header>
 <body>
 	<div>
 		<h1>
@@ -34,7 +30,7 @@
 	$session_id = $_GET["session_id"];
 	
 	$query = "
-		SELECT question_id, question_number, screen_picture, chart_picture, ignore_question FROM questions WHERE
+		SELECT question_id, question_number, screen_picture, chart_picture, correct_answer, ignore_question FROM questions WHERE
 		session_id = ?;
 	";
 	
@@ -42,7 +38,7 @@
 	$stmt->bind_param("i", $session_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	
-	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $ignore_question);
+	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $correct_answer, $ignore_question);
 	
 	// $result = $stmt->get_result();
 	
@@ -74,15 +70,39 @@
 				<td>" . $type . "</td>
 			";
 		}
+		
+		$a = "";
+		$b = "";
+		$c = "";
+		$d = "";
+		$e = "";
+		
+		if (strpos($correct_answer, 'A') !== false) {
+			$a = "checked";
+		}
+		if (strpos($correct_answer, 'B') !== false) {
+			$b = "checked";
+		}
+		if (strpos($correct_answer, 'C') !== false) {
+			$c = "checked";
+		}
+		if (strpos($correct_answer, 'D') !== false) {
+			$d = "checked";
+		}
+		if (strpos($correct_answer, 'E') !== false) {
+			$e = "checked";
+		}
+		
 		echo "
 			<td><img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
 			<td><img src='pictures/" . $chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
 			<td>
-				<input type='checkbox' name='A[]' value='" . $question_id . "'>A
-				<input type='checkbox' name='B[]' value='" . $question_id . "'>B
-				<input type='checkbox' name='C[]' value='" . $question_id . "'>C
-				<input type='checkbox' name='D[]' value='" . $question_id . "'>D
-				<input type='checkbox' name='E[]' value='" . $question_id . "'>E
+				<input type='checkbox' name='A[]' value='" . $question_id . "' " . $a . ">A
+				<input type='checkbox' name='B[]' value='" . $question_id . "' " . $b . ">B
+				<input type='checkbox' name='C[]' value='" . $question_id . "' " . $c . ">C
+				<input type='checkbox' name='D[]' value='" . $question_id . "' " . $d . ">D
+				<input type='checkbox' name='E[]' value='" . $question_id . "' " . $e . ">E
+				<input type='hidden' name='id[]' value='" . $question_id . "'>
 			</td>
 		";
 		
@@ -107,8 +127,5 @@
 </body>
 <?php
 	$conn->close();
+	createFooter();
 ?>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>

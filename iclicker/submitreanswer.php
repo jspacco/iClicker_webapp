@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -6,19 +7,28 @@
 	if (!isCookieValidLoginWithType($conn, "student")) {
 		header("Location: home.php");
 	}
+	
+	createHeader("Submitting answer...");
 ?>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-</head>
-<header>
-	<a href="logout.php">Logout</a>
-</header>
 <body>
 	<div>
 <?php
 	$question_id = (int) $_GET["question_id"];
-	$answer = $_POST["answer"];
+	$answers = $_POST["answers"];
+	$answer = "";
+	
+	foreach ($answers as $a) {
+		if ($a == 'A' ||
+			$a == 'B' ||
+			$a == 'C' ||
+			$a == 'D' ||
+			$a == 'E')
+			$answer = $answer . $a . ",";
+		else
+			continue;
+	}
+	$answer = trim($answer, ",");
+	
 	$user = $_COOKIE["Username"];
 	$pass = $_COOKIE["Password"];
 	
@@ -34,6 +44,7 @@
 	
 	$stmt->bind_result($student_id);
 	$stmt->fetch();
+	$stmt->close();
 	
 	// $result = $stmt->get_result();
 	
@@ -50,6 +61,7 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'delete' query. " . $conn->error);
 	$stmt->bind_param("ii", $question_id, $student_id);
 	$stmt->execute() or die("Couldn't execute 'delete' query. " . $conn->error);
+	$stmt->close();
 	
 	$query = "
 		INSERT INTO onlineresponses (question_id, student_id, response) VALUES (?, ?, ?);
@@ -61,15 +73,11 @@
 	
 	echo "
 		Answer submitted successfully!<br>
-		<a href='reanswerquestion.php?question_id=" . $question_id . "'>Go back</a>
 	";
 ?>
 	</div>
 </body>
 <?php
 	$conn->close();
+	createFooter(true, "reanswerquestion.php?question_id=" . $question_id);
 ?>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>

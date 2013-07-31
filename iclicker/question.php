@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -6,16 +7,11 @@
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
+	
+	createHeader("Question", true,
+		"<script type='text/javascript' src='jquery-1.10.2.min.js'></script>
+		<script type='text/javascript' src='jquery.tablesorter.min.js'></script>");
 ?>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-	<script type='text/javascript' src='jquery-1.10.2.min.js'></script>
-	<script type='text/javascript' src='jquery.tablesorter.min.js'></script>	
-</head>
-<header>
-	<a href="logout.php">Logout</a>
-</header>
 <body>
 	<script type='text/javascript'>
 		$(document).ready(function() {
@@ -45,7 +41,7 @@
 			<table>
 				<tr>
 					<th>Number</th>
-					<th>Correct Answer</th>
+					<th>Answers</th>
 					<th>Start Time</th>
 					<th>Stop Time</th>
 				</tr>
@@ -61,12 +57,13 @@
 			<img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='350' height='200'>
 		";
 	}
+	$stmt->close();
 ?>
 <table id='responsestable' class='tablesorter' cellspacing='1'>
 	<thead>
 		<tr class="">
 			<th colspan='3'>Student</th>
-			<th colspan='5'>Response</th>
+			<th colspan='6'>Response</th>
 		</tr>
 		<tr>
 			<th>School ID</th>
@@ -92,7 +89,7 @@
 	$stmt->execute() or die("Couldn't execute responses query. " . $conn->error);
 	
 	$stmt->bind_result($school_id, $iclicker_id, $last_name, $first_name, $number_of_attempts, $first_response, $time, $response, $final_answer_time);
-	
+
 	// $result = $stmt->get_result();
 	
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
@@ -116,8 +113,5 @@
 </body>
 <?php
 	$conn->close();
+	createFooter();
 ?>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>

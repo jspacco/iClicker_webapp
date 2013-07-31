@@ -1,4 +1,5 @@
 <?php
+	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
@@ -6,14 +7,9 @@
 	if (!isCookieValidLoginWithType($conn, "student")) {
 		header("Location: home.php");
 	}
+	
+	createHeader("Student Page");
 ?>
-<html>
-<head>
-	<link rel='stylesheet' type='text/css' href='stylesheet.css'>	
-</head>
-<header>
-	<a href="logout.php">Logout</a>
-</header>
 <body>
 	<div>
 		<h2>Questions</h2>
@@ -59,7 +55,7 @@
 	$stmt->bind_param("i", $student_id);
 	$stmt->execute() or die("Couldn't execute 'select' query. " . $conn->error);
 	
-	$stmt->bind_result($question_id, $course_name, $course_number, $section_number, $session_date, $question_number);
+	$stmt->bind_result($course_name, $course_number, $section_number, $session_date, $question_number, $question_id);
 	
 	// $result = $stmt->get_result();
 	
@@ -81,8 +77,5 @@
 </body>
 <?php
 	$conn->close();
+	createFooter();
 ?>
-<footer>
-	<a href='home.php'>Back to Home</a>
-</footer>
-</html>
