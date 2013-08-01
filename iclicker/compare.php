@@ -162,16 +162,16 @@
 	echo "
 			<tr>
 				<td>Individual Vote</td>
-				<td><img src='pictures/" . $iv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
-				<td><img src='pictures/" . $iv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
+				<td><a href='pictures/" . $iv_screen_picture . "' title='Picture of screen' data-lightbox='" . $iv_id . "'><img src='pictures/" . $iv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+				<td><a href='pictures/" . $iv_chart_picture . "' title='Chart of responses' data-lightbox='" . $iv_id . "'><img src='pictures/" . $iv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
 				<td>" . $iv_correct_answer . "</td>
 				<td>" . $iv_correct . "/" . count($iv_votes) . "</td>
 				<td>" . $iv_online_correct . "/" . count($iv_online) . "</td>
 			</tr>
 			<tr>
 				<td>Group Vote</td>
-				<td><img src='pictures/" . $gv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
-				<td><img src='pictures/" . $gv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
+				<td><a href='pictures/" . $gv_screen_picture . "' title='Picture of screen' data-lightbox='" . $gv_id . "'><img src='pictures/" . $gv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+				<td><a href='pictures/" . $gv_chart_picture . "' title='Chart of responses' data-lightbox='" . $gv_id . "'><img src='pictures/" . $gv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
 				<td>" . $gv_correct_answer . "</td>
 				<td>" . $gv_correct . "/" . count($gv_votes) . "</td>
 				<td>" . $gv_online_correct . "/" . count($gv_online) . "</td>
@@ -196,49 +196,36 @@
 <?php	
 	echo "
 			<tr>
-				<th>A</th>
-				<td>" . countFromTo("A", "A", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("A", "B", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("A", "C", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("A", "D", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("A", "E", $iv_votes, $gv_votes) . "</td>
+				" . countRow('A', $gv_correct_answer, $iv_votes, $gv_votes) . "
 			</tr>
 			<tr>
-				<th>B</th>
-				<td>" . countFromTo("B", "A", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("B", "B", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("B", "C", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("B", "D", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("B", "E", $iv_votes, $gv_votes) . "</td>
+				" . countRow('B', $gv_correct_answer, $iv_votes, $gv_votes) . "
 			</tr>
 			<tr>
-				<th>C</th>
-				<td>" . countFromTo("C", "A", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("C", "B", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("C", "C", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("C", "D", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("C", "E", $iv_votes, $gv_votes) . "</td>
+				" . countRow('C', $gv_correct_answer, $iv_votes, $gv_votes) . "
 			</tr>
 			<tr>
-				<th>D</th>
-				<td>" . countFromTo("D", "A", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("D", "B", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("D", "C", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("D", "D", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("D", "E", $iv_votes, $gv_votes) . "</td>
+				" . countRow('D', $gv_correct_answer, $iv_votes, $gv_votes) . "
 			</tr>
 			<tr>
-				<th>E</th>
-				<td>" . countFromTo("E", "A", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("E", "B", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("E", "C", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("E", "D", $iv_votes, $gv_votes) . "</td>
-				<td>" . countFromTo("E", "E", $iv_votes, $gv_votes) . "</td>
+				" . countRow('E', $gv_correct_answer, $iv_votes, $gv_votes) . "
 			</tr>
 		</table>
 	";
 	
-	function countFromTo($from, $to, $iv, $gv) {
+	function countRow($from, $answer, $iv, $gv) {
+		$s = "
+			<th>" . $from . "</th>" .
+			countFromTo($from, "A", $answer, $iv, $gv) . 
+			countFromTo($from, "B", $answer, $iv, $gv) . 
+			countFromTo($from, "C", $answer, $iv, $gv) . 
+			countFromTo($from, "D", $answer, $iv, $gv) . 
+			countFromTo($from, "E", $answer, $iv, $gv);
+		
+		return $s;
+	}
+	
+	function countFromTo($from, $to, $answer, $iv, $gv) {
 		$num = 0;
 		
 		foreach ($iv as $key => $value) {
@@ -250,9 +237,19 @@
 		}
 		
 		if ($num == 0)
-			return "-";
-		else
-			return $num;
+			$num = "-";
+		
+		if (trim($to) == trim($answer)) {
+			$s = "<td class='correct'>" . $num . "</td>";
+		} else if (trim($from) == trim($answer)) {
+			$s = "<td class='switched'>" . $num . "</td>";
+		} else if (trim($from) == trim($to)) {
+			$s = "<td class='stayed'>" . $num . "</td>";
+		} else {
+			$s = "<td>" . $num . "</td>";
+		}
+		
+		return $s;
 	}
 ?>
 	</div>

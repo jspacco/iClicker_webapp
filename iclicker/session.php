@@ -94,8 +94,8 @@
 		}
 		
 		echo "
-			<td><img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
-			<td><img src='pictures/" . $chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
+			<td><a href='pictures/" . $screen_picture . "' title='Picture of screen' data-lightbox='" . $question_id . "'><img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+			<td><a href='pictures/" . $chart_picture . "' title='Chart of responses' data-lightbox='" . $question_id . "'><img src='pictures/" . $chart_picture . "' rel='lightbox' title='Chart of responses' width='175' height='100'></td>
 			<td>
 				<input type='checkbox' name='A[]' value='" . $question_id . "' " . $a . ">A
 				<input type='checkbox' name='B[]' value='" . $question_id . "' " . $b . ">B

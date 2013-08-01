@@ -3,7 +3,10 @@
 		echo "
 			<html>
 			<head>
-				<link rel='stylesheet' type='text/css' href='stylesheet.css'>
+				<link rel='stylesheet' type='text/css' href='css/stylesheet.css' />
+				<link rel='stylesheet' type='text/css' href='css/lightbox.css' />
+				<script src='js/jquery-1.10.2.min.js'></script>
+				<script src='js/lightbox-2.6.min.js'></script>
 				<title>" . $title . "</title>
 				" . $extra . "
 			</head>
@@ -18,12 +21,16 @@
 		
 		echo "
 			</header>
+			<body>
+				<div class='main'>
 		";
 	}
 	
 	function createFooter($goBack = false, $goBackLink = "#") {
 		echo "
-			<footer>
+				</div>
+			</body>
+			<footer class='main'>
 		";
 		
 		if ($goBack) {

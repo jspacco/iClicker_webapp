@@ -47,8 +47,13 @@
 								$path = explode("/", zip_entry_name($zip_entry));
 								$foldername = explode("-", $path[0]); // split by / then by - to get course information
 								$course_name = $foldername[0];
-								$course_number = $foldername[1];
-								$section_number = $foldername[2];
+								if (sizeof($foldername) < 3) {
+									$course_number = 0;
+									$section_number = 0;
+								} else {
+									$course_number = $foldername[1];
+									$section_number = $foldername[2];
+								}
 								$filename = $path[1];
 								$session_year = substr($filename, 5, 2);
 								$session_month = substr($filename, 7, 2);
@@ -446,6 +451,7 @@
 										
 										$stmt->bind_result($student_id);
 										$stmt->fetch();
+										$stmt->close();
 										
 										// $result = $stmt->get_result();
 										
@@ -454,6 +460,7 @@
 									} else {
 										$stmt->bind_result($student_id);
 										$stmt->fetch();
+										$stmt->close();
 										
 										// $row = $result->fetch_array(MYSQLI_ASSOC);
 										// $student_id = $row["student_id"];

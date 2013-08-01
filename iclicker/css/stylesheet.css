@@ -1,4 +1,4 @@
-div, footer
+.main
 { 
 	width: 800px;
 	margin-left: auto;
@@ -7,7 +7,7 @@ div, footer
 	background-color: #eee;
 }
 
-h1, h2
+h1.main, h2.main
 {
 	text-align: left;
 }
@@ -27,6 +27,21 @@ h1, h2
 {
 	width: 100%;
 	clear: both;
+}
+
+td.switched
+{
+	background-color: #BB5555;
+}
+
+td.correct
+{
+	background-color: #55BB55;
+}
+
+td.stayed
+{
+	background-color: #BBBB55;
 }
 
 table.votechanges
