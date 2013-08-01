@@ -63,10 +63,10 @@
 								$rows = explode("\n", $res);
 								
 								// print the rows (for debugging)
-								$count = count($rows);
-								for ($i = 0; $i < $count; $i++) {
-									echo $i . "    " . $rows[$i] . "<br>";
-								}
+								// $count = count($rows);
+								// for ($i = 0; $i < $count; $i++) {
+									// echo $i . "    " . $rows[$i] . "<br>";
+								// }
 								
 								//
 								//	Setup question information
@@ -100,9 +100,9 @@
 									$questions[($i - 3) / 6]["correct_answer"] = $elements[$i];
 								}
 								
-								echo "<b>QUESTIONS</b><br>";
-								var_dump($questions);
-								echo "<br>";
+								// echo "<b>QUESTIONS</b><br>";
+								// var_dump($questions);
+								// echo "<br>";
 								
 								//
 								//	Setup student information
@@ -139,9 +139,9 @@
 									}
 								}
 								
-								echo "<b>RESPONSES</b><br>";
-								var_dump($responses);
-								echo "<br>";
+								// echo "<b>RESPONSES</b><br>";
+								// var_dump($responses);
+								// echo "<br>";
 								
 								//
 								//	Put everything in the database
@@ -204,7 +204,7 @@
 									
 									$stmt->close();
 								} else {
-									$stmt->bind_result($course_id);
+									$stmt->bind_result($course_id, $course_name, $course_number);
 									$stmt->fetch();
 									
 									// $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -263,7 +263,7 @@
 									
 									$stmt->close();
 								} else {
-									$stmt->bind_result($section_id);
+									$stmt->bind_result($section_id, $course_id, $section_number);
 									$stmt->fetch();
 									
 									// $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -277,11 +277,12 @@
 								$session_id;
 								$query = "
 									SELECT session_id FROM sessions WHERE
-									section_id = ?;
+									section_id = ? AND
+									session_date = ?;
 								";
 								
 								$stmt = $conn->prepare($query) or die("Couldn't prepare 'sessions' statement. " . $conn->error);
-								$stmt->bind_param("i", $section_id);
+								$stmt->bind_param("is", $section_id, $session_date);
 								$stmt->execute() or die("Couldn't execute 'sessions' statement. " . $conn->error);
 								
 								$stmt->store_result();
@@ -310,13 +311,17 @@
 									
 									$stmt->bind_result($session_id);
 									$stmt->fetch();
+									$stmt->close();
 									
 									// $result = $stmt->get_result();
 									// $row = $result->fetch_array(MYSQLI_ASSOC);
 									// $session_id = $row["session_id"];
 								} else {
+									echo "Data for this session already exists, removing...<br>";
+									
 									$stmt->bind_result($session_id);
 									$stmt->fetch();
+									$stmt->close();
 									
 									// $row = $result->fetch_array(MYSQLI_ASSOC);
 									// $session_id = $row["session_id"];
@@ -337,7 +342,15 @@
 									
 									// $result = $stmt->get_result();
 									
-									while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
+									$q_ids = array();
+									
+									while ($stmt->fetch()) {
+										array_push($q_ids, $question_id);
+									}
+									$stmt->close();
+									
+									// while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
+									foreach ($q_ids as $question_id) {
 										// remove all information about each question
 										
 										// delete from responses
@@ -477,8 +490,6 @@
 									$stmt->execute() or die("Couldn't execute 'responses' statement. " . $conn->error);
 									$stmt->close();
 								}
-								
-								$conn->close();
 								
 							} else {
 								echo "Error reading .csv file. Exiting...<br>";
