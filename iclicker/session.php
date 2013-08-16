@@ -9,6 +9,20 @@
 	}
 	
 	createHeader("Session");
+	
+	$session_id = $_GET["session_id"];
+
+	$query = "
+		SELECT section_id FROM sessions WHERE session_id = ?;
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'section_id' query. " . $conn->error);
+	$stmt->bind_param("i", $session_id);
+	$stmt->execute() or die("Couldn't execute 'section_id' query. " . $conn->error);
+	
+	$stmt->bind_result($section_id);
+	$stmt->fetch();
+	$stmt->close();
 ?>
 <body>
 	<div>
@@ -27,8 +41,6 @@
 				<th>Compare</th>
 			</tr>
 <?php
-	$session_id = $_GET["session_id"];
-	
 	$query = "
 		SELECT question_id, question_number, screen_picture, chart_picture, correct_answer, ignore_question FROM questions WHERE
 		session_id = ?;
@@ -127,5 +139,5 @@
 </body>
 <?php
 	$conn->close();
-	createFooter();
+	createFooter(true, "section.php?section_id=$section_id");
 ?>

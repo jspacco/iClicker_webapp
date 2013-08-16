@@ -513,7 +513,7 @@
 								echo "Copying " . zip_entry_name($zip_entry) . " to " . $dest . ".<br>";
 								
 								file_put_contents($dest, $res);
-								chmod($dest, 0744);
+								chmod($dest, 0755);
 							}
 							// Doesn't work
 							

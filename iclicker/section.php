@@ -9,17 +9,26 @@
 	}
 	
 	createHeader("Section");
+	
+	$section_id = $_GET["section_id"];
+	
+	$query = "
+		SELECT course_id FROM sections WHERE section_id = ?;
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'course_id' query. " . $conn->error);
+	$stmt->bind_param("i", $section_id);
+	$stmt->execute() or die("Couldn't execute 'course_id' query. " . $conn->error);
+	
+	$stmt->bind_result($course_id);
+	$stmt->fetch();
+	$stmt->close();
 ?>
 <body>
 	<div>
 		<h2>Sessions</h2>
-		<table class='collection'>
-			<tr>
-				<th>Date</th>
-			</tr>
-<?php
-	$section_id = $_GET["section_id"];
-	
+		<table>
+<?php	
 	$query = "
 		SELECT session_id, session_date FROM sessions WHERE
 		section_id = ?;
@@ -32,10 +41,42 @@
 	$stmt->bind_result($session_id, $session_date);
 	// $result = $stmt->get_result();
 	
+	$dayOfWeek = 0;
+	$day = 0;
+	$month = 0;
+	$week = 0;
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
+		$date = DateTime::createFromFormat("m/d/y H:i", $session_date);
+		$newDayOfWeek = (int) date("w", $date->getTimestamp());
+		$newDay = (int) date("j", $date->getTimestamp());
+		$newMonth = (int) date("n", $date->getTimestamp());
+		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $newMonth > $month) {
+			// new week
+			$week++;
+			echo "
+				</table>
+				<table class='collection'>
+				<tr>
+					<th>Week $week</a></th>
+					<th>
+						<form action='createassignment.php' method='get'>
+							<input type='hidden' name='section_id' value='$section_id'>
+							<input type='hidden' name='week' value='$week'>
+							<input type='submit' value='Create Assignment for this Week'>
+						</form>
+					</th>
+				</tr>
+			";
+		}
+		$dayOfWeek = $newDayOfWeek;
+		$day = $newDay;
+		$month = $newMonth;
+		
+		$dayString = date("l", $date->getTimestamp());
 		echo "
 			<tr>
-				<td><a href='session.php?session_id=" . $session_id . "'>" . $session_date . "</a></td>
+				<td><a href='session.php?session_id=" . $session_id . "'>$dayString</a></td>
+				<td><a href='session.php?session_id=" . $session_id . "'>$session_date</a></td>
 			</tr>
 		";
 	}
@@ -74,8 +115,8 @@
 		$count = mysqli_num_rows($result);
 		echo "
 			<tr>
-				<td><a href='editassignment.php?assignment_id=$assignment_id' >$count</a></td>
-				<td><a href='editassignment.php?assignment_id=$assignment_id' >$due</a></td>
+				<td><a href='assignmentreport.php?assignment_id=$assignment_id' >$count</a></td>
+				<td><a href='assignmentreport.php?assignment_id=$assignment_id' >$due</a></td>
 			</tr>
 		";
 	}
@@ -122,9 +163,7 @@
 	
 	echo "</table>";
 ?>
-	</div>
-</body>
 <?php
 	$conn->close();
-	createFooter();
+	createFooter(true, "course.php?course_id=$course_id");
 ?>
