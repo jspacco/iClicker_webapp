@@ -8,9 +8,9 @@
 		header("Location: home.php");
 	}
 	
-	createHeader("Session");
+createHeader("Session");
 ?>
-<body>
+
 	<div>
 		<h1>
 			Questions

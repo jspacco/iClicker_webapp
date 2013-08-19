@@ -2,15 +2,20 @@
 	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
+
+	$section_id = $_GET["section_id"];
+if (!isset($section_id)) {
+	endOutput("Must include section_id as a GET parameter so we know for which section to display information");
+}
+
 	$conn = connect();
 	
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
 	
-	createHeader("Section");
+createHeader("Section", true, "<a href=\"uploadform.php?section_id=$section_id\"> Upload new session(s) </a>");
 ?>
-<body>
 	<div>
 		<h2>Sessions</h2>
 		<table class='collection'>
@@ -18,7 +23,6 @@
 				<th>Date</th>
 			</tr>
 <?php
-	$section_id = $_GET["section_id"];
 	
 	$query = "
 		SELECT session_id, session_date FROM sessions WHERE
@@ -41,6 +45,10 @@
 	}
 ?>
 </table>
+<br>
+
+
+
 <br>
 <h2>Assignments</h2>
 <table class='collection'>

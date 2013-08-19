@@ -7,6 +7,9 @@
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
+
+// TODO: If only one course and section, redirect to that section
+// TODO: If only one course, redirect to that course
 	
 	createHeader("Courses");
 ?>

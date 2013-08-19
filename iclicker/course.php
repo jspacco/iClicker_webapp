@@ -3,10 +3,21 @@
 	require_once("dbutils.php");
 	require_once("loginutils.php");
 	$conn = connect();
-	
+
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
+
+$course_id = $_GET["course_id"];
+
+// check if there is only one section for this course
+// if so redirect directly to the proper section
+$count=countSectionsByCourseId($conn, $course_id);
+if ($count==1) {
+	// look up the section_id then redirect
+	$section_id=getSectionForCourseId($conn, $course_id);
+	header("Location: section.php?section_id=$section_id");
+}
 	
 	createHeader("Course");
 ?>
