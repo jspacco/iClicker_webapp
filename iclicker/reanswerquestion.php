@@ -9,6 +9,12 @@
 	}
 	
 	createHeader("Question Reanswer");
+	
+	if (isset($_GET["assignment_id"])) {
+		$assignment_id = $_GET["assignment_id"];
+	} else {
+		$assignment_id = "";
+	}
 ?>
 <body>
 	<div>
@@ -31,6 +37,8 @@
 	// $result = $stmt->get_result();
 	
 	// $row = $result->fetch_array(MYSQLI_ASSOC);
+	
+	$start_time = time();
 	
 	echo "
 		<h1>" . $question_name . "</h1>
@@ -60,7 +68,10 @@
 						<td></td>
 					</tr>
 					<tr>
-						<td></td>
+						<td>
+							<input type='hidden' name='assignment_id' value='" . $assignment_id . "'>
+							<input type='hidden' name='start_time' value='" . $start_time . "'>
+						</td>
 						<td><input type='submit' value='Submit'></td>
 					</tr>
 				</table>
@@ -72,5 +83,9 @@
 </body>
 <?php
 	$conn->close();
-	createFooter();
+	if (isset($assignment_id)) {
+		createFooter(true, "viewassignment.php?assignment_id=$assignment_id");
+	} else {
+		createFooter();
+	}
 ?>

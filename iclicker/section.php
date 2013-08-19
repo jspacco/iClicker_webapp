@@ -7,14 +7,15 @@
 if (!isset($section_id)) {
 	endOutput("Must include section_id as a GET parameter so we know for which section to display information");
 }
-
 	$conn = connect();
 	
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
 	
-createHeader("Section", true, "<a href=\"uploadform.php?section_id=$section_id\"> Upload new session(s) </a>");
+	createHeader("Section", true, "<a href=\"uploadform.php?section_id=$section_id\"> Upload new session(s) </a>");
+	
+list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $section_id);
 ?>
 	<div>
 		<h2>Sessions</h2>
@@ -36,10 +37,42 @@ createHeader("Section", true, "<a href=\"uploadform.php?section_id=$section_id\"
 	$stmt->bind_result($session_id, $session_date);
 	// $result = $stmt->get_result();
 	
+	$dayOfWeek = 0;
+	$day = 0;
+	$month = 0;
+	$week = 0;
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
+		$date = DateTime::createFromFormat("m/d/y H:i", $session_date);
+		$newDayOfWeek = (int) date("w", $date->getTimestamp());
+		$newDay = (int) date("j", $date->getTimestamp());
+		$newMonth = (int) date("n", $date->getTimestamp());
+		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $newMonth > $month) {
+			// new week
+			$week++;
+			echo "
+				</table>
+				<table class='collection'>
+				<tr>
+					<th>Week $week</a></th>
+					<th>
+						<form action='createassignment.php' method='get'>
+							<input type='hidden' name='section_id' value='$section_id'>
+							<input type='hidden' name='week' value='$week'>
+							<input type='submit' value='Create Assignment for this Week'>
+						</form>
+					</th>
+				</tr>
+			";
+		}
+		$dayOfWeek = $newDayOfWeek;
+		$day = $newDay;
+		$month = $newMonth;
+		
+		$dayString = date("l", $date->getTimestamp());
 		echo "
 			<tr>
-				<td><a href='session.php?session_id=" . $session_id . "'>" . $session_date . "</a></td>
+				<td><a href='session.php?session_id=" . $session_id . "'>$dayString</a></td>
+				<td><a href='session.php?session_id=" . $session_id . "'>$session_date</a></td>
 			</tr>
 		";
 	}
@@ -82,8 +115,8 @@ createHeader("Section", true, "<a href=\"uploadform.php?section_id=$section_id\"
 		$count = mysqli_num_rows($result);
 		echo "
 			<tr>
-				<td><a href='editassignment.php?assignment_id=$assignment_id' >$count</a></td>
-				<td><a href='editassignment.php?assignment_id=$assignment_id' >$due</a></td>
+				<td><a href='assignmentreport.php?assignment_id=$assignment_id' >$count</a></td>
+				<td><a href='assignmentreport.php?assignment_id=$assignment_id' >$due</a></td>
 			</tr>
 		";
 	}
@@ -130,9 +163,7 @@ createHeader("Section", true, "<a href=\"uploadform.php?section_id=$section_id\"
 	
 	echo "</table>";
 ?>
-	</div>
-</body>
 <?php
 	$conn->close();
-	createFooter();
+	createFooter(true, "course.php?course_id=$course_id");
 ?>

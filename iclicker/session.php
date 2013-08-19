@@ -8,7 +8,11 @@
 		header("Location: home.php");
 	}
 	
-createHeader("Session");
+	createHeader("Session");
+	
+	$session_id = $_GET["session_id"];
+
+	$section_id=getSectionForCourseId($conn, $course_id);
 ?>
 
 	<div>
@@ -27,8 +31,6 @@ createHeader("Session");
 				<th>Compare</th>
 			</tr>
 <?php
-	$session_id = $_GET["session_id"];
-	
 	$query = "
 		SELECT question_id, question_number, screen_picture, chart_picture, correct_answer, ignore_question FROM questions WHERE
 		session_id = ?;
@@ -127,5 +129,5 @@ createHeader("Session");
 </body>
 <?php
 	$conn->close();
-	createFooter();
+	createFooter(true, "section.php?section_id=$section_id");
 ?>

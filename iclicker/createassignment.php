@@ -9,6 +9,11 @@
 	}
 	
 	createHeader("Create Assignment");
+	
+	$assignment_week = -1;
+	if (isset($_GET["week"])) {
+		$assignment_week = $_GET["week"];
+	}
 ?>
 <script type='text/javascript'>
 	$(function() {
@@ -17,7 +22,7 @@
 </script>
 	<table>
 		<tr>
-			<th>Session Date</th>
+			<th>Week / Date</th>
 			<th>Question #</th>
 			<th>Screen Picture</th>
 			<th>Chart Picture</th>
@@ -46,40 +51,76 @@
 	}
 	$stmt->close();
 	
+	$dayOfWeek = 0;
+	$day = 0;
+	$month = 0;
+	$week = 0;
 	// create entries for each session and its questions
 	foreach ($sessions as $session_id => $session_date) {
-		echo "
-			<tr>
-				<td> " . $session_date . "</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-		";
-		
-		$query = "
-			SELECT question_id, question_number, screen_picture, chart_picture FROM questions WHERE session_id = ?;
-		";
-		
-		$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions' query. " . $conn->error);
-		$stmt->bind_param("i", $session_id);
-		$stmt->execute() or die("Couldn't execute 'questions' query. " . $conn->error);
-		
-		$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture);
-		
-		while ($stmt->fetch()) {
+		$date = DateTime::createFromFormat("m/d/y H:i", $session_date);
+		$newDayOfWeek = (int) date("w", $date->getTimestamp());
+		$newDay = (int) date("j", $date->getTimestamp());
+		$newMonth = (int) date("n", $date->getTimestamp());
+		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $newMonth > $month) {
+			$week++;
 			echo "
 				<tr>
+					<th>Week $week</th>
 					<td></td>
-					<td>" . $question_number . "</td>
-					<td><a href='pictures/" . $screen_picture . "' title='Picture of screen' data-lightbox='" . $question_id . "'><img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
-					<td><a href='pictures/" . $chart_picture . "' title='Chart of responses' data-lightbox='" . $question_id . "'><img src='pictures/" . $chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
-					<td><input type='checkbox' name='questions[]' value='" . $question_id . "'></td>
+					<td></td>
+					<td></td>
+					<td></td>
 				</tr>
 			";
 		}
-		$stmt->close();
+		$dayOfWeek = $newDayOfWeek;
+		$day = $newDay;
+		$month = $newMonth;
+		
+		// only printing the assigned week
+		if ($assignment_week == $week || $assignment_week = -1) {
+			echo "
+				<tr>
+					<td> " . $session_date . "</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			";
+			
+			$query = "
+				SELECT question_id, question_number, screen_picture, chart_picture, ignore_question FROM questions WHERE session_id = ?;
+			";
+			
+			$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions' query. " . $conn->error);
+			$stmt->bind_param("i", $session_id);
+			$stmt->execute() or die("Couldn't execute 'questions' query. " . $conn->error);
+			
+			$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $ignore_question);
+			
+			$gv = false;
+			while ($stmt->fetch()) {
+				$checked = "";
+				if ($ignore_question == 0) {
+					if ($gv) {
+						$checked = "checked";
+					}
+					$gv = !$gv;
+				}
+				
+				echo "
+					<tr>
+						<td></td>
+						<td>" . $question_number . "</td>
+						<td><a href='pictures/" . $screen_picture . "' title='Picture of screen' data-lightbox='" . $question_id . "'><img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+						<td><a href='pictures/" . $chart_picture . "' title='Chart of responses' data-lightbox='" . $question_id . "'><img src='pictures/" . $chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
+						<td><input type='checkbox' name='questions[]' value='" . $question_id . "' $checked></td>
+					</tr>
+				";
+			}
+			$stmt->close();
+		}
 	}
 ?>
 	<tr>

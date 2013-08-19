@@ -15,6 +15,8 @@
 <?php
 	$question_id = (int) $_GET["question_id"];
 	$answers = $_POST["answers"];
+	$start_time = $_POST["start_time"];
+	$time = time();
 	$answer = "";
 	
 	foreach ($answers as $a) {
@@ -52,23 +54,23 @@
 	
 	// $student_id = $row["student_id"];
 	
-	$query = "
-		DELETE FROM onlineresponses WHERE
-		question_id = ? AND
-		student_id = ?;
-	";
+	// $query = "
+		// DELETE FROM onlineresponses WHERE
+		// question_id = ? AND
+		// student_id = ?;
+	// ";
 	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'delete' query. " . $conn->error);
-	$stmt->bind_param("ii", $question_id, $student_id);
-	$stmt->execute() or die("Couldn't execute 'delete' query. " . $conn->error);
-	$stmt->close();
+	// $stmt = $conn->prepare($query) or die("Couldn't prepare 'delete' query. " . $conn->error);
+	// $stmt->bind_param("ii", $question_id, $student_id);
+	// $stmt->execute() or die("Couldn't execute 'delete' query. " . $conn->error);
+	// $stmt->close();
 	
 	$query = "
-		INSERT INTO onlineresponses (question_id, student_id, response) VALUES (?, ?, ?);
+		INSERT INTO onlineresponses (question_id, student_id, response, start_time, end_time) VALUES (?, ?, ?, ?, ?);
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'insert' query. " . $conn->error);
-	$stmt->bind_param("iis", $question_id, $student_id, $answer);
+	$stmt->bind_param("iisii", $question_id, $student_id, $answer, $start_time, $time);
 	$stmt->execute() or die("Couldn't execute 'insert' query. " . $conn->error);
 	
 	echo "
@@ -79,5 +81,10 @@
 </body>
 <?php
 	$conn->close();
-	createFooter(true, "reanswerquestion.php?question_id=" . $question_id);
+	if (isset($_POST["assignment_id"])) {
+		$assignment_id = $_POST["assignment_id"];
+		createFooter(true, "viewassignment.php?assignment_id=$assignment_id");
+	} else {
+		createFooter();
+	}
 ?>

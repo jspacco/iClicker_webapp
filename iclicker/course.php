@@ -59,5 +59,5 @@ if ($count==1) {
 </body>
 <?php
 	$conn->close();
-	createFooter();
+	createFooter(true, "courses.php");
 ?>
