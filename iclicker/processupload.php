@@ -11,7 +11,7 @@ createHeader("Submitting upload...");
 // Let's assume that the section ID is a post parameter
 $section_id=$_POST['section_id'];
 
-echo "<br><br> section id: $section_id <p><p>";
+echo "<br><br> section id: $section_id <br><br>";
 
 if (!isset($_FILES["file"])) {
 	echo "Error with file uploading. Exiting...<br>";

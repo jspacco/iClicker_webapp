@@ -24,10 +24,14 @@ Uploading new session or sessions for <?= $course_name ?> with course_id <?= $co
 
 <div>
 	<form action="processupload.php" method="post" enctype="multipart/form-data">
-	<label>Filename:</label>
 	<input type="hidden" name="section_id" value="<?= $section_id ?>"/>
+	<p>
+	<label>Filename:</label>
 	<input name="file" type="file">
+	</p>
+	<p>
 	<input type="submit" value="Submit">
+	</p>
 	</form>
 </div>
 <?php
