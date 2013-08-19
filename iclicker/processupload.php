@@ -6,10 +6,10 @@ $conn = connect();
 	
 checkAdmin($conn);
 
-createHeader("Submitting upload...");
-
 // Let's assume that the section ID is a post parameter
 $section_id=$_POST['section_id'];
+
+createHeader("Submitting upload...", true, "<a href=\"section.php?section_id=$section_id\"> Back to Sessions and Assignments</a>");
 
 echo "<br><br> section id: $section_id <br><br>";
 

@@ -13,12 +13,18 @@ if (!isset($section_id)) {
 		header("Location: home.php");
 	}
 	
-	createHeader("Section", true, "<a href=\"uploadform.php?section_id=$section_id\"> Upload new session(s) </a>");
+	createHeader("Section");
 	
 list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $section_id);
 ?>
 	<div>
 		<h2>Sessions</h2>
+<div>
+<p>
+<b><a href="uploadform.php?section_id=<?= $section_id ?>"> Upload new session(s) </a></b>
+</p>
+</div>
+
 		<table class='collection'>
 			<tr>
 				<th>Date</th>
@@ -78,6 +84,7 @@ list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $s
 	}
 ?>
 </table>
+
 <br>
 
 
