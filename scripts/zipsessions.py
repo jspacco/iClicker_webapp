@@ -4,65 +4,22 @@ import os
 import sys
 import shutil
 import zipfile
-import argparse
 import urllib2
+import tempfile
+import glob
 
-# extract into function, then have it take a class folder and create data for each session in the class maybe
+#
+# Global variable for the URL of the server to list courses
+#
+listcourses_url='http://localhost:8890/iclicker/listcourses.php'
 
-# function for zipping a directory from:
-# http://stackoverflow.com/questions/1855095/how-to-create-a-zip-archive-of-a-directory-in-python
-def zipdir(path, zip):
-	for root, dirs, files in os.walk(path):
-		for file in files:
-			zip.write(os.path.join(root, file))
-
-def main():
-	# parser = argparse.ArgumentParser(description='Zip up sessions to be uploaded to the JETS server. '+
-	# 				 'Uploads must be made to a particular section_id ' +
-	# 				 '(courses may have one or more sections, ' +
-	# 	'although in practice most courses will have only one section). ' +
-	# 	"\n\n" +
-	# 	'For example: "%s 3 CS101" would zip up all new sessions from the CS101 folder ' % sys.argv[0] +
-	# 	'(which will be in CS101/SessionData) that have not already been uploaded to section_id 3.')
-	# parser.add_argument('section_id', metavar='<section_id>', type=str, action='store',
-	# 		    help='the section_id where you want to upload the sessions. ' +
-	# 	'Note that for courses with only one section, this is basically the courseId.')
-	# parser.add_argument('course_dir', metavar='<directory>', type=str, action='store',
-	# 		    help='The path to the directory for the course.')
-	# parser.add_argument('--listcourses', action='store_true', required=False,
-	# 		    help='List all of the courses and their possible section_ids')
-	# args = parser.parse_args()
-
-	# print args.listcourses
-
-	if len(sys.argv) < 2:
-		usage()
-
-	if sys.argv[1]=='--listcourses' or sys.argv[1]=='-l':
-		print listcourses()
-		return
-	if len(sys.argv) < 3:
-		usage()
-	section_id=sys.argv[1]
-	directory=sys.argv[2]
-	if len(sys.argv)>3:
-		url=sys.argv[3]
-
-	# Find the dir
-	# Ask about the sessions
-	# 
-
-	zipcsv(sys.argv[1])
-
-
-def listcourses(url):
-	response = urllib2.urlopen(url)
-	headers = response.info()
-	data = response.read()
-	return data
+#
+# Global variable for finding out new sessions
+#
+checksessions_url='http://localhost:8890/iclicker/checksessions.php'
 
 def usage():
-	print '''%s --listcourses
+	print '''%s --listcourses <url>
 List all courses and their corresponding section_id.  Most courses will only have a single section, so in practice the section_id is how we identify the course
 
 or
@@ -72,12 +29,114 @@ Create a zipfile of new sessions contained in <directory>, to be uploaded into t
 ''' % (sys.argv[0], sys.argv[0])
 	sys.exit()
 
+def main():
+	global listcourses_url
+	global checksessions_url
+	if len(sys.argv) < 2:
+		usage()
+
+	if sys.argv[1]=='--listcourses' or sys.argv[1]=='-l':
+		if len(sys.argv) > 2:
+			listcourses_url=sys.argv[2]
+		print wget(listcourses_url)
+		return
+	if len(sys.argv) < 3:
+		usage()
+	section_id=sys.argv[1]
+	directory=sys.argv[2]
+	if len(sys.argv)>3:
+		checksessions_url=sys.argv[3]
+
+	# Get the list of sessions that have been uploaded to the
+	# course with the chosen section_id
+	sessionstr=wget(checksessions_url + "?section_id=%s" % section_id)
+	sessions={}
+	for s in sessionstr.split():
+		sessions[s]=1
+	#print sessions
+
+	# Get the missing essions
+	missing=getMissingSessions(directory, sessions)
+	#print missing
+
+	zipcsvs(directory, missing)
+
+
+def getMissingSessions(dir, sess):
+	missing=[]
+	for f in os.listdir(os.path.join(dir, "SessionData")):
+		if f.startswith("L") and f.endswith(".csv"):
+			if not f.replace('.csv', '') in sess:
+				missing.append(f)
+	return missing
+
+def wget(url):
+	response = urllib2.urlopen(url)
+	headers = response.info()
+	data = response.read()
+	return data
+
+def zipcsvs(dir, missing):
+	'''
+	Create an overall tempdir
+	Create tempdirs for each of the sessions named dataL..........
+	Copy matching csv and image files into the appropriate session dirs
+	Zip the overall tempdir
+	'''
+
+	print 'Will create zip for upload of the following sessions:'
+	for s in missing:
+		print '\t',s
+
+	# Create overall tempdir
+	tmpdir=tempfile.mkdtemp()
+
+	print 'Created temporary directory: %s' % tmpdir
+
+	for csv in missing:
+		sesname=csv.replace('.csv', '')
+		subdir=os.path.join(tmpdir, 'sessions', 'data'+sesname)
+		os.makedirs(subdir)
+
+		print 'Created data directory for session %s' % sesname
+		
+		# Copy the .csv file
+		shutil.copy(os.path.join(dir, "SessionData", csv), subdir)
+		# Find the image files
+		# glob is awesome, btw
+
+		print 'Copying image files for session %s' % sesname
+
+		for f in glob.glob(os.path.join(dir, 'Images', '%s*.jpg' % sesname)):
+			# Copy the image files
+			shutil.copy(f, subdir)
+
+		print 'Done copying image files for session %s' % sesname
+			
+	
+	# zip the whole tmpdir into a zipfile
+	zipname='data.zip'
+	print 'Zipping sessions into %s' % zipname
+
+	shutil.make_archive(zipname, "zip", tmpdir)
+	#zipdir(tmpdir, zipname)
+
+	print 'Removing temporary directory %s' % tmpdir
+
+	shutil.rmtree(tmpdir)
+
+
+def zipdir(path, outfile):
+	# function for zipping a directory from:
+	# http://stackoverflow.com/questions/1855095/how-to-create-a-zip-archive-of-a-directory-in-python
+	zip=zipfile.ZipFile(outfile, "w")
+	for root, dirs, files in os.walk(path):
+		for file in files:
+			zip.write(os.path.join(root, file))
+	zip.close()
+
+
 def zipcsv(csvpath):
-	'''
-	TODO:
-	Query for the already uploaded session names
-	Keep 
-	'''
 	csvname = os.path.basename(csvpath)
 	tempdirpath = os.path.dirname(csvpath)				# move to SessionData directory
 	basepath = os.path.dirname(tempdirpath)				# move up to base directory
@@ -92,6 +151,7 @@ def zipcsv(csvpath):
 		sys.exit(1)
 
 	# create a temporary directory, deleting any directory which would interfere
+	# holy crap, this sounds dangerous...
 	if (os.path.exists(tempdirpath)):
 		print "Directory already exists. Removing..."
 		shutil.rmtree(tempdirpath)

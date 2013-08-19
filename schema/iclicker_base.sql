@@ -1,20 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.2.2
+-- version 3.5.1
 -- http://www.phpmyadmin.net
 --
--- Host: 127.0.0.1
--- Generation Time: Aug 05, 2013 at 05:10 PM
--- Server version: 5.5.27
--- PHP Version: 5.4.7
+-- Host: localhost
+-- Generation Time: Aug 20, 2013 at 12:26 AM
+-- Server version: 5.5.25
+-- PHP Version: 5.4.4
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
 
 --
 -- Database: `iclicker`
@@ -26,12 +20,12 @@ SET time_zone = "+00:00";
 -- Table structure for table `assignments`
 --
 
-CREATE TABLE IF NOT EXISTS `assignments` (
+CREATE TABLE `assignments` (
   `assignment_id` int(11) NOT NULL AUTO_INCREMENT,
   `section_id` int(11) NOT NULL,
   `due` varchar(20) NOT NULL,
   PRIMARY KEY (`assignment_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -39,12 +33,12 @@ CREATE TABLE IF NOT EXISTS `assignments` (
 -- Table structure for table `assignmentstoquestions`
 --
 
-CREATE TABLE IF NOT EXISTS `assignmentstoquestions` (
+CREATE TABLE `assignmentstoquestions` (
   `atq_id` int(11) NOT NULL AUTO_INCREMENT,
   `assignment_id` int(11) NOT NULL,
   `question_id` int(11) NOT NULL,
   PRIMARY KEY (`atq_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -52,12 +46,12 @@ CREATE TABLE IF NOT EXISTS `assignmentstoquestions` (
 -- Table structure for table `courses`
 --
 
-CREATE TABLE IF NOT EXISTS `courses` (
+CREATE TABLE `courses` (
   `course_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `course_name` varchar(100) NOT NULL,
   `course_number` varchar(10) NOT NULL,
   PRIMARY KEY (`course_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -65,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `courses` (
 -- Table structure for table `onlineresponses`
 --
 
-CREATE TABLE IF NOT EXISTS `onlineresponses` (
+CREATE TABLE `onlineresponses` (
   `question_id` int(11) NOT NULL,
   `student_id` int(11) NOT NULL,
   `response` varchar(10) NOT NULL
@@ -77,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `onlineresponses` (
 -- Table structure for table `questions`
 --
 
-CREATE TABLE IF NOT EXISTS `questions` (
+CREATE TABLE `questions` (
   `question_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `session_id` int(11) NOT NULL,
   `question_number` int(11) NOT NULL,
@@ -89,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `stop_time` varchar(50) NOT NULL,
   `ignore_question` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`question_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=116 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -97,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `questions` (
 -- Table structure for table `responses`
 --
 
-CREATE TABLE IF NOT EXISTS `responses` (
+CREATE TABLE `responses` (
   `question_id` int(11) NOT NULL,
   `student_id` int(11) NOT NULL,
   `number_of_attempts` int(11) NOT NULL,
@@ -113,13 +107,13 @@ CREATE TABLE IF NOT EXISTS `responses` (
 -- Table structure for table `sections`
 --
 
-CREATE TABLE IF NOT EXISTS `sections` (
+CREATE TABLE `sections` (
   `section_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `course_id` int(11) NOT NULL,
   `section_number` int(11) NOT NULL,
   `year_offered` int(11) NOT NULL,
   PRIMARY KEY (`section_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -127,12 +121,13 @@ CREATE TABLE IF NOT EXISTS `sections` (
 -- Table structure for table `sessions`
 --
 
-CREATE TABLE IF NOT EXISTS `sessions` (
+CREATE TABLE `sessions` (
   `session_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `section_id` int(11) NOT NULL,
   `session_date` varchar(100) NOT NULL,
+  `session_tag` varchar(11) CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`session_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -140,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 -- Table structure for table `students`
 --
 
-CREATE TABLE IF NOT EXISTS `students` (
+CREATE TABLE `students` (
   `student_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `iclicker_id` varchar(50) NOT NULL,
   `school_id` varchar(50) NOT NULL,
@@ -150,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `students` (
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   PRIMARY KEY (`student_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -158,13 +153,9 @@ CREATE TABLE IF NOT EXISTS `students` (
 -- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE `users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
