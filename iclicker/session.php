@@ -8,7 +8,7 @@
 		header("Location: home.php");
 	}
 	
-	createHeader("Session");
+	createHeader("Session", true, "<a href=\"course.php?course_id=$course_id\"> Go Back </a>");
 	
 	$session_id = $_GET["session_id"];
 

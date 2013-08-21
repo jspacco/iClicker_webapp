@@ -191,11 +191,12 @@ while ($zip_entry = zip_read($zip)) {
 						// Is this actually asking for last_update_id()?
 						$query = "
 										SELECT session_id FROM sessions WHERE
-										section_id = ?;
+										section_id = ? AND
+										session_date = ? ;
 									";
 									
 						$stmt = $conn->prepare($query) or die("Couldn't prepare 'sessions select id' statement. " . $conn->error);
-						$stmt->bind_param("i", $section_id);
+						$stmt->bind_param("is", $section_id, $session_date);
 						$stmt->execute() or die("Couldn't execute 'sessions select id' statement. " . $conn->error);
 									
 						$stmt->bind_result($session_id);

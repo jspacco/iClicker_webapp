@@ -13,7 +13,7 @@ if (!isset($section_id)) {
 		header("Location: home.php");
 	}
 	
-	createHeader("Section");
+createHeader("Section", true, "<a href=\"course.php?course_id=$course_id\"> Back </a>");
 	
 list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $section_id);
 ?>
@@ -59,7 +59,7 @@ list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $s
 				</table>
 				<table class='collection'>
 				<tr>
-					<th>Week $week</a></th>
+					<th>Week $week</th>
 					<th>
 						<form action='createassignment.php' method='get'>
 							<input type='hidden' name='section_id' value='$section_id'>
@@ -172,5 +172,5 @@ list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $s
 ?>
 <?php
 	$conn->close();
-	createFooter(true, "course.php?course_id=$course_id");
+	createFooter();
 ?>
