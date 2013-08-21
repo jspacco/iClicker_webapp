@@ -19,7 +19,7 @@ listcourses_url='http://localhost:8890/iclicker/listcourses.php'
 checksessions_url='http://localhost:8890/iclicker/checksessions.php'
 
 def usage():
-	print '''%s --listcourses <url>
+	print '''%s --listcourses [ <url> ]
 List all courses and their corresponding section_id.  Most courses will only have a single section, so in practice the section_id is how we identify the course
 
 or
@@ -136,48 +136,6 @@ def zipdir(path, outfile):
 	zip.close()
 
 
-def zipcsv(csvpath):
-	csvname = os.path.basename(csvpath)
-	tempdirpath = os.path.dirname(csvpath)				# move to SessionData directory
-	basepath = os.path.dirname(tempdirpath)				# move up to base directory
-	tempdirname = "data" + csvname.split(os.extsep)[0]
-	tempdirpath = os.path.join(basepath, tempdirname)	# append temporary directory name
 
-	# look for the file
-	print "Looking for file: " + csvpath
-
-	if not os.path.isfile(csvpath):
-		print "Couldn't find: " + csvpath + "."
-		sys.exit(1)
-
-	# create a temporary directory, deleting any directory which would interfere
-	# holy crap, this sounds dangerous...
-	if (os.path.exists(tempdirpath)):
-		print "Directory already exists. Removing..."
-		shutil.rmtree(tempdirpath)
-	print "Creating temporary directory: " + tempdirpath
-	os.makedirs(tempdirpath)
-	
-	# copy pictures into the temporary directory
-	for file in os.listdir(os.path.join(basepath, "Images")):
-		if tempdirname[4:] == file[0:len(tempdirname[4:])]:
-			# copy this file
-			print "Copying file " + file + " to " + tempdirpath
-			shutil.copy(os.path.join(basepath, "Images/" + file), tempdirpath)
-	
-	# copy the csv into the temporary directory
-	print "Copying file " + csvname + " to " + tempdirpath
-	shutil.copy(csvpath, tempdirpath)
-	
-	# zip the temporary directory
-	print "Zipping " + tempdirpath + " to " + tempdirname + ".zip"
-	zip = zipfile.ZipFile(tempdirname + ".zip", "w")
-	zipdir(tempdirpath, zip)
-	zip.close()
-	
-	# remove the temporary directory
-	print "Removing temporary directory " + tempdirpath
-	shutil.rmtree(tempdirpath)
-	
 if __name__=='__main__':
 	main()
