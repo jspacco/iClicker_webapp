@@ -85,13 +85,25 @@
 		$stmt->close();
 		
 		$answered = "No";
-		if ($num > 0)
+		$link = "";
+		if ($num > 0) {
 			$answered = "Yes";
+			$link = "
+				<td>
+					<form action='questionreport.php' method='get'>
+						<input type='hidden' value='$assignment_id' name='assignment_id'>
+						<input type='hidden' value='$question_id' name='question_id'>
+						<input type='submit' value='View Report'>
+					</form>
+				</td>
+			";
+		}
 		
 		echo "
 			<tr>
 				<td><a href='reanswerquestion.php?question_id=$question_id&assignment_id=$assignment_id'>Question $i</a></td>
 				<td><a href='reanswerquestion.php?question_id=$question_id&assignment_id=$assignment_id'>$answered</a></td>
+				" . $link . "
 			</tr>
 		";
 		

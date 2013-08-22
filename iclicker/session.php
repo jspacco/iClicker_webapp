@@ -8,28 +8,36 @@
 		header("Location: home.php");
 	}
 	
-	createHeader("Session", true, "<a href=\"course.php?course_id=$course_id\"> Go Back </a>");
+	createHeader("Session");
 	
 	$session_id = $_GET["session_id"];
 
-	$section_id=getSectionForCourseId($conn, $course_id);
+	$query = "
+		SELECT section_id FROM sessions WHERE session_id = ?;
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'section_id' query. " . $conn->error);
+	$stmt->bind_param("i", $session_id);
+	$stmt->execute() or die("Couldn't execute 'section_id' query. " . $conn->error);
+	
+	$stmt->bind_result($section_id);
+	$stmt->fetch();
+	$stmt->close();
 ?>
-
-	<div>
-		<h1>
-			Questions
-		</h1>
-		<table>
-		<form action='endeditsession.php' method='post'>
-			<tr>
-				<th>Ignore?</th>
-				<th>#</th>
-				<th>Type</th>
-				<th>Question Picture</th>
-				<th>Chart Picture</th>
-				<th>Answers</th>
-				<th>Compare</th>
-			</tr>
+<h1>
+	Questions
+</h1>
+<table>
+<form action='endeditsession.php' method='post'>
+	<tr>
+		<th>Ignore?</th>
+		<th>#</th>
+		<th>Type</th>
+		<th>Question Picture</th>
+		<th>Chart Picture</th>
+		<th>Answers</th>
+		<th>Compare</th>
+	</tr>
 <?php
 	$query = "
 		SELECT question_id, question_number, screen_picture, chart_picture, correct_answer, ignore_question FROM questions WHERE
@@ -122,11 +130,9 @@
 		echo "</tr>";
 	}
 ?>
-		</table>
-			<input type='submit' value='Update'>
-		</form>
-	</div>
-</body>
+</table>
+	<input type='submit' value='Update'>
+</form>
 <?php
 	$conn->close();
 	createFooter(true, "section.php?section_id=$section_id");

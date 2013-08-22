@@ -14,7 +14,7 @@
 	<div>
 <?php
 	$query = "
-		SELECT student_id, email FROM students WHERE
+		SELECT student_id, school_id, email FROM students WHERE
 		username = ? AND
 		password = ?;
 	";
@@ -23,7 +23,7 @@
 	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
 	$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
 	
-	$stmt->bind_result($student_id, $email);
+	$stmt->bind_result($student_id, $school_id, $email);
 	$stmt->fetch();
 	
 	// $result = $stmt->get_result();
@@ -33,7 +33,8 @@
 	// $email = $row["email"];
 ?>
 	<form action="endstudentedit.php" method="post">
-		Email:<input type='text' name='email' value=<?php echo $email; ?>><br>
+		School ID: <input type='text' name='school_id' value=<?php echo $school_id; ?>><br>
+		Email: <input type='text' name='email' value=<?php echo $email; ?>><br>
 		<input type='submit' value='Submit'>
 	</form>
 	</div>

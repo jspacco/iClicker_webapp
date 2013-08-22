@@ -2,35 +2,37 @@
 	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
-
+	
 	$section_id = $_GET["section_id"];
-if (!isset($section_id)) {
-	endOutput("Must include section_id as a GET parameter so we know for which section to display information");
-}
+	if (!isset($section_id)) {
+		endOutput("Must include section_id as a GET parameter so we know for which section to display information");
+	}
+	
 	$conn = connect();
 	
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
 	
-createHeader("Section", true, "<a href=\"course.php?course_id=$course_id\"> Back </a>");
+	createHeader("Section");
 	
-list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $section_id);
+	$query = "
+		SELECT course_id FROM sections WHERE section_id = ?;
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'course_id' query. " . $conn->error);
+	$stmt->bind_param("i", $section_id);
+	$stmt->execute() or die("Couldn't execute 'course_id' query. " . $conn->error);
+	
+	$stmt->bind_result($course_id);
+	$stmt->fetch();
+	$stmt->close();
 ?>
+<body>
 	<div>
 		<h2>Sessions</h2>
-<div>
-<p>
-<b><a href="uploadform.php?section_id=<?= $section_id ?>"> Upload new session(s) </a></b>
-</p>
-</div>
-
-		<table class='collection'>
-			<tr>
-				<th>Date</th>
-			</tr>
-<?php
-	
+		<table>
+<?php	
 	$query = "
 		SELECT session_id, session_date FROM sessions WHERE
 		section_id = ?;
@@ -61,7 +63,7 @@ list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $s
 				<tr>
 					<th>Week $week</th>
 					<th>
-						<form action='createassignment.php' method='get'>
+						<form action='createassignment.php#week$week' method='get'>
 							<input type='hidden' name='section_id' value='$section_id'>
 							<input type='hidden' name='week' value='$week'>
 							<input type='submit' value='Create Assignment for this Week'>
@@ -84,11 +86,6 @@ list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $s
 	}
 ?>
 </table>
-
-<br>
-
-
-
 <br>
 <h2>Assignments</h2>
 <table class='collection'>
@@ -172,5 +169,5 @@ list($course_id, $course_name, $course_number)=lookupCourseBySectionId($conn, $s
 ?>
 <?php
 	$conn->close();
-	createFooter();
+	createFooter(true, "course.php?course_id=$course_id");
 ?>

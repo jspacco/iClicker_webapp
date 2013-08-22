@@ -10,10 +10,9 @@
 	
 	createHeader("Submitting answer...");
 ?>
-<body>
-	<div>
 <?php
-	$question_id = (int) $_GET["question_id"];
+	$assignment_id = $_POST["assignment_id"];
+	$question_id = $_POST["question_id"];
 	$answers = $_POST["answers"];
 	$start_time = $_POST["start_time"];
 	$time = time();
@@ -71,14 +70,13 @@
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'insert' query. " . $conn->error);
 	$stmt->bind_param("iisii", $question_id, $student_id, $answer, $start_time, $time);
-	$stmt->execute() or die("Couldn't execute 'insert' query. " . $conn->error);
+	$result = $stmt->execute() or die("Couldn't execute 'insert' query. " . $conn->error);
 	
-	echo "
-		Answer submitted successfully!<br>
-	";
+	if ($result) {
+		header("Location: questionreport.php?question_id=$question_id&assignment_id=$assignment_id");
+	}
 ?>
-	</div>
-</body>
+<p>Answer submission unsuccessful!</p>
 <?php
 	$conn->close();
 	if (isset($_POST["assignment_id"])) {

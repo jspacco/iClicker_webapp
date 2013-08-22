@@ -11,8 +11,13 @@
 	createHeader("Creating Assignment...");
 	
 	$due = $_POST["due"];
+	$hour = $_POST["hour"];
+	$minute = $_POST["minute"];
 	$questions = $_POST["questions"];
 	$section_id = $_POST["section_id"];
+	
+	$date = explode("/", $due);
+	$due = mktime($hour, $minute, 0, $date[0], $date[1], $date[2]);
 	
 	$query = "
 		INSERT INTO assignments (section_id, due) VALUES (?, ?);

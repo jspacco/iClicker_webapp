@@ -66,8 +66,9 @@
 		";
 		
 		$query = "
-			SELECT DISTINCT response, question_id, student_id, max(end_time) FROM onlineresponses WHERE
-			onlineresponses.question_id = $question_id
+			SELECT DISTINCT response, question_id, student_id FROM onlineresponses WHERE
+			onlineresponses.question_id = $question_id AND
+			end_time < (SELECT due FROM assignments WHERE assignment_id = $assignment_id)
 			GROUP BY student_id, question_id;
 		";
 		
@@ -162,9 +163,11 @@
 			}
 			
 			$query = "
-				SELECT DISTINCT response, MAX(end_time) FROM onlineresponses WHERE
+				SELECT response FROM onlineresponses WHERE
 				onlineresponses.student_id = $student_id AND
-				onlineresponses.question_id = $question_id;
+				onlineresponses.question_id = $question_id AND
+				end_time < (SELECT due FROM assignments WHERE assignment_id = $assignment_id)
+				ORDER BY end_time DESC LIMIT 1;
 			";
 			
 			$result = $conn->query($query) or die("Couldn't execute 'answer' query. " . $conn->error);
@@ -197,6 +200,7 @@
 	}
 ?>
 </table>
+<?php echo "<a href='editassignment.php?assignment_id=$assignment_id'>Edit Assignment</a>"; ?>
 <?php
 	$conn->close();
 	createFooter();

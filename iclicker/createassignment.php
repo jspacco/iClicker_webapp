@@ -12,7 +12,7 @@
 	
 	$assignment_week = -1;
 	if (isset($_GET["week"])) {
-		$assignment_week = $_GET["week"];
+		$assignment_week = (int) $_GET["week"];
 	}
 ?>
 <script type='text/javascript'>
@@ -65,7 +65,7 @@
 			$week++;
 			echo "
 				<tr>
-					<th>Week $week</th>
+					<th><a name='week$week'>Week $week</a></th>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -78,7 +78,8 @@
 		$month = $newMonth;
 		
 		// only printing the assigned week
-		if ($assignment_week == $week || $assignment_week = -1) {
+		// we'll print every week for 
+		/*if ($assignment_week == $week || $assignment_week = -1)*/ {
 			echo "
 				<tr>
 					<td> " . $session_date . "</td>
@@ -103,7 +104,8 @@
 			while ($stmt->fetch()) {
 				$checked = "";
 				if ($ignore_question == 0) {
-					if ($gv) {
+					// only check group votes in the week we're creating an assignment for
+					if ($gv && ($assignment_week == $week || $assignment_week == -1)) {
 						$checked = "checked";
 					}
 					$gv = !$gv;
@@ -126,8 +128,8 @@
 	<tr>
 		<td><input type='hidden' name='section_id' value=<?php echo $section_id; ?>></td>
 		<td></td>
-		<td></td>
 		<td>Date: <input type='text' name='due' id='datepicker' ></td>
+		<td><input type='text' name='hour' size='2' value='11'> : <input type='text' name='minute' size='2' value='59'></td>
 		<td><input type='submit' value='Create Assignment'></td>
 		</form>
 	</tr>

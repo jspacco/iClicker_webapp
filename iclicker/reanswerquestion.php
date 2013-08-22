@@ -43,7 +43,7 @@
 	echo "
 		<h1>" . $question_name . "</h1>
 		<img src='pictures/" . $screen_picture . "' width='700px' height='500px'>
-		<form action='submitreanswer.php?question_id=" . $question_id . "' method='post'>
+		<form action='submitreanswer.php' method='post'>
 			<fieldset>
 				<legend>Select all correct answers</legend>
 				<table>
@@ -70,6 +70,7 @@
 					<tr>
 						<td>
 							<input type='hidden' name='assignment_id' value='" . $assignment_id . "'>
+							<input type='hidden' name='question_id' value='" . $question_id . "'>
 							<input type='hidden' name='start_time' value='" . $start_time . "'>
 						</td>
 						<td><input type='submit' value='Submit'></td>

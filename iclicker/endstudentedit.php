@@ -8,6 +8,7 @@
 		header("Location: home.php");
 	}
 	
+	$school_id = $_POST["school_id"];
 	$email = $_POST["email"];
 	
 	$query = "
@@ -22,6 +23,7 @@
 
 	$stmt->bind_result($student_id);
 	$stmt->fetch();
+	$stmt->close();
 	
 	// $result = $stmt->get_result();
 	// $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -29,11 +31,11 @@
 	// $student_id = $row["student_id"];
 	
 	$query = "
-		UPDATE students SET email = ? WHERE student_id = ?;
+		UPDATE students SET email = ?, school_id = ? WHERE student_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't execute 'email' query. " . $conn->error);
-	$stmt->bind_param("si", $email, $student_id);
+	$stmt->bind_param("ssi", $email, $school_id, $student_id);
 	$result = $stmt->execute() or die("Couldn't execute 'email' query. " . $conn->error);
 	
 	if ($result) {
