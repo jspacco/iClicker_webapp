@@ -13,14 +13,12 @@
 	
 	createHeader("Courses");
 ?>
-<body>
-	<div>
-		<h2>Courses</h2>
-		<table class='collection'>
-			<tr>
-				<th>Name</th>
-				<th>Number</th>
-			</tr>
+<h2>Courses</h2>
+<table class='collection'>
+	<tr>
+		<th>Name</th>
+		<th>Number</th>
+	</tr>
 <?php
 	$query = "
 		SELECT course_id, course_name, course_number FROM courses;
@@ -37,11 +35,7 @@
 		";
 	}
 ?>
-		</table>
-		<br>
-		<a href='upload.php'>Upload session data</a>
-	</div>
-</body>
+</table>
 <?php
 	$conn->close();
 	createFooter();
