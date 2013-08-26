@@ -16,17 +16,6 @@
 	
 	createHeader("Section");
 	
-	$query = "
-		SELECT course_id FROM sections WHERE section_id = ?;
-	";
-	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'course_id' query. " . $conn->error);
-	$stmt->bind_param("i", $section_id);
-	$stmt->execute() or die("Couldn't execute 'course_id' query. " . $conn->error);
-	
-	$stmt->bind_result($course_id);
-	$stmt->fetch();
-	$stmt->close();
 ?>
 <body>
 	<div>
@@ -34,8 +23,9 @@
 		<table>
 <?php	
 	$query = "
-		SELECT session_id, session_date FROM sessions WHERE
-		section_id = ?;
+		SELECT session_id, session_date FROM sessions 
+		WHERE section_id = ?
+		ORDER BY session_tag ASC;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare sessions query. " . $conn->error);
@@ -49,12 +39,14 @@
 	$day = 0;
 	$month = 0;
 	$week = 0;
+	$dayOfYear=-1;
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		$date = DateTime::createFromFormat("m/d/y H:i", $session_date);
 		$newDayOfWeek = (int) date("w", $date->getTimestamp());
 		$newDay = (int) date("j", $date->getTimestamp());
 		$newMonth = (int) date("n", $date->getTimestamp());
-		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $newMonth > $month) {
+		//if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $newMonth > $month) {
+		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7) {
 			// new week
 			$week++;
 			echo "
@@ -79,14 +71,15 @@
 		$dayString = date("l", $date->getTimestamp());
 		echo "
 			<tr>
-				<td><a href='session.php?session_id=" . $session_id . "'>$dayString</a></td>
-				<td><a href='session.php?session_id=" . $session_id . "'>$session_date</a></td>
+				<td><a href='session.php?session_id=$session_id'>$dayString</a></td>
+				<td><a href='session.php?session_id=$session_id'>$session_date</a></td>
 			</tr>
 		";
 	}
 ?>
 </table>
 <br>
+<b><a href="uploadform.php?section_id=<?= $section_id ?>"> Upload new session(s) </a></b>
 <h2>Assignments</h2>
 <table class='collection'>
 	<tr>
@@ -169,5 +162,5 @@
 ?>
 <?php
 	$conn->close();
-	createFooter(true, "course.php?course_id=$course_id");
+	createFooter();
 ?>

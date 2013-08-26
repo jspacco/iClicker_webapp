@@ -11,12 +11,12 @@ import glob
 #
 # Global variable for the URL of the server to list courses
 #
-listcourses_url='http://localhost:8890/iclicker/listcourses.php'
+listcourses_url='https://cs.knox.edu/iclicker/listcourses.php'
 
 #
 # Global variable for finding out new sessions
 #
-checksessions_url='http://localhost:8890/iclicker/checksessions.php'
+checksessions_url='https://cs.knox.edu/iclicker/checksessions.php'
 
 def usage():
 	print '''%s --listcourses [ <url> ]
@@ -24,9 +24,13 @@ List all courses and their corresponding section_id.  Most courses will only hav
 
 or
 
+%s --checksessions <section_id> [ <url> ]
+
+or
+
 %s <section_id> <directory> [ <url> ]
 Create a zipfile of new sessions contained in <directory>, to be uploaded into the section and course with the given section_id.  Basically, this script needs the section_id to ask the server located at <url> which sessions have already been uploaded to a particular course.
-''' % (sys.argv[0], sys.argv[0])
+''' % (sys.argv[0], sys.argv[0], sys.argv[0])
 	sys.exit()
 
 def main():
@@ -39,6 +43,12 @@ def main():
 		if len(sys.argv) > 2:
 			listcourses_url=sys.argv[2]
 		print wget(listcourses_url)
+		return
+	if sys.argv[1]=='--checksessions' or sys.argv[1]=='-c':
+		section_id=sys.argv[2]
+		if len(sys.argv) > 3:
+			checksessions_url=sys.argv[3]
+		print wget(checksessions_url+"?section_id=%s" % section_id)
 		return
 	if len(sys.argv) < 3:
 		usage()
@@ -57,7 +67,7 @@ def main():
 
 	# Get the missing essions
 	missing=getMissingSessions(directory, sessions)
-	#print missing
+	print missing
 
 	zipcsvs(directory, missing)
 
@@ -112,7 +122,6 @@ def zipcsvs(dir, missing):
 			shutil.copy(f, subdir)
 
 		print 'Done copying image files for session %s' % sesname
-			
 	
 	# zip the whole tmpdir into a zipfile
 	zipname='data.zip'
