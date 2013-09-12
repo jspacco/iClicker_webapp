@@ -47,21 +47,23 @@
 			</html>
 		";
 	}
-
-function endOutput($endMessage){
-    ignore_user_abort(true);
-    set_time_limit(0);
-    header("Connection: close");
-    header("Content-Length: ".strlen($endMessage));
-    echo $endMessage;
-    echo str_repeat("\r\n", 10); // just to be sure
-    flush();
-}
-
-function checkAdmin($conn) {
-	if (!isCookieValidLoginWithType($conn, "admin")) {
-		header("Location: home.php");
+	
+	function endOutput($endMessage){
+		ignore_user_abort(true);
+		set_time_limit(0);
+		header("Connection: close");
+		header("Content-Length: ".strlen($endMessage));
+		echo $endMessage;
+		echo str_repeat("\r\n", 10); // just to be sure
+		flush();
 	}
-}
 
+	function checkAdmin($conn) {
+		if (!isCookieValidLoginWithType($conn, "admin")) {
+			header("Location: home.php");
+	}
+	
+	function DateFromUTC($utc) {
+		return date("l, F j, g:i a", $utc);
+	}
 ?>

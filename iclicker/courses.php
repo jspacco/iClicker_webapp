@@ -7,18 +7,17 @@
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
-
-// TODO: If only one course and section, redirect to that section
-// TODO: If only one course, redirect to that course
 	
 	createHeader("Courses");
 ?>
-<h2>Courses</h2>
-<table class='collection'>
-	<tr>
-		<th>Name</th>
-		<th>Number</th>
-	</tr>
+<body>
+	<div>
+		<h2>Courses</h2>
+		<table class='collection'>
+			<tr>
+				<th>Name</th>
+				<th>Number</th>
+			</tr>
 <?php
 	$query = "
 		SELECT course_id, course_name, course_number FROM courses;
@@ -35,7 +34,9 @@
 		";
 	}
 ?>
-</table>
+		</table>
+	</div>
+</body>
 <?php
 	$conn->close();
 	createFooter();

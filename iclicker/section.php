@@ -120,7 +120,7 @@
 		echo "
 			<tr>
 				<td><a href='assignmentreport.php?assignment_id=$assignment_id' >$count</a></td>
-				<td><a href='assignmentreport.php?assignment_id=$assignment_id' >$due</a></td>
+				<td><a href='assignmentreport.php?assignment_id=$assignment_id' >" . DateFromUTC($due) . "</a></td>
 			</tr>
 		";
 	}

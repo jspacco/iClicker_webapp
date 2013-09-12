@@ -27,7 +27,7 @@
 <table>
 	<tr>
 		<td>Due: </td>
-		<td><?php echo $due; ?></td>
+		<td><?php echo DateFromUTC($due); ?></td>
 	</tr>
 </table>
 <h2>Questions</h2>
