@@ -12,7 +12,7 @@
 
 	// check if there is only one section for this course
 	// if so redirect directly to the proper section
-	$count=countSectionsByCourseId($conn, $course_id);
+	$count = countSectionsByCourseId($conn, $course_id);
 	if ($count==1) {
 		// look up the section_id then redirect
 		$section_id=getSectionForCourseId($conn, $course_id);

@@ -1,17 +1,15 @@
 <?php
 
 function closeConn($conn) {
-	$conn->close();
 }
 
 	function connect() {
-		$dbhost = '127.0.0.1';
+		$dbhost = 'localhost';
 		$dbuser = 'root';
-		$dbpass = 'root';
-		$dbport = '8889';
+		$dbpass = '';
 		$dbname = 'iclicker';
 		
-		$conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport) or die ('Error connecting to mysql ' . mysqli_connect_error());
+		$conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname) or die ('Error connecting to mysql ' . mysqli_connect_error());
 		register_shutdown_function('closeConn', $conn);
 		return $conn;
 	}

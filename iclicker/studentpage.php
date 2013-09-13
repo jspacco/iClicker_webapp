@@ -77,7 +77,7 @@
 			<tr>
 				<td><a href='viewassignment.php?assignment_id=$assignment_id'>$answercount</a></td>
 				<td><a href='viewassignment.php?assignment_id=$assignment_id'>$questioncount</a></td>
-				<td><a href='viewassignment.php?assignment_id=$assignment_id'>$due</a></td>
+				<td><a href='viewassignment.php?assignment_id=$assignment_id'>" . DateFromUTC($due) . "</a></td>
 			</tr>
 		";
 		
