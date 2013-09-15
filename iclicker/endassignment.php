@@ -8,7 +8,6 @@
 		header("Location: home.php");
 	}
 	
-	createHeader("Creating Assignment...");
 	
 	$due = $_POST["due"];
 	$hour = $_POST["hour"];
@@ -52,6 +51,8 @@
 		$stmt->execute() or die("Couldn't execute 'atq' query. " . $conn->error);
 		$stmt->close();
 	}
+
+	createHeader("Creating Assignment...");
 ?>
 	<p>Assignment created successfully!</p>
 <?php
