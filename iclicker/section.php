@@ -40,13 +40,18 @@
 	$month = 0;
 	$week = 0;
 	$dayOfYear=-1;
+	// special case to detect the first week!
+	$isFirstWeek=1;
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		$date = DateTime::createFromFormat("m/d/y H:i", $session_date);
 		$newDayOfWeek = (int) date("w", $date->getTimestamp());
 		$newDay = (int) date("j", $date->getTimestamp());
 		$newMonth = (int) date("n", $date->getTimestamp());
+
 		//if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $newMonth > $month) {
-		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7) {
+		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $isFirstWeek) {
+			// special case to detect the first week
+			$isFirstWeek=0;
 			// new week
 			$week++;
 			echo "
