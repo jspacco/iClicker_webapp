@@ -94,6 +94,10 @@ def zipcsvs(dir, missing):
 	Zip the overall tempdir
 	'''
 
+	if len(missing)==0:
+		print "No outstanding sessions!  Nothing to zip and upload"
+		return
+
 	print 'Will create zip for upload of the following sessions:'
 	for s in missing:
 		print '\t',s
@@ -127,8 +131,9 @@ def zipcsvs(dir, missing):
 	zipname='data.zip'
 	print 'Zipping sessions into %s' % zipname
 
-	shutil.make_archive(zipname, "zip", tmpdir)
-	#zipdir(tmpdir, zipname)
+	# shutil's make_archive only exists in 2.7 and above
+	#shutil.make_archive(zipname, "zip", tmpdir)
+	zipdir(tmpdir, zipname)
 
 	print 'Removing temporary directory %s' % tmpdir
 
@@ -136,15 +141,17 @@ def zipcsvs(dir, missing):
 
 
 def zipdir(path, outfile):
+	#print "PATH",path
 	# function for zipping a directory from:
 	# http://stackoverflow.com/questions/1855095/how-to-create-a-zip-archive-of-a-directory-in-python
 	zip=zipfile.ZipFile(outfile, "w")
 	for root, dirs, files in os.walk(path):
 		for file in files:
-			zip.write(os.path.join(root, file))
+			# Name of the file relative to the archive
+			# We don't want the whole path to the tempdir
+			arcname=os.path.join(root, file).replace(path+'/', '')
+			zip.write(os.path.join(root, file), arcname)
 	zip.close()
-
-
 
 if __name__=='__main__':
 	main()
