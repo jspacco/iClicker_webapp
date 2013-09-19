@@ -281,6 +281,15 @@ while ($zip_entry = zip_read($zip)) {
 						$screen_picture = $basename . "_Q" . ($i + 1) . ".jpg";
 						$chart_picture = $basename . "_C" . ($i + 1) . ".jpg";
 									
+						if (!isset($questions[$i]["correct_answer"])) {
+							$questions[$i]["correct_answer"]="";
+						}
+						if (!isset($questions[$i]["start_time"])) {
+							$questions[$i]["start_time"]="";
+						}
+						if (!isset($questions[$i]["stop_time"])) {
+							$questions[$i]["stop_time"]="";
+						}
 						$query = "
 										INSERT INTO questions (session_id, question_number, question_name, screen_picture, chart_picture, correct_answer, start_time, stop_time)
 										VALUES (?, ?, ?, ?, ?, ?, ?, ?);
