@@ -52,10 +52,6 @@
 		$stmt->close();
 	}
 
-	createHeader("Creating Assignment...");
-?>
-	<p>Assignment created successfully!</p>
-<?php
 	$conn->close();
-	createFooter();
+	header("Location: section.php?section_id=$section_id");
 ?>
