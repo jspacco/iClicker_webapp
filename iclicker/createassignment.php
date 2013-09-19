@@ -55,6 +55,7 @@
 	$day = 0;
 	$month = 0;
 	$week = 0;
+	$isFirstWeek=1;
 	// create entries for each session and its questions
 	foreach ($sessions as $session_id => $session_date) {
 		$date = DateTime::createFromFormat("m/d/y H:i", $session_date);
@@ -62,7 +63,8 @@
 		$newDay = (int) date("j", $date->getTimestamp());
 		$newMonth = (int) date("n", $date->getTimestamp());
 		//if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $newMonth > $month) {
-		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7) {
+		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $isFirstWeek) {
+			$isFirstWeek=0;
 			$week++;
 		
 			echo "
