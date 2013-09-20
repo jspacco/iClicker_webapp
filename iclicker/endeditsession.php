@@ -7,13 +7,20 @@ $conn = connect();
 if (!isCookieValidLoginWithType($conn, "admin")) {
 	header("Location: home.php");
 }
-	
+
+$session_id=$_POST['session_id'];
+
+// TODO: Does this unignore ALL questions?
+// We should only unignore for this session, right?
 $query = "
-		UPDATE questions SET ignore_question = 0;
+		UPDATE questions SET ignore_question = 0
+		WHERE session_id=?;
 	";
 	
-$conn->query($query) or die("Couldn't execute 'unignore' query. " . $conn->error);
-	
+$stmt = $conn->prepare($query) or die("Couldn't prepare update statement" . $conn->error);
+$stmt->bind_param('i', $session_id);
+$stmt->execute() or die("Couldn't execute update statement" . $conn->error);
+
 // Update ignores
 	
 if (!isset($_POST["ignore"])) {
@@ -82,7 +89,18 @@ if (isset($_POST["id"])) {
 		$stmt->bind_param("si", $answer, $id);
 		$stmt->execute() or die("Couldn't execute 'update' query. " . $conn->error);
 		$stmt->close();
+		
 	}
+	$query = "
+			UPDATE sessions SET post_processed=1 WHERE
+			session_id = ?;
+			";
+			
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'update' query for marking session as processed. " . $conn->error);
+	$stmt->bind_param("i", $session_id);
+	$stmt->execute() or die("Couldn't execute 'update' query for marking session as processed. " . $conn->error);
+	$stmt->close();
+
 } else {
 	//echo "Error: ID array not set!<br>";
 }

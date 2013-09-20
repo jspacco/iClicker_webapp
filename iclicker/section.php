@@ -23,7 +23,7 @@
 		<table>
 <?php	
 	$query = "
-		SELECT session_id, session_date FROM sessions 
+		SELECT session_id, session_date, post_processed FROM sessions 
 		WHERE section_id = ?
 		ORDER BY session_tag ASC;
 	";
@@ -32,7 +32,7 @@
 	$stmt->bind_param("i", $section_id);
 	$stmt->execute() or die("Couldn't execute sessions query. " . $conn->error);
 	
-	$stmt->bind_result($session_id, $session_date);
+$stmt->bind_result($session_id, $session_date, $post_processed);
 	// $result = $stmt->get_result();
 	
 	$dayOfWeek = 0;
@@ -58,6 +58,8 @@
 				</table>
 				<table class='collection'>
 				<tr>
+					<th> Updated? </th>
+
 					<th>Week $week</th>
 					<th>
 						<form action='createassignment.php#week$week' method='get'>
@@ -74,9 +76,14 @@
 		$month = $newMonth;
 		
 		$dayString = date("l", $date->getTimestamp());
+		$postProcessedString="";
+		if ($post_processed) {
+			$postProcessedString="*yes*";
+		}
 		echo "
 			<tr>
-				<td><a href='session.php?session_id=$session_id'>$dayString</a></td>
+				<td align=\"center\"> $postProcessedString </td>
+				<td> <a href='session.php?session_id=$session_id'>$dayString</a></td>
 				<td><a href='session.php?session_id=$session_id'>$session_date</a></td>
 			</tr>
 		";
