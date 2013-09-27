@@ -28,10 +28,11 @@
 			if ($email != "") {
 				// valid email
 				$newpass = uniqid();
+				$encpass = getEncrypted($newpass);
 				
 				$query = "
 					UPDATE students
-					SET password = '$newpass'
+					SET password = '$encpass'
 					WHERE student_id = '$student_id'
 				";
 				
