@@ -47,7 +47,7 @@ $stmt->close();
 
 $dayOne=lastSunday($first_session_date);
 
-echo "first: $first_session_date <br>";
+//echo "first: $first_session_date <br>";
 
 	// get all the sessions
 $query = "
@@ -65,8 +65,8 @@ $firstWeek=1;
 $lastWeek=0;
 while ($stmt->fetch()) {
 	$currentWeek = currentWeek($session_date, $dayOne);
-	echo "<tr>".td("current week: $currentWeek")."</tr>";
-	echo "<tr>".td("day one: $dayOne")."</tr>";
+	//echo "<tr>".td("current week: $currentWeek")."</tr>";
+	//echo "<tr>".td("day one: $dayOne")."</tr>";
 	if ($firstWeek || $currentWeek>$lastWeek) {
 		$firstWeek=0;
 		echo "
@@ -129,7 +129,6 @@ while ($stmt->fetch()) {
 	$stmt2->close();
 }
 $stmt->close();
-
 
 ?>
 	<tr>

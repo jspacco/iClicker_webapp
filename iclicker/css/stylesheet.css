@@ -122,9 +122,22 @@ table.tablesorter tbody tr.odd td {
 table.tablesorter thead tr .headerSortUp {
 	background-image: url(asc.gif);
 }
+
 table.tablesorter thead tr .headerSortDown {
 	background-image: url(desc.gif);
 }
 table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
 	background-color: #8dbdd8;
+}
+
+/* Croping images */
+.rightcrop{
+    position: relative;
+    float:left;
+    margin:.5em 10px .5em 0;
+    overflow:hidden;
+    border:1px solid #ccc;
+}
+.rightcrop img{
+    margin: 0% 0% 0% -50%;
 }

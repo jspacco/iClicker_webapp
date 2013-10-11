@@ -17,7 +17,7 @@
 	createHeader("Section");
 	
 ?>
-<body>
+
 	<div>
 		<h2>Sessions</h2>
 		<table>
