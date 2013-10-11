@@ -26,7 +26,8 @@
 		<h1>Online i>Clicker Questions</h1>
 		<img style="float: right;" src="logo.jpg"><br>
 		<p>Login to access the student/administration tools.<br></p>
-		<a href="register.php">Student Registration</a><br>
+		<a href="register.php">Student Registration</a>
+		<a href="resetpassword.php">Reset Password</a><br>
 		<form action='endlogin.php' method='post'>
 			<table>
 				<tr>
