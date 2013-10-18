@@ -10,23 +10,13 @@
 		
 	$session_id = $_GET["session_id"];
 
-	$query = "
-		SELECT section_id FROM sessions WHERE session_id = ?;
-	";
-	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'section_id' query. " . $conn->error);
-	$stmt->bind_param("i", $session_id);
-	$stmt->execute() or die("Couldn't execute 'section_id' query. " . $conn->error);
-	
-	$stmt->bind_result($section_id);
-	$stmt->fetch();
-	$stmt->close();
+list($session_id, $section_id, $session_date, $session_tag, $post_processed) = lookupSessionBySessionId($conn, $session_id);
 
 createHeader("Session", true, "<a href='section.php?section_id=$section_id'> Back to Sessions and Assignments </a>");
 
 ?>
 <h1>
-	Questions
+	Questions <?=$session_date?>
 </h1>
 <table>
 <form action='endeditsession.php' method='post'>

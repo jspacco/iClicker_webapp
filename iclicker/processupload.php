@@ -48,11 +48,17 @@ while ($zip_entry = zip_read($zip)) {
 			case ".CSV":
 			case ".csv":
 				$res = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
+			if (zip_entry_filesize($zip_entry)==0) {
+				echo "Empty, skipping!<br><br>";
+				continue;
+			}
 			//echo "res is $res<br><br><p><p>";
 			if ($res !== FALSE && $res !== "") {
 				// uploading the csv
 				echo "zip entry name: " . zip_entry_name($zip_entry) . "<br><p><p>";
 				$path = explode("/", zip_entry_name($zip_entry));
+
+
 
 				$filename=array_pop($path);
 				$filename=str_replace(".csv", "", $filename);

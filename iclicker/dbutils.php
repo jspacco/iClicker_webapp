@@ -6,7 +6,7 @@ function closeConn($conn) {
 	function connect() {
 		$dbhost = 'localhost';
 		$dbuser = 'root';
-		$dbpass = '';
+		$dbpass = 'root';
 		$dbname = 'iclicker';
 		
 		$conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname) or die ('Error connecting to mysql ' . mysqli_connect_error());
@@ -48,6 +48,21 @@ function countSectionsByCourseId($conn, $course_id) {
 	$stmt->bind_result($count);
 	$stmt->fetch();
 	return $count;
+}
+
+function lookupSessionBySessionId($conn, $session_id) {
+	$query = "
+		SELECT  session_id, section_id, session_date, session_tag, post_processed FROM sessions WHERE session_id = ?;
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'section' query. " . $conn->error);
+	$stmt->bind_param("i", $session_id);
+	$stmt->execute() or die("Couldn't execute 'section' query. " . $conn->error);
+	
+	$stmt->bind_result($session_id, $section_id, $session_date, $session_tag, $post_processed);
+	$stmt->fetch();
+	$stmt->close();
+	return array($session_id, $section_id, $session_date, $session_tag, $post_processed);
 }
 
 function lookupCourseBySectionId($conn, $section_id) {
