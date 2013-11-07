@@ -80,6 +80,12 @@ function lastSunday($session_date) {
 	return date('z', strtotime('Last Sunday', $d->getTimestamp())) + 1;
 }
 
+function dayOfWeek($session_date) {
+	date_default_timezone_set('America/Chicago');
+	$d = DateTime::createFromFormat("m/d/y H:i", $session_date);
+	return date('l', $d->getTimestamp());
+}
+
 function currentWeek($session_date, $dayOne) {
 	return (int)((dayOfYear($session_date) - $dayOne) / 7) + 1;
 }

@@ -1,18 +1,21 @@
 <?php
 
-function closeConn($conn) {
-}
+require_once('dbconn.php');
 
-	function connect() {
-		$dbhost = 'localhost';
-		$dbuser = 'root';
-		$dbpass = 'root';
-		$dbname = 'iclicker';
-		
-		$conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname) or die ('Error connecting to mysql ' . mysqli_connect_error());
-		register_shutdown_function('closeConn', $conn);
-		return $conn;
+function getStudent($conn, $student_id) {
+	$query="select iclicker_id, school_id, first_name, last_name, email, username from students where student_id=?";
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("i", $student_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	
+	$stmt->bind_result($iclicker_id, $school_id, $firstname, $lastname, $email, $username);
+	if (!$stmt->fetch()) {
+		// raise an error
+		//exit("No section exists for course_id $course_id");
 	}
+	$stmt->close();
+	return array($student_id, $iclicker_id, $school_id, $firstname, $lastname, $email, $username);
+}
 
 function getSectionForCourseId($conn, $course_id) {
 	// Returns: $section_id
@@ -83,5 +86,76 @@ function lookupCourseBySectionId($conn, $section_id) {
 	return array($course_id, $course_name, $course_number);
 }
 
+function lookupSectionID($student_id) {
+	$query="
+select s.section_id 
+from students s, registrations r
+where s.section_id = r.section_id
+and s.student_id = ?
+";
+
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("i", $student_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	
+	$stmt->bind_result($section_id);
+	$stmt->fetch();
+	$stmt->close();
+	return $section_id;
+}
+
+function createAnswers($conn, $student_id, $section_id) {
+	$query="
+create temporary table answercounts
+select s.session_id, s.session_tag, s.session_date, r.student_id, count(*) as answers
+from responses r, questions q, sessions s
+where 1
+and q.question_id = r.question_id
+and q.session_id = s.session_id
+and q.ignore_question = 0
+and r.student_id = ?
+and s.section_id = ?
+group by s.session_id
+order by s.session_tag
+";
+
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("ii", $student_id, $section_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->close();
+}
+
+function createQcounts($conn, $section_id) {
+	$query="
+create temporary table qcounts
+select s.session_id, s.session_tag, s.session_date, count(*) as count
+from sessions s, questions q
+where 1
+and s.session_id = q.session_id
+and q.ignore_question = 0
+and s.section_id = ?
+group by s.session_id
+";
+
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("i", $section_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->close();
+}
+
+function getSectionIdByStudentId($conn, $student_id) {
+	$query="
+select section_id
+from registrations
+where student_id = ?
+";
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("i", $student_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->bind_result($section_id);
+	$stmt->fetch();
+	$stmt->close();
+	return $section_id;
+}
 
 ?>

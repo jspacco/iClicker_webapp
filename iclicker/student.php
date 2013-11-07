@@ -27,7 +27,8 @@ createAnswers($conn, $student_id, $section_id);
 $query="
 select q.session_id, q.session_tag, q.session_date, q.count, a.answers
 from qcounts q left outer join answercounts a
-	on q.session_id = a.session_id;
+	on q.session_id = a.session_id
+order by q.session_tag asc
 ";
 
 
@@ -36,6 +37,7 @@ $stmt->execute() or die("Couldn't execute query. " . $conn->error);
 $stmt->bind_result($session_id, $session_tag, $session_date, $qcount, $answers);
 
 echo "<table border=1><tr>";
+echo th('day');
 echo th('date');
 echo th('tag');
 echo th('total');
@@ -44,6 +46,7 @@ echo "</tr>";
 
 while ($stmt->fetch()) {
 	echo "<tr>";
+	echo td(dayOfWeek($session_date));
 	echo td($session_date);
 	echo td($session_tag);
 	echo td($qcount);
@@ -57,29 +60,7 @@ while ($stmt->fetch()) {
 
 $stmt->close();
 
-
-
-
 $conn->close();
 createFooter();
-
-// TODO: Create a temporary table, just for this person
-// Then do the outer join...
-$query2="
-select s.session_tag, qc.count, count(*) as answercount
-from 
-responses r join questions q 
-	on q.question_id = r.question_id
-join sessions s
-	on q.session_id = s.session_id
-right outer join qcounts qc
-	on s.session_id = qc.session_id
-where 1
-and q.ignore_question = 0
-and r.student_id = 101
-and s.section_id = 2
-group by qc.session_id
-";
-
 
 ?>
