@@ -4,9 +4,10 @@
 	require_once("loginutils.php");
 	$conn = connect();
 	
-	if (!isCookieValidLoginWithType($conn, "student")) {
-		header("Location: home.php");
-	}
+
+//	if (!isCookieValidLoginWithType($conn, "student")) {
+//		header("Location: home.php");
+//	}
 	
 	createHeader("Student Page");
 	
@@ -83,10 +84,34 @@
 		
 		$stmt->close();
 	}
+
+echo "</table>";
+
+$query = "SELECT section_id FROM registrations WHERE student_id=?";
+
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'student_id' query. " . $conn->error);
+	$stmt->bind_param("i", $student_id);
+	$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
+
+	$stmt->bind_result($section_id);
+$stmt->store_result();
+
+while ($stmt->fetch()) {
+	echo "Course Section ID: $section_id<br>";
+	printClickerParticipation($conn, $student_id, $section_id);
+}
+
+$stmt->close();
+
+
+
 ?>
-	</table>
+
 <br>
+<p>
 <a href='editstudentinfo.php'>Edit Info</a>
+</p>
+<br>
 <?php
 	$conn->close();
 	createFooter();
