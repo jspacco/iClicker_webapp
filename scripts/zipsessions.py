@@ -28,7 +28,7 @@ or
 
 or
 
-%s <section_id> <directory> [ <url> ]
+%s <section_id> <directory> [ -u <url> ] [ -o <outfile> ]
 Create a zipfile of new sessions contained in <directory>, to be uploaded into the section and course with the given section_id.  Basically, this script needs the section_id to ask the server located at <url> which sessions have already been uploaded to a particular course.
 ''' % (sys.argv[0], sys.argv[0], sys.argv[0])
 	sys.exit()
@@ -54,8 +54,19 @@ def main():
 		usage()
 	section_id=sys.argv[1]
 	directory=sys.argv[2]
-	if len(sys.argv)>3:
-		checksessions_url=sys.argv[3]
+	args=sys.argv[3:]
+	zipname='data.zip'
+	while len(args) > 0:
+		if args[0]=='-u':
+			checksessions_url=args[1]
+			args=args[2:]
+		elif args[0]=='-o':
+			zipname=args[1]
+			args=args[2:]
+		else:
+			print 'unknown argument: %s' % args[0]
+			usage()
+			sys.exit(1)
 
 	# Get the list of sessions that have been uploaded to the
 	# course with the chosen section_id
@@ -69,7 +80,7 @@ def main():
 	missing=getMissingSessions(directory, sessions)
 	print missing
 
-	zipcsvs(directory, missing)
+	zipcsvs(directory, missing, zipname)
 
 
 def getMissingSessions(dir, sess):
@@ -86,7 +97,7 @@ def wget(url):
 	data = response.read()
 	return data
 
-def zipcsvs(dir, missing):
+def zipcsvs(dir, missing, zipname):
 	'''
 	Create an overall tempdir
 	Create tempdirs for each of the sessions named dataL..........
@@ -128,7 +139,6 @@ def zipcsvs(dir, missing):
 		print 'Done copying image files for session %s' % sesname
 	
 	# zip the whole tmpdir into a zipfile
-	zipname='data.zip'
 	print 'Zipping sessions into %s' % zipname
 
 	# shutil's make_archive only exists in 2.7 and above
@@ -149,8 +159,11 @@ def zipdir(path, outfile):
 		for file in files:
 			# Name of the file relative to the archive
 			# We don't want the whole path to the tempdir
+			'''
 			arcname=os.path.join(root, file).replace(path+'/', '')
 			zip.write(os.path.join(root, file), arcname)
+			'''
+			zip.write(os.path.join(root, file))
 	zip.close()
 
 if __name__=='__main__':

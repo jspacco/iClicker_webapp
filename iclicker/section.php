@@ -163,9 +163,9 @@ $stmt->bind_result($session_id, $session_date, $post_processed);
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		echo "
 			<tr>
-				<td><a href='student.php?student_id=" . $student_id . "'>" . $school_id . "</a></td>
-				<td><a href='student.php?student_id=" . $student_id . "'>" . $iclicker_id . "</a></td>
-				<td><a href='student.php?student_id=" . $student_id . "'>" . $last_name . ", " . $first_name . "</a></td>
+				<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$school_id</a></td>
+				<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$iclicker_id</a></td>
+				<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$last_name , $first_name</a></td>
 			</tr>
 		";
 	}

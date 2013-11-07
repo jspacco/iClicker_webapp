@@ -84,4 +84,16 @@ function currentWeek($session_date, $dayOne) {
 	return (int)((dayOfYear($session_date) - $dayOne) / 7) + 1;
 }
 
+function td($str) {
+	return "<td> $str </td>";
+}
+
+function th($str) {
+	return "<th> $str </th>";
+}
+
+function tr($str) {
+	return "<tr> $str </tr>";
+}
+
 ?>
