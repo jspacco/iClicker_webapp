@@ -175,7 +175,7 @@ order by q.session_tag asc
 		echo td($session_tag);
 		echo td($qcount);
 		if ($answers=='') {
-			echo td(0);
+			echo td('<font color=red>0</red>');
 		} else {
 			echo td($answers);
 		}
