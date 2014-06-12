@@ -13,7 +13,7 @@ $session_id=$_POST['session_id'];
 // TODO: Does this unignore ALL questions?
 // We should only unignore for this session, right?
 $query = "
-		UPDATE questions SET ignore_question = 0
+		UPDATE questions SET ignore_question = 0, single_question = 0
 		WHERE session_id=?;
 	";
 	
@@ -43,6 +43,28 @@ if (!isset($_POST["ignore"])) {
 	}
 }
 	
+// Update singles
+
+if (!isset($_POST["single"])) {
+	//echo "Nothing for single.<br>";
+} else {		
+	$single = $_POST["single"];
+	$i = 1;
+		
+	foreach ($single as $question_id) {
+		$query = "
+				UPDATE questions SET single_question = ? WHERE
+				question_id = ?;
+			";
+			
+		$stmt = $conn->prepare($query) or die("Couldn't prepare 'single' query. " . $conn->error);
+		$stmt->bind_param("ii", $i, $question_id);
+		$stmt->execute() or die("Couldn't execute 'single' query. " . $conn->error);
+			
+		//echo "SV " . $question_id . ".<br>";
+	}
+}
+
 // Update correct answers
 	
 if (isset($_POST["id"])) {

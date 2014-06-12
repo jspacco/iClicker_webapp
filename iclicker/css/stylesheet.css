@@ -1,6 +1,6 @@
 .main
 { 
-	width: 800px;
+	width: 870px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
@@ -57,7 +57,7 @@ table.votechanges td
 
 table.collection
 { 
-	width: 800px;
+	width: 870px;
 	border-collapse: collapse;
 }
 table.collection td

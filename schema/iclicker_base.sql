@@ -1,23 +1,17 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.2.2
+-- version 3.5.1
 -- http://www.phpmyadmin.net
 --
--- Host: 127.0.0.1
--- Generation Time: Aug 22, 2013 at 08:32 PM
--- Server version: 5.5.27
--- PHP Version: 5.4.7
+-- Host: localhost
+-- Generation Time: Jun 12, 2014 at 08:45 PM
+-- Server version: 5.5.24-log
+-- PHP Version: 5.4.3
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
 --
--- Database: `iclicker`
+-- Database: `cs147`
 --
 
 -- --------------------------------------------------------
@@ -31,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `assignments` (
   `section_id` int(11) NOT NULL,
   `due` int(20) NOT NULL,
   PRIMARY KEY (`assignment_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -45,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `assignmentstoquestions` (
   `question_id` int(11) NOT NULL,
   `next_question` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`atq_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -58,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `courses` (
   `course_name` varchar(100) NOT NULL,
   `course_number` varchar(10) NOT NULL,
   PRIMARY KEY (`course_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -91,8 +85,22 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `start_time` varchar(50) NOT NULL,
   `stop_time` varchar(50) NOT NULL,
   `ignore_question` tinyint(1) NOT NULL DEFAULT '0',
+  `single_question` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`question_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=116 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `registrations`
+--
+
+CREATE TABLE IF NOT EXISTS `registrations` (
+  `student_id` mediumint(8) unsigned NOT NULL,
+  `section_id` mediumint(8) unsigned NOT NULL,
+  PRIMARY KEY (`student_id`,`section_id`),
+  KEY `course_id` (`section_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -122,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `sections` (
   `section_number` int(11) NOT NULL,
   `year_offered` int(11) NOT NULL,
   PRIMARY KEY (`section_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -135,8 +143,9 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   `section_id` int(11) NOT NULL,
   `session_date` varchar(100) NOT NULL,
   `session_tag` varchar(20) NOT NULL,
+  `post_processed` tinyint(2) unsigned NOT NULL,
   PRIMARY KEY (`session_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -154,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `students` (
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   PRIMARY KEY (`student_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -167,8 +176,4 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
