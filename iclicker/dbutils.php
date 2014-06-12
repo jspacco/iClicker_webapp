@@ -113,6 +113,7 @@ where 1
 and q.question_id = r.question_id
 and q.session_id = s.session_id
 and q.ignore_question = 0
+and q.single_question = 0
 and r.student_id = ?
 and s.section_id = ?
 group by s.session_id
@@ -133,6 +134,7 @@ from sessions s, questions q
 where 1
 and s.session_id = q.session_id
 and q.ignore_question = 0
+and q.single_question = 0
 and s.section_id = ?
 group by s.session_id
 ";

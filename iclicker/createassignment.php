@@ -2,11 +2,11 @@
 	require_once("pageutils.php");
 	require_once("dbutils.php");
 	require_once("loginutils.php");
-
+/**
 function td($s) {
 	return "<td>$s</td>";
 }
-
+*/
 	$conn = connect();
 	
 	if (!isCookieValidLoginWithType($conn, "admin")) {
@@ -71,7 +71,7 @@ while ($stmt->fetch()) {
 		$firstWeek=0;
 		echo "
 			<tr>
-				<th><a name='week$week'>Week $currentWeek</a></th>
+				<th><a name='week$currentWeek'>'Week' $currentWeek</a></th>
 				<td></td>
 				<td></td>
 				<td></td>
@@ -110,7 +110,7 @@ while ($stmt->fetch()) {
 		$checked = "";
 		if ($ignore_question == 0) {
 			// only check group votes in the week we're creating an assignment for
-			if ($gv && $assignment_week > -1 && $assignment_week == $week) {
+			if ($gv && $assignment_week > -1 && $assignment_week == $currentWeek) {
 				$checked = "checked";
 			}
 			$gv = !$gv;

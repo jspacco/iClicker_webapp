@@ -49,8 +49,8 @@
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		echo "
 			<tr>
-				<td><a href='section.php?section_id=" . $section_id . "'>" . $section_number . "</a></td>
-				<td><a href='section.php?section_id=" . $section_id . "'>" . $year_offered . "</a></td>
+				<td><a href='section.php?section_id=$section_id>$section_number</a></td>
+				<td><a href='section.php?section_id=$section_id>$year_offered</a></td>
 			</tr>
 		";
 	}
