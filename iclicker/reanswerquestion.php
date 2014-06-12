@@ -9,7 +9,7 @@
 	}
 	
 // create header without the <div class="main"> tag
-createHead("Question Reanswer");
+createHead("Reanswer Question");
 	
 	if (isset($_GET["assignment_id"])) {
 		$assignment_id = $_GET["assignment_id"];
@@ -33,10 +33,6 @@ createHead("Question Reanswer");
 	$stmt->fetch();
 	
 	$conn->close();
-
-	// $result = $stmt->get_result();
-	
-	// $row = $result->fetch_array(MYSQLI_ASSOC);
 	
 	$start_time = time();
 	

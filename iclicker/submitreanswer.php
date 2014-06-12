@@ -34,9 +34,9 @@
 	$pass = $_COOKIE["Password"];
 	
 	$query = "
-		SELECT student_id FROM students WHERE
-		username = ? AND
-		password = ?;
+		SELECT student_id FROM students 
+		WHERE username = ? 
+		AND password = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'select' query. " . $conn->error);

@@ -14,7 +14,7 @@
 		header("Location: home.php");
 	}
 	
-	createHeader("Section");
+createHeader("Section",true, "<a href='home.php'> Home </a>");
 	
 ?>
 
@@ -144,33 +144,63 @@ $stmt->bind_result($session_id, $session_date, $post_processed);
 	</tr>
 <?php
 	
-	$query = "
-		SELECT distinct students.student_id, iclicker_id, school_id, first_name, last_name, username FROM students, sections, sessions, questions, responses WHERE
-		students.student_id = responses.student_id AND
-		responses.question_id = questions.question_id AND
-		questions.session_id = sessions.session_id AND
-		sessions.section_id = sections.section_id AND
-		sections.section_id = ?;
-	";
-	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare students query. " . $conn->error);
-	$stmt->bind_param("i", $section_id);
-	$stmt->execute() or die("Couldn't execute students query. " . $conn->error);
-	
+
+/*
+// Everyone registered for the course
+$query="
+SELECT distinct students.student_id, iclicker_id, school_id, first_name, last_name, username 
+	FROM students, registrations
+	WHERE students.student_id = registrations.student_id 
+	AND registrations.section_id = ?
+";
+
+$stmt = $conn->prepare($query) or die("Couldn't prepare students query. " . $conn->error);
+$stmt->bind_param("i", $section_id);
+$stmt->execute() or die("Couldn't execute students query. " . $conn->error);
 $stmt->bind_result($student_id, $iclicker_id, $school_id, $first_name, $last_name, $username);
 	
-	// $result = $stmt->get_result();
 	
-	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
-		echo "
-			<tr>
-				<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$school_id</a></td>
-				<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$iclicker_id</a></td>
-				<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$last_name , $first_name</a></td>
-				<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$username</a></td>
-			</tr>
-		";
-	}
+while ($stmt->fetch()) {
+	echo "
+	<tr>
+		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$school_id</a></td>
+		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$iclicker_id</a></td>
+		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$last_name , $first_name</a></td>
+		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$username</a></td>
+	</tr>
+";
+}
+*/
+
+// Everyone who has answered a question for the course
+// This will include students who are registered, as well as those who are not
+$query = "
+	SELECT distinct students.student_id, iclicker_id, school_id, first_name, last_name, username 
+	FROM students, sections, sessions, questions, responses 
+	WHERE students.student_id = responses.student_id 
+	AND responses.question_id = questions.question_id 
+	AND questions.session_id = sessions.session_id
+	AND sessions.section_id = sections.section_id 
+	AND sections.section_id = ?;
+	";
+
+$stmt = $conn->prepare($query) or die("Couldn't prepare students query. " . $conn->error);
+$stmt->bind_param("i", $section_id);
+$stmt->execute() or die("Couldn't execute students query. " . $conn->error);
+$stmt->bind_result($student_id, $iclicker_id, $school_id, $first_name, $last_name, $username);
+
+while ($stmt->fetch()) {
+	echo "
+	<tr>
+		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$school_id</a></td>
+		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$iclicker_id</a></td>
+		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$last_name , $first_name</a></td>
+		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$username</a></td>
+	</tr>
+";
+}
+
+
 	
 	echo "</table>";
 ?>

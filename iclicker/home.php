@@ -26,14 +26,12 @@
 		<h1>Online i>Clicker Questions</h1>
 		<img style="float: right;" src="logo.jpg"><br>
 		<p>Login to access the student/administration tools.<br></p>
-		<a href="register.php">Student Registration</a>
-		<a href="resetpassword.php">Reset Password</a><br>
 		<form action='endlogin.php' method='post'>
 			<table>
 				<tr>
 					<td>Login as </td>
-					<td><input type='radio' name='logintype' value='admin'>Administrator</td>
-					<td><input type='radio' name='logintype' value='student' checked>Student</td>
+					<td><input id='349' type='radio' name='logintype' value='admin'><label for='349'>Administrator</label></td>
+					<td><input id='350' type='radio' name='logintype' value='student' checked><label for='350'>Student</label></td>
 				</tr>
 				<tr>
 					<td>Username: </td>
@@ -49,6 +47,12 @@
 				</tr>
 			</table>
 		</form>
+	</div>
+	<div>
+	<a href="register.php">Click to register your clicker</a> <font color=red> (click here if you have never used this system before) </font>
+	</div>
+	<div>
+		<a href="resetpassword.php">Reset Password</a><br>
 	</div>
 </body>
 <?php

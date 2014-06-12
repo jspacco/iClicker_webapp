@@ -13,7 +13,7 @@ if (!isCookieValidLoginWithType($conn, "admin")) {
 	header("Location: home.php");
 }
 	
-createHead("Student");
+createHead("Student", true, "<a href='section.php?section_id=$section_id'> Back to Sessions and Assignments </a>");
 
 echo "<div>\n";
 

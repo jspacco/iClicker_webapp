@@ -36,7 +36,7 @@ function createHeader($title, $includeLogout = true, $extra = "") {
 		
 		if ($goBack) {
 			echo "
-				<a href='" . $goBackLink . "'>Go Back</a>
+				<a href='$goBackLink'>Go Back</a>
 			";
 		}
 		

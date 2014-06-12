@@ -1,4 +1,7 @@
 <?php
+// TODO: Rewrite with sessions to make this more secure
+// as we cannot rely on cookies alone
+// We also should not store the hashed password in the cookie...
 	function isCookieValidLoginWithType($conn, $type) {
 		return isCookieValidLogin($conn) &&
 			$_COOKIE["LoginType"] == $type;

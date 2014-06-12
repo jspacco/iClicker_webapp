@@ -20,7 +20,7 @@ createHeader("Session", true, "<a href='section.php?section_id=$section_id'> Bac
 </h1>
 <table>
 <form action='endeditsession.php' method='post'>
-	<input type="hidden" name="session_id" value="<?= $_GET[session_id] ?>"/>
+	<input type="hidden" name="session_id" value="<?= $_GET['session_id'] ?>"/>
 	<tr>
 		<th>Ignore?</th>
 		<th>#</th>
@@ -47,7 +47,7 @@ createHeader("Session", true, "<a href='section.php?section_id=$section_id'> Bac
 	$q = 1;
 	$num = 1;
 	$iv_id;
-	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
+	while ($stmt->fetch()) {
 		$type = "IV";
 		if ($q % 2 === 0) {
 			$type = "GV";

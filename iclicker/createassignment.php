@@ -1,25 +1,22 @@
 <?php
-	require_once("pageutils.php");
-	require_once("dbutils.php");
-	require_once("loginutils.php");
+require_once("pageutils.php");
+require_once("dbutils.php");
+require_once("loginutils.php");
 
-function td($s) {
-	return "<td>$s</td>";
+$conn = connect();
+	
+if (!isCookieValidLoginWithType($conn, "admin")) {
+	header("Location: home.php");
+}
+	
+$assignment_week = -1;
+if (isset($_GET["week"])) {
+	$assignment_week = (int) $_GET["week"];
 }
 
-	$conn = connect();
-	
-	if (!isCookieValidLoginWithType($conn, "admin")) {
-		header("Location: home.php");
-	}
-	
-	createHeader("Create Assignment");
-	
-	$assignment_week = -1;
-	if (isset($_GET["week"])) {
-		$assignment_week = (int) $_GET["week"];
-	}
+createHeader("Create Assignment");
 ?>
+
 <script type='text/javascript'>
 	$(function() {
 		$('#datepicker').datepicker();
@@ -35,6 +32,7 @@ function td($s) {
 		</tr>
 		<form action='endassignment.php' method='post'>
 <?php
+
 	$section_id = $_GET['section_id'];
 	
 	// Find the minimum date for the session

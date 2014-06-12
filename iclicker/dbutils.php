@@ -113,6 +113,7 @@ where 1
 and q.question_id = r.question_id
 and q.session_id = s.session_id
 and q.ignore_question = 0
+and r.number_of_attempts > 0
 and r.student_id = ?
 and s.section_id = ?
 group by s.session_id
@@ -123,6 +124,26 @@ order by s.session_tag
 	$stmt->bind_param("ii", $student_id, $section_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	$stmt->close();
+}
+
+function createCorrectCounts($conn, $student_id, $section_id) {
+	$query="
+create temporary table correctCounts
+SELECT s.session_id, s.session_date, s.session_tag, r.student_id, count(*) as numcorrect
+FROM questions q, responses r, sessions s
+WHERE q.question_id = r.question_id
+AND q.session_id = s.session_id
+AND q.correct_answer REGEXP r.response
+AND r.student_id = ?
+AND s.section_id = ?
+GROUP BY q.session_id, r.student_id
+";
+
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("ii", $student_id, $section_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->close();
+
 }
 
 function createQcounts($conn, $section_id) {
@@ -148,17 +169,22 @@ function printClickerParticipation($conn, $student_id, $section_id) {
 
 	createAnswers($conn, $student_id, $section_id);
 
+	createCorrectCounts($conn, $student_id, $section_id);
+
 	$query="
-select q.session_id, q.session_tag, q.session_date, q.count, a.answers
-from qcounts q left outer join answercounts a
-	on q.session_id = a.session_id
+select q.session_id, q.session_tag, q.session_date, q.count, a.answers, a.answers/q.count, c.numcorrect
+from qcounts q 
+	left outer join answercounts a
+		on q.session_id = a.session_id
+	left outer join correctCounts c
+		on q.session_id = c.session_id
 order by q.session_tag asc
 ";
 
 
 	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	$stmt->bind_result($session_id, $session_tag, $session_date, $qcount, $answers);
+	$stmt->bind_result($session_id, $session_tag, $session_date, $qcount, $answers, $pct, $numcorrect);
 
 	echo "<table border=1><tr>";
 	echo th('day');
@@ -166,6 +192,8 @@ order by q.session_tag asc
 	echo th('tag');
 	echo th('total');
 	echo th('answered');
+	echo th('pct answ');
+	echo th('correct');
 	echo "</tr>";
 
 	while ($stmt->fetch()) {
@@ -175,13 +203,24 @@ order by q.session_tag asc
 		echo td($session_tag);
 		echo td($qcount);
 		if ($answers=='') {
-			echo td('<font color=red>0</red>');
+			echo td('<font color=red>0</font>');
 		} else {
 			echo td($answers);
+		}
+		if ($pct < 0.75) {
+			echo td("<font color=red>$pct</font>");
+		} else {
+			echo td($pct);
+		}
+		if ($numcorrect=='') {
+			echo td('<font color=red>0</font>');
+		} else {
+			echo td($numcorrect);
 		}
 		echo "</tr>";
 	}
 	$stmt->close();
+
 }
 
 function getSectionIdByStudentId($conn, $student_id) {
