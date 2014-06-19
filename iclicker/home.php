@@ -24,7 +24,7 @@
 <body>
 	<div style="text-align: left;">
 		<h1>Online i>Clicker Questions</h1>
-		<img style="float: right;" src="logo.jpg"><br>
+		<img style="float: right;" src="img/logo.jpg"><br>
 		<p>Login to access the student/administration tools.<br></p>
 		<form action='endlogin.php' method='post'>
 			<table>
