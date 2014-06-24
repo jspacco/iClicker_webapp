@@ -16,7 +16,7 @@
 	if ($count==1) {
 		// look up the section_id then redirect
 		$section_id=getSectionForCourseId($conn, $course_id);
-		header("Location: section.php?section_id=$section_id");
+		header("Location: section.php?section_id=$section_id?");
 	}
 
 	
@@ -34,8 +34,9 @@
 	$course_id = $_GET["course_id"];
 	
 	$query = "
-		SELECT section_id, section_number, year_offered FROM sections WHERE
-		course_id = ?;
+		SELECT section_id, section_number, year_offered 
+		FROM sections 
+		WHERE course_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
@@ -49,9 +50,10 @@
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		echo "
 			<tr>
-				<td><a href='section.php?section_id=$section_id>$section_number</a></td>
-				<td><a href='section.php?section_id=$section_id>$year_offered</a></td>
+				<td><a href=section.php?section_id=$section_id>$section_number</a></td>
+				<td><a href=section.php?section_id=$section_id>$year_offered</a></td>
 			</tr>
+			
 		";
 	}
 ?>

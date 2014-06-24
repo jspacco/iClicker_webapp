@@ -49,7 +49,10 @@ $dayOne=lastSunday($first_session_date);
 
 	// get all the sessions
 $query = "
-		SELECT session_id, session_date FROM sessions WHERE section_id = ? order by session_date asc;
+		SELECT session_id, session_date 
+		FROM sessions 
+		WHERE section_id = ? 
+		ORDER BY session_date asc;
 	";
 	
 $stmt = $conn->prepare($query) or die("Couldn't prepare 'sessions' query. " . $conn->error);

@@ -13,7 +13,8 @@ $session_id=$_POST['session_id'];
 // TODO: Does this unignore ALL questions?
 // We should only unignore for this session, right?
 $query = "
-		UPDATE questions SET ignore_question = 0, single_question = 0
+		UPDATE questions 
+		SET ignore_question = 0, single_question = 0
 		WHERE session_id=?;
 	";
 	
@@ -31,9 +32,10 @@ if (!isset($_POST["ignore"])) {
 		
 	foreach ($ignore as $question_id) {
 		$query = "
-				UPDATE questions SET ignore_question = ? WHERE
-				question_id = ?;
-			";
+			UPDATE questions 
+			SET ignore_question = ? 
+			WHERE question_id = ?;
+		";
 			
 		$stmt = $conn->prepare($query) or die("Couldn't prepare 'ignore' query. " . $conn->error);
 		$stmt->bind_param("ii", $i, $question_id);
@@ -53,9 +55,10 @@ if (!isset($_POST["single"])) {
 		
 	foreach ($single as $question_id) {
 		$query = "
-				UPDATE questions SET single_question = ? WHERE
-				question_id = ?;
-			";
+			UPDATE questions 
+			SET single_question = ? 
+			WHERE question_id = ?;
+		";
 			
 		$stmt = $conn->prepare($query) or die("Couldn't prepare 'single' query. " . $conn->error);
 		$stmt->bind_param("ii", $i, $question_id);
@@ -103,8 +106,9 @@ if (isset($_POST["id"])) {
 		//echo "Updating question ID = " . $id . " set to: " . $answer . "<br>";
 			
 		$query = "
-				UPDATE questions SET correct_answer = ? WHERE
-				question_id = ?;
+				UPDATE questions 
+				SET correct_answer = ? 
+				WHERE question_id = ?;
 			";
 			
 		$stmt = $conn->prepare($query) or die("Couldn't prepare 'update' query. " . $conn->error);
@@ -114,9 +118,10 @@ if (isset($_POST["id"])) {
 		
 	}
 	$query = "
-			UPDATE sessions SET post_processed=1 WHERE
-			session_id = ?;
-			";
+		UPDATE sessions 
+		SET post_processed = 1 
+		WHERE session_id = ?;
+	";
 			
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'update' query for marking session as processed. " . $conn->error);
 	$stmt->bind_param("i", $session_id);
@@ -127,7 +132,7 @@ if (isset($_POST["id"])) {
 	//echo "Error: ID array not set!<br>";
 }
 
-header("Location: session.php?session_id=$_POST[session_id]&message=Updated");
+header("Location: session.php?session_id=$_POST[session_id]&message=Updated!");
 
 $conn->close();
 ?>

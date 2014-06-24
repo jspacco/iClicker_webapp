@@ -21,9 +21,10 @@
 	} else {
 		
 		$query = "
-			SELECT distinct student_id FROM students WHERE
-			iclicker_id = ? OR
-			iclicker_id = ?;
+			SELECT distinct student_id 
+			FROM students 
+			WHERE iclicker_id = ? 
+			OR iclicker_id = ?;
 		";
 		
 		$stmt = $conn->prepare($query) or die("Couldn't prepare 'select' query. " . $conn->error);
@@ -44,8 +45,9 @@
 			
 			// verify the user hasn't been registered yet
 			$query = "
-				SELECT username, password FROM students WHERE
-				student_id = $student_id;
+				SELECT username, password 
+				FROM students 
+				WHERE student_id = $student_id;
 			";
 			
 			$result = $conn->query($query) or die("Couldn't execute 'namefree' query. " . $conn->error);
@@ -55,8 +57,9 @@
 				
 				// make sure the username isn't taken
 				$query = "
-					SELECT username FROM students WHERE
-					username = ?;
+					SELECT username 
+					FROM students 
+					WHERE username = ?;
 				";
 				
 				$stmt = $conn->prepare($query) or die("Couldn't prepare 'namecheck' query. " . $conn->error);
@@ -68,9 +71,9 @@
 				if ($stmt->num_rows == 0) {
 					
 					$query = "
-						UPDATE students SET
-						username = ?, password = ? WHERE
-						student_id = ?;
+						UPDATE students 
+						SET	username = ?, password = ? 
+						WHERE student_id = ?;
 					";
 					
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'update' query. " . $conn->error);
@@ -89,7 +92,43 @@
 			echo "Couldn't find any student record with iClicker ID " . $iclicker . " or " . $iclicker_alt . ".<br>";
 		}
 	}
+	
+	?>
+	
+	echo "
+		Sign up for course(s).
+	";
+<body>
+	<div>
+		<h2>Courses</h2>
+		<table class='collection'>
+			<tr>
+				<th>Name</th>
+				<th>Number</th>
+			</tr>
+<?php
+	$query = "
+		SELECT course_id, course_name, course_number 
+		FROM courses;
+	";
+	
+	$result = $conn->query($query) or die("Couldn't execute query. " . $conn->error);
+	
+	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+		echo "
+			<tr>
+				<td><a href='course.php?course_id=" . $row["course_id"] . "'>" . $row["course_name"] . "</a></td>
+				<td><a href='course.php?course_id=" . $row["course_id"] . "'>" . $row["course_number"] . "</a></td>
+			</tr>
+		";
+	}
 ?>
+		</table>
+	</div>
+</body>	
+	
+	
+
 <?php
 	$conn->close();
 	createFooter(!$registrationSuccess, "register.php");

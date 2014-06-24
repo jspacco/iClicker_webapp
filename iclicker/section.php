@@ -13,17 +13,18 @@
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
-	
+
 createHeader("Section",true, "<a href='home.php'> Home </a>");
-	
 ?>
 
 	<div>
+		<a href='adminsettings.php?section_id=<?=$section_id?>'>Settings</a>
 		<h2>Sessions</h2>
 		<table>
 <?php	
 	$query = "
-		SELECT session_id, session_date, post_processed FROM sessions 
+		SELECT session_id, session_date, post_processed 
+		FROM sessions 
 		WHERE section_id = ?
 		ORDER BY session_tag ASC;
 	";
@@ -39,7 +40,7 @@ $stmt->bind_result($session_id, $session_date, $post_processed);
 	$day = 0;
 	$month = 0;
 	$week = 0;
-	$dayOfYear=-1;
+	$dayOfYear = -1;
 	// special case to detect the first week!
 	$isFirstWeek=1;
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
@@ -100,7 +101,9 @@ $stmt->bind_result($session_id, $session_date, $post_processed);
 	</tr>
 <?php
 	$query = "
-		SELECT assignment_id, due FROM assignments WHERE section_id = ?;
+		SELECT assignment_id, due 
+		FROM assignments 
+		WHERE section_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'assignments' query. " . $conn->error);
@@ -117,7 +120,9 @@ $stmt->bind_result($session_id, $session_date, $post_processed);
 	
 	foreach ($assignments as $assignment_id => $due) {
 		$query = "
-			SELECT atq_id FROM assignmentstoquestions WHERE assignment_id = $assignment_id;
+			SELECT atq_id 
+			FROM assignmentstoquestions 
+			WHERE assignment_id = $assignment_id;
 		";
 		
 		$result = $conn->query($query) or die("Couldn't execute 'atq' query. " . $conn->error);
@@ -194,7 +199,7 @@ while ($stmt->fetch()) {
 	<tr>
 		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$school_id</a></td>
 		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$iclicker_id</a></td>
-		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$last_name , $first_name</a></td>
+		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$first_name $last_name</a></td>
 		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$username</a></td>
 	</tr>
 ";

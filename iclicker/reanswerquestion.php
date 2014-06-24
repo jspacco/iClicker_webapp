@@ -9,7 +9,7 @@
 	}
 	
 // create header without the <div class="main"> tag
-createHead("Reanswer Question");
+createHead("Reanswer Question", false);
 	
 	if (isset($_GET["assignment_id"])) {
 		$assignment_id = $_GET["assignment_id"];
@@ -20,8 +20,9 @@ createHead("Reanswer Question");
 	$question_id = $_GET["question_id"];
 
 	$query = "
-		SELECT question_name, screen_picture FROM questions WHERE
-		question_id = ?;
+		SELECT question_name, screen_picture 
+		FROM questions 
+		WHERE question_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'select' query. " . $conn->error);
@@ -32,21 +33,44 @@ createHead("Reanswer Question");
 	
 	$stmt->fetch();
 	
-	$conn->close();
+	$stmt->close();
+
+	//	$conn->close();
 	
 	$start_time = time();
 	
+	$query = "
+		SELECT display_screen  
+		FROM sections, questions, sessions 
+		WHERE 1
+		AND questions.session_id = sessions.session_id
+		AND sessions.section_id = sections.section_id
+	";
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	
+	$stmt->bind_result($display_screen);
+	$stmt->fetch();
+	$conn->close();
+
+	echo "<div ";
+	if ($display_screen == 'right'){
+		echo "class=rightcrop";
+	} else if ($display_screen == 'left'){
+		echo "class=leftcrop";
+	} else {
+		//Do nothing -> full screen
+	}
+	echo ">";
 ?>
 
 <h1><?=$question_name?></h1>
-
-
-	<div class="rightcrop">
+<div class=>
 	<img src="pictures/<?=$screen_picture?>" width="700px" height="500px"/>
 
 	<form action="submitreanswer.php" method="post">
 	<fieldset>
-	<legend>Select all correct answers</legend>
+	<legend>Select Correct Answer(s)</legend>
 	<table>
 	<tr>
 		<td><input type="checkbox" name="answers[]" value="A">A</td>

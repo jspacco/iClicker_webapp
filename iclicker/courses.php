@@ -20,7 +20,8 @@
 			</tr>
 <?php
 	$query = "
-		SELECT course_id, course_name, course_number FROM courses;
+		SELECT course_id, course_name, course_number 
+		FROM courses;
 	";
 	
 	$result = $conn->query($query) or die("Couldn't execute query. " . $conn->error);

@@ -33,9 +33,11 @@
 </script>
 <?php
 	$query = "
-		SELECT student_id, school_id, email FROM students WHERE
-		username = ? AND
-		password = ?;
+		SELECT student_id, school_id, email 
+		FROM students 
+		WHERE 1
+		AND username = ? 
+		AND	password = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't execute 'student_id' query. " . $conn->error);
@@ -51,11 +53,49 @@
 	
 	// $student_id = $row["student_id"];
 	// $email = $row["email"];
+	
 ?>
 <h2>Update Information</h2>
 <form action="endstudentedit.php" method="post">
 	School ID: <input type='text' name='school_id' value=<?php echo $school_id; ?>><br>
 	Email: <input type='text' name='email' value=<?php echo $email; ?>><br>
+	Select the course(s) you are enrolled in...<br>
+	<table>
+		<tr>
+			<th>Course</th>
+			<th>Section</th>
+			<th>Year Offered</th>
+		</tr>
+	</table>
+	<?php
+	
+		$query = "
+			SELECT section_id, year_offered, course_name
+			FROM sections, courses
+			WHERE sections.course_id = courses.course_id
+		";
+		
+		$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+		//$stmt->bind_param("i", $course_id);
+		$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+		
+		$stmt->bind_result($section_id, $year_offered, $course_name);
+		
+		$course = "";
+		
+		//different notepad code
+		if ($course_name == 1) {
+			$course = "checked";
+		}
+		while($stmt->fetch()){
+			echo "
+				<td><input type='checkbox' name='courses[]' value='$course'>$course_name</td><br>
+			";
+		}
+	?>
+	
+	<!--<td><input type='checkbox' name='courses[]' value='$course_id'$course></td>-->
+	
 	<input type='submit' value='Update'>
 </form>
 <h2>Change Password</h2>

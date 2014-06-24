@@ -33,7 +33,9 @@
 	
 <?php
 	$query = "
-		SELECT question_id, question_number, screen_picture, chart_picture, correct_answer, ignore_question, single_question FROM questions WHERE session_id = ?;
+		SELECT question_id, question_number, screen_picture, chart_picture, correct_answer, ignore_question, single_question 
+		FROM questions 
+		WHERE session_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);

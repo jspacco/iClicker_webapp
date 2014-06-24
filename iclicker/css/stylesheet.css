@@ -141,3 +141,12 @@ table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSo
 .rightcrop img{
     margin: 0% 0% 0% -50%;
 }
+.leftcrop{
+    position: relative;
+    float:left;
+    margin:.5em 10px .5em 0;
+    overflow:hidden;
+    border:1px solid #ccc;
+}
+.leftcrop img{
+    margin: 0% 0% 0% 50%;
