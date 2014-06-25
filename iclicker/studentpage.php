@@ -32,10 +32,12 @@
 	</tr>
 <?php
 	$query = "
-		SELECT assignment_id, due 
-		FROM assignments, sections, sessions, questions, responses 
+		SELECT assignment_id, due
+		FROM assignments, sections, sessions, questions, responses, students, registrations
 		WHERE 1
-		AND assignments.section_id = sections.section_id
+		AND students.student_id = registrations.student_id
+		AND registrations.section_id = sections.section_id
+		AND sections.section_id = assignments.section_id
 		AND sections.section_id = sessions.section_id
 		AND sessions.session_id = questions.session_id
 		AND questions.question_id = responses.question_id
@@ -78,15 +80,28 @@
 		$stmt->execute() or die("Couldn't execute 'responses' query. " . $conn->error);
 		$stmt->store_result();
 		$answercount = mysqli_stmt_num_rows($stmt);
-
-		echo "
-			<tr>
-				<td><a href='viewassignment.php?assignment_id=$assignment_id'>$answercount</a></td>
-				<td><a href='viewassignment.php?assignment_id=$assignment_id'>$questioncount</a></td>
-				<td><a href='viewassignment.php?assignment_id=$assignment_id'>" . DateFromUTC($due) . "</a></td>
-			</tr>
+		/*
+		$query = "
+			SELECT registrations.section_id, sections.section_id, assignment.section_id
+			FROM registrations, sections, assignments, 
 		";
 		
+		$stmt = $conn->prepare($query) or die("Couldn't prepare 'new' query. " . $conn->error);
+		$stmt->bind_param("i", $student_id);
+		$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
+	
+		$stmt->bind_result($section_id);
+		$stmt->store_result();
+		*/
+		//if(sections.section_id = assignments.section_id){
+			echo "
+				<tr>
+					<td><a href='viewassignment.php?assignment_id=$assignment_id'>$answercount</a></td>
+					<td><a href='viewassignment.php?assignment_id=$assignment_id'>$questioncount</a></td>
+					<td><a href='viewassignment.php?assignment_id=$assignment_id'>" . DateFromUTC($due) . "</a></td>
+				</tr>
+			";
+		//}
 		$stmt->close();
 	}
 
@@ -110,8 +125,6 @@
 		printClickerParticipation($conn, $student_id, $section_id);
 	}
 
-	//echo "hello world";
-	//echo "SECTIONID IS '$section_id'";
 	echo "
 	<br>
 	<p>

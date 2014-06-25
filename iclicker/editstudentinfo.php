@@ -9,6 +9,7 @@
 	}
 	
 	createHeader("Edit Info");
+	
 ?>
 <script type="text/javascript">
 	jQuery(function(){
@@ -48,12 +49,6 @@
 	$stmt->fetch();
 	$stmt->close();
 	
-	// $result = $stmt->get_result();
-	// $row = $result->fetch_array(MYSQLI_ASSOC);
-	
-	// $student_id = $row["student_id"];
-	// $email = $row["email"];
-	
 ?>
 <h2>Update Information</h2>
 <form action="endstudentedit.php" method="post">
@@ -62,40 +57,63 @@
 	Select the course(s) you are enrolled in...<br>
 	<table>
 		<tr>
+			<th>Enrolled?</th>
 			<th>Course</th>
 			<th>Section</th>
 			<th>Year Offered</th>
 		</tr>
 	</table>
 	<?php
-	
 		$query = "
-			SELECT section_id, year_offered, course_name
+			SELECT section_id, student_id
+			FROM registrations
+			WHERE student_id = ?
+		";
+		
+		$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+		$stmt->bind_param("i", $student_id);
+		$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+		
+		$stmt->bind_result($section_id, $student_id);
+		
+		$regsect = array();
+		while ($stmt->fetch()){
+			array_push($regsect, $section_id);
+		};
+		
+		$stmt->close();
+		
+		$query = "
+			SELECT section_id, course_name, section_number, year_offered
 			FROM sections, courses
 			WHERE sections.course_id = courses.course_id
 		";
 		
 		$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
-		//$stmt->bind_param("i", $course_id);
 		$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 		
-		$stmt->bind_result($section_id, $year_offered, $course_name);
-		
-		$course = "";
-		
-		//different notepad code
-		if ($course_name == 1) {
-			$course = "checked";
-		}
-		while($stmt->fetch()){
+		$stmt->bind_result($section_id, $course_name, $section_number, $year_offered);
+				
+		while($stmt->fetch()){		
+			$sect = "";
+			
+			if (in_array($section_id, $regsect)) {
+					$sect = "checked";
+			}
+			
 			echo "
-				<td><input type='checkbox' name='courses[]' value='$course'>$course_name</td><br>
+				<td>
+					<input type='checkbox' name='checkedcourses[]' value='$section_id'$sect>
+					<input type='hidden' name='allcourses[]' value='$section_id'>
+					$course_name
+					$section_number
+					$year_offered
+				</td><br>
 			";
 		}
+		
 	?>
-	
-	<!--<td><input type='checkbox' name='courses[]' value='$course_id'$course></td>-->
-	
+		
 	<input type='submit' value='Update'>
 </form>
 <h2>Change Password</h2>

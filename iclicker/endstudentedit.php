@@ -12,9 +12,11 @@
 	$email = $_POST["email"];
 	
 	$query = "
-		SELECT student_id FROM students WHERE
-		username = ? AND
-		password = ?;
+		SELECT student_id 
+		FROM students 
+		WHERE 1
+		AND username = ? 
+		AND	password = ?;
 	";
 
 	$stmt = $conn->prepare($query) or die("Couldn't execute 'student_id' query. " . $conn->error);
@@ -23,15 +25,60 @@
 
 	$stmt->bind_result($student_id);
 	$stmt->fetch();
-	$stmt->close();
-	
-	// $result = $stmt->get_result();
-	// $row = $result->fetch_array(MYSQLI_ASSOC);
-	
-	// $student_id = $row["student_id"];
+	$stmt->close();	
 	
 	$query = "
-		UPDATE students SET email = ?, school_id = ? WHERE student_id = ?;
+		SELECT section_id
+		FROM registrations
+		WHERE student_id = ?
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("i", $student_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	
+	$stmt->bind_result($section_id);
+	
+	$regsect = array();
+	while ($stmt->fetch()){
+		array_push($regsect, $section_id);
+	};				
+	
+	$sect = $_POST["checkedcourses"];
+	
+	foreach ($sect as $section_id) {//for each section_id that is checked 
+		if (!in_array($section_id, $regsect)) {	//if section_id is not registered insert into db
+			$query = "
+				INSERT INTO registrations (student_id, section_id)
+				VALUES (?, ?)
+			";
+				
+			$stmt = $conn->prepare($query) or die("Couldn't prepare  query. " . $conn->error);
+			$stmt->bind_param("ii", $student_id, $section_id);
+			$stmt->execute() or die("Couldn't execute 'new' query. " . $conn->error);
+			$stmt->close();
+		}
+	}
+	
+	foreach ($regsect as $section_id) {//for each section_id that is not checked 
+		if (!in_array($section_id, $sect)) {	//if section_id is not registered insert into db
+			$query = "
+				DELETE FROM registrations 
+				WHERE 1
+				AND student_id = ? 
+				AND section_id = ?
+			";
+				
+			$stmt = $conn->prepare($query) or die("Couldn't prepare  query. " . $conn->error);
+			$stmt->bind_param("ii", $student_id, $section_id);
+			$stmt->execute() or die("Couldn't execute 'new2' query. " . $conn->error);
+			$stmt->close();
+		}
+	}
+	$query = "
+		UPDATE students 
+		SET email = ?, school_id = ? 
+		WHERE student_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't execute 'email' query. " . $conn->error);

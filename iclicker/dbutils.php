@@ -114,7 +114,7 @@ function lookupSectionID($student_id) {
 
 function createAnswers($conn, $student_id, $section_id) {
 	$query="
-		create temporary table answercounts
+		create temporary table answercounts$section_id
 		SELECT s.session_id, s.session_tag, s.session_date, r.student_id, count(*) AS answers
 		FROM responses r, questions q, sessions s
 		WHERE 1
@@ -136,7 +136,7 @@ function createAnswers($conn, $student_id, $section_id) {
 
 function createCorrectCounts($conn, $student_id, $section_id) {
 	$query="
-		create temporary table correctCounts
+		create temporary table correctCounts$section_id
 		SELECT s.session_id, s.session_date, s.session_tag, r.student_id, count(*) AS numcorrect
 		FROM questions q, responses r, sessions s
 		WHERE 1
@@ -157,7 +157,7 @@ function createCorrectCounts($conn, $student_id, $section_id) {
 
 function createQcounts($conn, $section_id) {
 	$query="
-		create temporary table qcounts
+		create temporary table qcounts$section_id
 		SELECT s.session_id, s.session_tag, s.session_date, count(*) AS count
 		FROM sessions s, questions q
 		WHERE 1
@@ -196,10 +196,10 @@ function printClickerParticipation($conn, $student_id, $section_id) {
 	
 	$query="
 		SELECT q.session_id, q.session_tag, q.session_date, q.count, a.answers, a.answers/q.count, c.numcorrect
-		FROM qcounts q 
-		LEFT OUTER JOIN answercounts a
+		FROM qcounts$section_id q 
+		LEFT OUTER JOIN answercounts$section_id a
 		ON q.session_id = a.session_id
-		LEFT OUTER JOIN correctCounts c
+		LEFT OUTER JOIN correctCounts$section_id c
 		ON q.session_id = c.session_id
 		ORDER BY q.session_tag asc
 	";
