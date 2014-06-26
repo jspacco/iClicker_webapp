@@ -4,7 +4,7 @@
 	require_once("loginutils.php");
 	$conn = connect();
 	
-	createHeader("Reset Password", false);
+	createHeader("Reset Password", false, false);
 	
 	if (isset($_POST["username"])) {
 		// they're resetting their password

@@ -47,7 +47,7 @@ function createHeader($title, $includeLogout = true, $extra = "") {
 			</html>
 		";
 	}
-	
+
 	function endOutput($endMessage){
 		ignore_user_abort(true);
 		set_time_limit(0);

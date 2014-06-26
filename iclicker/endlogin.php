@@ -18,7 +18,7 @@
 		header("Location: home.php");
 	}
 	
-	createHeader("End Login", false);
+	createHeader("End Login", false, false);
 ?>
 <body>
 	<div>

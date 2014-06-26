@@ -19,7 +19,7 @@
 		header("Location: " . $redirect);
 	}
 	
-	createHeader("Online i<Clicker Questions", false);
+	createHeader("Online i<Clicker Questions", false, false);
 ?>
 <body>
 	<div style="text-align: left;">
