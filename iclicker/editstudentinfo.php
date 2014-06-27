@@ -50,19 +50,24 @@
 	$stmt->close();
 	
 ?>
-<h2>Update Information</h2>
+<h2>
+	Update Information
+</h2>
+
 <form action="endstudentedit.php" method="post">
 	School ID: <input type='text' name='school_id' value=<?php echo $school_id; ?>><br>
 	Email: <input type='text' name='email' value=<?php echo $email; ?>><br>
 	Select the course(s) you are enrolled in...<br>
-	<table>
+		<div>
+		<table class = 'collection'>
 		<tr>
 			<th>Enrolled?</th>
 			<th>Course</th>
 			<th>Section</th>
 			<th>Year Offered</th>
 		</tr>
-	</table>
+		
+	
 	<?php
 		$query = "
 			SELECT section_id, student_id
@@ -102,18 +107,19 @@
 			}
 			
 			echo "
-				<td>
-					<input type='checkbox' name='checkedcourses[]' value='$section_id'$sect>
-					<input type='hidden' name='allcourses[]' value='$section_id'>
-					$course_name
-					$section_number
-					$year_offered
-				</td><br>
+			<tr>
+				<td><input type='checkbox' name='checkedcourses[]' value='$section_id'$sect></td>
+				<td><input type='hidden' name='allcourses[]' value='$section_id'></td>
+				<td>$course_name</td>
+				<td>$section_number</td>
+				<td>$year_offered</td>
+			</tr>
 			";
 		}
 		
 	?>
-		
+	</table>
+	</div>	
 	<input type='submit' value='Update'>
 </form>
 <h2>Change Password</h2>

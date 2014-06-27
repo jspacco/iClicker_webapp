@@ -23,8 +23,9 @@
 	$question_id = $_GET["question_id"];
 	
 	$query = "
-		SELECT question_number, question_name, screen_picture, chart_picture, correct_answer, start_time, stop_time FROM questions WHERE
-		question_id = ?;
+		SELECT question_number, question_name, screen_picture, chart_picture, correct_answer, start_time, stop_time 
+		FROM questions 
+		WHERE question_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare questions query. " . $conn->error);
@@ -53,8 +54,8 @@
 				</tr>
 			</table>
 			<br>
-			<img src='pictures/" . $chart_picture . "' alt='Chart of responses' width='350' height='200'>
-			<img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='350' height='200'>
+			<img src='pictures/$section_id/" . $chart_picture . "' alt='Chart of responses' width='350' height='200'>
+			<img src='pictures/$section_id/" . $screen_picture . "' alt='Picture of screen' width='350' height='200'>
 		";
 	}
 	$stmt->close();
@@ -79,9 +80,11 @@
 	<tbody>
 <?php
 	$query = "
-		SELECT school_id, iclicker_id, last_name, first_name, number_of_attempts, first_response, time, response, final_answer_time FROM students, responses WHERE
-		students.student_id = responses.student_id AND
-		responses.question_id = ?;
+		SELECT school_id, iclicker_id, last_name, first_name, number_of_attempts, first_response, time, response, final_answer_time 
+		FROM students, responses 
+		WHERE 1
+		AND students.student_id = responses.student_id 
+		AND	responses.question_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare responses query. " . $conn->error);
@@ -89,8 +92,6 @@
 	$stmt->execute() or die("Couldn't execute responses query. " . $conn->error);
 	
 	$stmt->bind_result($school_id, $iclicker_id, $last_name, $first_name, $number_of_attempts, $first_response, $time, $response, $final_answer_time);
-
-	// $result = $stmt->get_result();
 	
 	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 		echo "

@@ -91,15 +91,15 @@ function currentWeek($session_date, $dayOne) {
 }
 
 function td($str) {
-	return "<td> $str </td>";
+	return "<td> $str </td>\n";
 }
 
 function th($str) {
-	return "<th> $str </th>";
+	return "<th> $str </th>\n";
 }
 
 function tr($str) {
-	return "<tr> $str </tr>";
+	return "<tr> $str </tr>\n";
 }
 
 ?>

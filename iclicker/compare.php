@@ -162,16 +162,16 @@
 	echo "
 			<tr>
 				<td>Individual Vote</td>
-				<td><a href='pictures/" . $iv_screen_picture . "' title='Picture of screen' data-lightbox='" . $iv_id . "'><img src='pictures/" . $iv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
-				<td><a href='pictures/" . $iv_chart_picture . "' title='Chart of responses' data-lightbox='" . $iv_id . "'><img src='pictures/" . $iv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
+				<td><a href='pictures/$section_id/" . $iv_screen_picture . "' title='Picture of screen' data-lightbox='" . $iv_id . "'><img src='pictures/$section_id/" . $iv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+				<td><a href='pictures/$section_id/" . $iv_chart_picture . "' title='Chart of responses' data-lightbox='" . $iv_id . "'><img src='pictures/$section_id/" . $iv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
 				<td>" . $iv_correct_answer . "</td>
 				<td>" . $iv_correct . "/" . count($iv_votes) . "</td>
 				<td>" . $iv_online_correct . "/" . count($iv_online) . "</td>
 			</tr>
 			<tr>
 				<td>Group Vote</td>
-				<td><a href='pictures/" . $gv_screen_picture . "' title='Picture of screen' data-lightbox='" . $gv_id . "'><img src='pictures/" . $gv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
-				<td><a href='pictures/" . $gv_chart_picture . "' title='Chart of responses' data-lightbox='" . $gv_id . "'><img src='pictures/" . $gv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
+				<td><a href='pictures/$section_id/" . $gv_screen_picture . "' title='Picture of screen' data-lightbox='" . $gv_id . "'><img src='pictures/$section_id/" . $gv_screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+				<td><a href='pictures/$section_id/" . $gv_chart_picture . "' title='Chart of responses' data-lightbox='" . $gv_id . "'><img src='pictures/$section_id/" . $gv_chart_picture . "' alt='Chart of responses' width='175' height='100'></td>
 				<td>" . $gv_correct_answer . "</td>
 				<td>" . $gv_correct . "/" . count($gv_votes) . "</td>
 				<td>" . $gv_online_correct . "/" . count($gv_online) . "</td>

@@ -121,8 +121,8 @@ while ($stmt->fetch()) {
 <tr>
 	<td></td>
 	<td>$question_number</td>
-	<td><a href='pictures/$screen_picture' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$screen_picture' alt='Picture of screen' width='175' height='100'></td>
-	<td><a href='pictures/$chart_picture' title='Chart of responses' data-lightbox='$question_id'><img src='pictures/$chart_picture' alt='Chart of responses' width='175' height='100'></td>
+	<td><a href='pictures/$section_id/$screen_picture' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$section_id/$screen_picture' alt='Picture of screen' width='175' height='100'></td>
+	<td><a href='pictures/$section_id/$chart_picture' title='Chart of responses' data-lightbox='$question_id'><img src='pictures/$section_id/$chart_picture' alt='Chart of responses' width='175' height='100'></td>
 <td><input type='checkbox' name='questions[]' value='$question_id' $checked></td>
 </tr>
 ";

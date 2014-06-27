@@ -14,9 +14,11 @@
 	$question_id = $_GET["question_id"];
 	
 	$query = "
-		SELECT student_id FROM students WHERE
-		username = ? AND
-		password = ?;
+		SELECT student_id 
+		FROM students 
+		WHERE 1
+		AND username = ? 
+		AND	password = ?;
 	";
 
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'student_id' query. " . $conn->error);
@@ -39,8 +41,9 @@
 <?php
 	// we do this with multiple queries in case they didn't answer the question in class
 	$query = "
-		SELECT screen_picture, correct_answer FROM questions WHERE
-		question_id = ?;
+		SELECT screen_picture, correct_answer 
+		FROM questions 
+		WHERE question_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'question' query. " . $conn->error);
@@ -52,9 +55,11 @@
 	$stmt->close();
 	
 	$query = "
-		SELECT response FROM responses WHERE
-		question_id = ? AND
-		student_id = ?;
+		SELECT response 
+		FROM responses 
+		WHERE 1
+		AND question_id = ? 
+		AND	student_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'response' query. " . $conn->error);
@@ -66,10 +71,12 @@
 	$stmt->close();
 	
 	$query = "
-		SELECT response FROM onlineresponses WHERE
-		question_id = ? AND
-		student_id = ? AND
-		end_time < (SELECT due FROM assignments WHERE assignment_id = ?)
+		SELECT response 
+		FROM onlineresponses 
+		WHERE 1
+		AND question_id = ? 
+		AND	student_id = ? 
+		AND	end_time < (SELECT due FROM assignments WHERE assignment_id = ?)
 		ORDER BY end_time DESC LIMIT 1;
 	";
 	
@@ -82,9 +89,11 @@
 	$stmt->close();
 	
 	$query = "
-		SELECT response FROM onlineresponses WHERE
-		question_id = ? AND
-		student_id = ?
+		SELECT response 
+		FROM onlineresponses 
+		WHERE 1
+		AND question_id = ? 
+		AND	student_id = ?
 		ORDER BY end_time DESC LIMIT 1;
 	";
 	
@@ -98,7 +107,7 @@
 	
 	echo "
 		<tr>
-			<td><a href='pictures/" . $screen_picture . "' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/" . $screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
+			<td><a href='pictures/$section_id/" . $screen_picture . "' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$section_id/" . $screen_picture . "' alt='Picture of screen' width='175' height='100'></td>
 			<td>$correct_answer</td>
 			<td>$response</td>
 			<td>$beforeonlineresponse</td>
@@ -110,8 +119,9 @@
 <br>
 <?php
 	$query = "
-		SELECT assignment_id, question_id FROM assignmentstoquestions WHERE
-		atq_id IN (SELECT next_question FROM assignmentstoquestions WHERE assignment_id = ? AND question_id = ?);
+		SELECT assignment_id, question_id 
+		FROM assignmentstoquestions 
+		WHERE atq_id IN (SELECT next_question FROM assignmentstoquestions WHERE assignment_id = ? AND question_id = ?);
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'next_question' query. " . $conn->error);

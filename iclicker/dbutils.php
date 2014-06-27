@@ -194,7 +194,22 @@ function printClickerParticipation($conn, $student_id, $section_id) {
 	$stmt->fetch();
 	$stmt->close();
 	
-	$query="
+	$query = "
+		SELECT course_name, section_number 
+		FROM courses, sections 
+		WHERE 1
+		AND section_id = ?
+		AND courses.course_id = sections.course_id
+	";
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("i", $section_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	
+	$stmt->bind_result($course_name, $section_number);
+	$stmt->fetch();
+	$stmt->close();
+	
+	$query = "
 		SELECT q.session_id, q.session_tag, q.session_date, q.count, a.answers, a.answers/q.count, c.numcorrect
 		FROM qcounts$section_id q 
 		LEFT OUTER JOIN answercounts$section_id a
@@ -209,6 +224,7 @@ function printClickerParticipation($conn, $student_id, $section_id) {
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	$stmt->bind_result($session_id, $session_tag, $session_date, $qcount, $answers, $pct, $numcorrect);	
 	
+	echo "$course_name $section_number";
 	echo "<table border=1><tr>";
 	echo th('day');
 	echo th('date');
@@ -242,6 +258,7 @@ function printClickerParticipation($conn, $student_id, $section_id) {
 		}
 		echo "</tr>";
 	}
+	echo "</table>";
 	$stmt->close();
 
 }
@@ -252,7 +269,7 @@ function getSectionIdByStudentId($conn, $student_id) {
 		FROM registrations
 		WHERE student_id = ?
 	";
-	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'getSectionIdByStudentId' query. " . $conn->error);
 	$stmt->bind_param("i", $student_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	$stmt->bind_result($section_id);
@@ -260,6 +277,27 @@ function getSectionIdByStudentId($conn, $student_id) {
 	$stmt->close();
 	return $section_id;
 }
+
+function getSectionIdByAssignmentId($conn, $assignment_id) {
+
+$query = "
+		SELECT section_id
+		FROM assignments
+		WHERE assignment_id = ?
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'getSectionIdByAssignmentId' query. " . $conn->error);
+	$stmt->bind_param("i", $assignment_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->bind_result($section_id);
+	$stmt->fetch();
+	$stmt->close();
+	return $section_id;
+	
+}
+
+
+
 /**s
 function deselectCheckbox(obj) {
    var fries = document.getElementsByName('fries');

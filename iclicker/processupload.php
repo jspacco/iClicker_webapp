@@ -7,7 +7,22 @@ $conn = connect();
 checkAdmin($conn);
 
 // Let's assume that the section ID is a post parameter
-$section_id=$_POST['section_id'];
+/*
+How to increase memory in php.ini:
+
+http://stackoverflow.com/questions/4399138/upper-memory-limit-for-php-apache
+
+How to do error checking for the file upload and post sizes:
+
+http://www.flynsarmy.com/2013/10/_files-and-_post-empty-in-php-when-uploading-large-files/
+
+Eventually we want clearer error messages about this.
+*/
+
+if (empty($_FILES) || empty($_POST) ){
+	echo "Error" . ini_get("upload_max_filesize") . "    " . ini_get("memory_limit") . "    " . ini_get("post_max_size");
+}
+$section_id = $_POST['section_id']; 
 
 createHeader("Submitting upload...", true, "<a href=\"section.php?section_id=$section_id\"> Back to Sessions and Assignments</a>");
 
@@ -202,9 +217,11 @@ while ($zip_entry = zip_read($zip)) {
 
 					// Is this actually asking for last_update_id()?
 					$query = "
-										SELECT session_id FROM sessions WHERE
-										section_id = ? AND
-										session_date = ? ;
+										SELECT session_id 
+										FROM sessions 
+										WHERE 1
+										AND section_id = ? 
+										AND session_date = ? ;
 									";
 									
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'sessions select id' statement. " . $conn->error);
@@ -377,9 +394,11 @@ while ($zip_entry = zip_read($zip)) {
 					$question_number = ($i % $num_questions) + 1;
 									
 					$query = "
-										SELECT question_id FROM questions WHERE
-										session_id = ? AND
-										question_number = ?;
+										SELECT question_id 
+										FROM questions 
+										WHERE 1
+										AND session_id = ? 
+										AND	question_number = ?;
 									";
 									
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions select' statement. " . $conn->error);
@@ -415,10 +434,13 @@ while ($zip_entry = zip_read($zip)) {
 				$res = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
 				if ($res !== FALSE && $res !== "") {
 					$path = pathinfo(zip_entry_name($zip_entry));
-					$dest = "pictures/" . $path["basename"];
-								
+					if (!file_exists("pictures/$section_id")){
+						mkdir ("pictures/$section_id");
+					}
+					
+					$dest = "pictures/$section_id/" . $path["basename"];
 					echo "Copying " . zip_entry_name($zip_entry) . " to " . $dest . ".<br>";
-								
+													
 					file_put_contents($dest, $res);
 					chmod($dest, 0744);
 				}
