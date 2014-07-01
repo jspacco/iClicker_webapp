@@ -1,5 +1,0 @@
-DELETE questions.*, responses.*, sessions.*
-FROM questions, responses, sessions
-WHERE questions.question_id = responses.question_id
-AND questions.session_id = sessions.session_id
-AND sessions.section_id = 5;
