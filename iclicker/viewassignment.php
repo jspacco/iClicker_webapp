@@ -13,7 +13,9 @@
 	$assignment_id = $_GET["assignment_id"];
 	
 	$query = "
-		SELECT section_id, due FROM assignments WHERE assignment_id = ?;
+		SELECT section_id, due 
+		FROM assignments 
+		WHERE assignment_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'assignments' query. " . $conn->error);
@@ -30,7 +32,7 @@
 		<td><?php echo DateFromUTC($due); ?></td>
 	</tr>
 </table>
-<h2>Questions</h2>
+<h1>Questions</h1>
 <table class="collection">
 	<tr>
 		<th>Number</th>
@@ -38,9 +40,11 @@
 	</tr>
 <?php
 	$query = "
-		SELECT student_id FROM students WHERE
-		username = ? AND
-		password = ?;
+		SELECT student_id 
+		FROM students 
+		WHERE 1
+		AND username = ? 
+		AND	password = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'student_id' query. " . $conn->error);
@@ -52,8 +56,9 @@
 	$stmt->close();
 	
 	$query = "
-		SELECT question_id FROM assignmentstoquestions WHERE
-		assignmentstoquestions.assignment_id = ?;
+		SELECT question_id 
+		FROM assignmentstoquestions 
+		WHERE assignmentstoquestions.assignment_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions' query. " . $conn->error);
@@ -72,11 +77,13 @@
 	$i = 1;
 	foreach ($questions as $question_id) {
 		$query = "
-			SELECT response FROM onlineresponses WHERE
-			question_id = ?	AND
-			student_id = ?;
+			SELECT response 
+			FROM onlineresponses 
+			WHERE 1
+			AND question_id = ?	
+			AND	student_id = ?;
 		";
-		
+
 		$stmt = $conn->prepare($query) or die("Couldn't prepare 'responses' query. " . $conn->error);
 		$stmt->bind_param("ii", $question_id, $student_id);
 		$stmt->execute() or die("Couldn't execute 'responses' query. " . $conn->error);

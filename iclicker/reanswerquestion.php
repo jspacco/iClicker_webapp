@@ -29,12 +29,10 @@ createHead("Reanswer Question", false);
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute 'select' query. " . $conn->error);
 	
-	$stmt->bind_result($question_name, $screen_picture);
-	
+	$stmt->bind_result($question_name, $screen_picture);	
 	$stmt->fetch();
-	
 	$stmt->close();
-
+	
 	//	$conn->close();
 	
 	$start_time = time();
@@ -51,8 +49,8 @@ createHead("Reanswer Question", false);
 	
 	$stmt->bind_result($display_screen);
 	$stmt->fetch();
-	$conn->close();
-
+	$stmt->close();
+	
 	echo "<div ";
 	if ($display_screen == 'right'){
 		echo "class=rightcrop";
@@ -62,11 +60,45 @@ createHead("Reanswer Question", false);
 		//Do nothing -> full screen
 	}
 	echo ">";
+	
+	$section_id = getSectionIdByAssignmentId($conn, $assignment_id);
+	
+	$query = "
+		SELECT min(atq_id)
+		FROM assignmentstoquestions 
+		WHERE assignment_id = ?
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'atq_id' query. " . $conn->error);
+	$stmt->bind_param("i", $assignment_id);
+	$stmt->execute() or die("Couldn't execute 'atq_id' query. " . $conn->error);
+
+	$stmt->bind_result($min_atq_id);
+	$stmt->fetch();
+	$stmt->close();	
+	
+	$query = "
+		SELECT atq_id
+		FROM assignmentstoquestions
+		WHERE assignment_id = ? AND question_id = ?
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'atq_id' query. " . $conn->error);
+	$stmt->bind_param("ii", $assignment_id, $question_id);
+	$stmt->execute() or die("Couldn't execute 'atq_id' query. " . $conn->error);
+
+	$stmt->bind_result($atq_id);
+	$stmt->fetch();
+	$stmt->close();	
+	$conn->close();
+	
+	$begin_atq = $atq_id - $min_atq_id + 1;
+
+	
 ?>
 
-<h1><?=$question_name?></h1>
-<div class=>
-	<img src="pictures/<?=$screen_picture?>" width="700px" height="500px"/>
+<h1><?="Question #$begin_atq"?></h1>
+	<img src="<?="pictures/$section_id/$screen_picture"?>" width="700px" height="500px"/>
 
 	<form action="submitreanswer.php" method="post">
 	<fieldset>
@@ -111,7 +143,6 @@ createHead("Reanswer Question", false);
 </html>
 
 <?php
-
 	//createFooter(false);
 
 /*

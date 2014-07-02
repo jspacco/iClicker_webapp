@@ -10,8 +10,6 @@ if (!isCookieValidLoginWithType($conn, "admin")) {
 
 $session_id=$_POST['session_id'];
 
-// TODO: Does this unignore ALL questions?
-// We should only unignore for this session, right?
 $query = "
 		UPDATE questions 
 		SET ignore_question = 0, single_question = 0
@@ -102,9 +100,7 @@ if (isset($_POST["id"])) {
 			$answer = $answer . 'E,';
 			
 		$answer = trim($answer, ",");
-			
-		//echo "Updating question ID = " . $id . " set to: " . $answer . "<br>";
-			
+						
 		$query = "
 				UPDATE questions 
 				SET correct_answer = ? 

@@ -14,9 +14,13 @@
 	$assignment_id = $_GET["assignment_id"];
 ?>
 <?php
+
+	$section_id = getSectionIdByAssignmentId($conn, $assignment_id);
+	
 	$query = "
-		SELECT question_id FROM assignmentstoquestions WHERE
-		assignment_id = ?;
+		SELECT question_id 
+		FROM assignmentstoquestions 
+		WHERE assignment_id = ?;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions' query. " . $conn->error);
@@ -63,7 +67,7 @@
 				<td>Question $arr[question_number] </td>
 				<td> $arr[question_name] </td>
 				<td> $arr[correct_answer] </td>
-				<td><a href='pictures/$arr[screen_picture]' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$arr[screen_picture]' alt='Picture of screen' width='175' height='100'></td>
+				<td><a href='pictures/$section_id/$arr[screen_picture]' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$section_id/$arr[screen_picture]' alt='Picture of screen' width='175' height='100'></td>
 		";
 		
 		$query = "

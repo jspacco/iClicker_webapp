@@ -83,11 +83,13 @@ table.collection tr a
 	display: block;
 	padding: 0px;
 	height: 100%;
+	text-align: center;
 }
 table.collection td a
 {
 	text-decoration: none;
 	color: #00a0b0;
+	text-align: center;
 }
 
 table.tablesorter {

@@ -12,7 +12,7 @@
 ?>
 <body>
 	<div>
-		<h2>Courses</h2>
+		<h1>Courses</h1>
 		<table class='collection'>
 			<tr>
 				<th>Name</th>
@@ -34,8 +34,10 @@
 			</tr>
 		";
 	}
+
 ?>
 		</table>
+		<a href='createnewcourse.php?'>Create New Course</a>
 	</div>
 </body>
 <?php

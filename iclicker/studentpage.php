@@ -23,7 +23,7 @@
 	$stmt->fetch();
 	$stmt->close();
 ?>
-<h2>Assignments</h2>
+<h1>Assignments</h1>
 <table class='collection'>
 	<tr>
 		<th>Answered</th>
@@ -80,20 +80,7 @@
 		$stmt->execute() or die("Couldn't execute 'responses' query. " . $conn->error);
 		$stmt->store_result();
 		$answercount = mysqli_stmt_num_rows($stmt);
-		/*
-		$query = "
-			SELECT registrations.section_id, sections.section_id, assignment.section_id
-			FROM registrations, sections, assignments, 
-		";
 		
-		$stmt = $conn->prepare($query) or die("Couldn't prepare 'new' query. " . $conn->error);
-		$stmt->bind_param("i", $student_id);
-		$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
-	
-		$stmt->bind_result($section_id);
-		$stmt->store_result();
-		*/
-		//if(sections.section_id = assignments.section_id){
 			echo "
 				<tr>
 					<td><a href='viewassignment.php?assignment_id=$assignment_id'>$answercount</a></td>
@@ -101,7 +88,6 @@
 					<td><a href='viewassignment.php?assignment_id=$assignment_id'>" . DateFromUTC($due) . "</a></td>
 				</tr>
 			";
-		//}
 		$stmt->close();
 	}
 
@@ -121,18 +107,12 @@
 	$stmt->store_result();
 
 	while ($stmt->fetch()) {
-		echo "Course Section ID: '$section_id'<br>";
 		printClickerParticipation($conn, $student_id, $section_id);
 	}
 
 	echo "
 	<br>
-	<p>
 	<a href='editstudentinfo.php'>Edit Info</a>
-	<br>
-	<a href='viewstudentinfo.php?student_id=$student_id&section_id=$section_id'>View Student Info</a>
-	</p>
-	<br>
 	";
 
 	$stmt->close();
