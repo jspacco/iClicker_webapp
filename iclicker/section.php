@@ -19,7 +19,7 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 
 	<div>
 		<a href='adminsettings.php?section_id=<?=$section_id?>'>Settings</a>
-		<h2>Sessions</h2>
+		<h1>Sessions</h1>
 		<table>
 <?php	
 	$query = "
@@ -93,7 +93,7 @@ $stmt->bind_result($session_id, $session_date, $post_processed);
 </table>
 <br>
 <b><a href="uploadform.php?section_id=<?= $section_id ?>"> Upload new session(s) </a></b>
-<h2>Assignments</h2>
+<h1>Assignments</h1>
 <table class='collection'>
 	<tr>
 		<th>Number of Questions</th>
@@ -139,7 +139,7 @@ $stmt->bind_result($session_id, $session_date, $post_processed);
 <br>
 <a href='createassignment.php?section_id=<?php echo $section_id; ?>'>Create Assignment</a>
 <br>
-<h2>Students</h2>
+<h1>Students</h1>
 <table class='collection'>
 	<tr>
 		<th>School ID</th>

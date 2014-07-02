@@ -56,7 +56,7 @@
 
 <form action="endstudentedit.php" method="post">
 	School ID: <input type='text' name='school_id' value=<?php echo $school_id; ?>><br>
-	Email: <input type='text' name='email' value=<?php echo $email; ?>><br>
+	Email: <input type='text' name='email' value=<?php echo $email; ?>><br><br>
 	Select the course(s) you are enrolled in...<br>
 		<div>
 		<table class = 'collection'>

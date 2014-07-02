@@ -224,8 +224,10 @@ function printClickerParticipation($conn, $student_id, $section_id) {
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	$stmt->bind_result($session_id, $session_tag, $session_date, $qcount, $answers, $pct, $numcorrect);	
 	
-	echo "$course_name $section_number";
-	echo "<table border=1><tr>";
+	echo "<div align='center'>";
+	echo "<h1>$course_name $section_number</h1>";
+	echo "</div>";
+	echo "<table border=1 align='center'><tr>";
 	echo th('day');
 	echo th('date');
 	echo th('tag');

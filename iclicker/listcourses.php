@@ -17,7 +17,7 @@ $stmt->bind_result($course_name, $course_id);
 
 echo "course_name\tsection_id\n";
 while ($stmt->fetch()) {
-	echo "$course_name\t$course_id\n";
+	echo "\n$course_name\t$course_id\n";
 }
 
 ?>

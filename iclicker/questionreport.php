@@ -28,6 +28,8 @@
 	$stmt->bind_result($student_id);
 	$stmt->fetch();
 	$stmt->close();
+	
+	$section_id = getSectionIdByStudentId($conn, $student_id);
 ?>
 <h1>Question Report</h1>
 <table>

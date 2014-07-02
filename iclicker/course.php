@@ -24,7 +24,7 @@
 ?>
 <body>
 	<div>
-		<h2>Sections</h2>
+		<h1>Sections</h1>
 		<table class='collection'>
 			<tr>
 				<th>Section Number</th>

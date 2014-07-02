@@ -23,7 +23,7 @@
 	$stmt->fetch();
 	$stmt->close();
 ?>
-<h2>Assignments</h2>
+<h1>Assignments</h1>
 <table class='collection'>
 	<tr>
 		<th>Answered</th>
@@ -88,7 +88,6 @@
 					<td><a href='viewassignment.php?assignment_id=$assignment_id'>" . DateFromUTC($due) . "</a></td>
 				</tr>
 			";
-		//}
 		$stmt->close();
 	}
 
@@ -108,12 +107,7 @@
 	$stmt->store_result();
 
 	while ($stmt->fetch()) {
-		//echo "1";
-		//echo "Course Section ID: '$section_id'<br>";
-		//echo "2";
 		printClickerParticipation($conn, $student_id, $section_id);
-		//echo "Course Section ID: '$section_id'<br>";
-		//echo "3";
 	}
 
 	echo "

@@ -32,7 +32,7 @@
 		<td><?php echo DateFromUTC($due); ?></td>
 	</tr>
 </table>
-<h2>Questions</h2>
+<h1>Questions</h1>
 <table class="collection">
 	<tr>
 		<th>Number</th>
