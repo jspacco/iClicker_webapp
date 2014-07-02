@@ -19,7 +19,7 @@ def main():
             import configparser
             config = configparser.ConfigParser()
 
-        config.read("sessions-config.ini")
+        config.read("zipsessions-config.ini")
 
         if len(sys.argv) > 1:
                 selectedCourse=sys.argv[1]
