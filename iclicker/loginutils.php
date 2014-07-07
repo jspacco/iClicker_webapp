@@ -20,16 +20,20 @@
 		switch ($type) {
 			case "admin":
 				$query = "
-					SELECT user_id FROM users WHERE
-					username = ? AND
-					password = ?;
+					SELECT user_id 
+					FROM users 
+					WHERE 1
+					AND username = ? 
+					AND	password = ?;
 				";
 				break;
 			case "student":
 				$query = "
-					SELECT student_id FROM students WHERE
-					username = ? AND
-					password = ?;
+					SELECT student_id 
+					FROM students 
+					WHERE 1
+					AND username = ? 
+					AND	password = ?;
 				";
 				break;
 			default:

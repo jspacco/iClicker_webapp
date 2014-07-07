@@ -33,10 +33,7 @@ function getSectionForCourseId($conn, $course_id) {
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	
 	$stmt->bind_result($section_id);
-	if (!$stmt->fetch()) {
-		// raise an error
-		//exit("No section exists for course_id $course_id");
-	}
+	$stmt->fetch();
 	$stmt->close();
 	return $section_id;
 }
@@ -55,6 +52,39 @@ function countSectionsByCourseId($conn, $course_id) {
 	$stmt->bind_result($count);
 	$stmt->fetch();
 	return $count;
+}
+
+function countSectionsByUserId($conn, $course_id) {
+	// Returns: $count
+	$query = "
+		SELECT count(*) 
+		FROM adminregistrations 
+		WHERE course_id = ?;
+	";
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("i", $course_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	
+	$stmt->bind_result($count);
+	$stmt->fetch();
+	return $count;
+}
+
+function getUserForCourseId($conn, $course_id) {
+	// Returns: $user_id
+	$query = "
+		SELECT user_id
+		FROM adminregistrations 
+		WHERE course_id = ?;
+	";
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("i", $course_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	
+	$stmt->bind_result($user_id);
+	$stmt->fetch();
+	$stmt->close();
+	return $user_id;
 }
 
 function lookupSessionBySessionId($conn, $session_id) {
@@ -282,7 +312,7 @@ function getSectionIdByStudentId($conn, $student_id) {
 
 function getSectionIdByAssignmentId($conn, $assignment_id) {
 
-$query = "
+	$query = "
 		SELECT section_id
 		FROM assignments
 		WHERE assignment_id = ?
@@ -297,8 +327,6 @@ $query = "
 	return $section_id;
 	
 }
-
-
 
 /**s
 function deselectCheckbox(obj) {

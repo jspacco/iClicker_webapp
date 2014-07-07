@@ -7,8 +7,24 @@
 	if (!isCookieValidLoginWithType($conn, "admin")) {
 		header("Location: home.php");
 	}
+
+	$query = "
+		SELECT user_id 
+		FROM users 
+		WHERE 1
+		AND username = ? 
+		AND	password = ?
+	";
 	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'user_id' query. " . $conn->error);
+	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->bind_result($user_id);
+	$stmt->fetch();
+	$stmt->close();
+
 	createHeader("Courses");
+	
 ?>
 <body>
 	<div>
@@ -19,21 +35,32 @@
 				<th>Number</th>
 			</tr>
 <?php
+
 	$query = "
-		SELECT course_id, course_name, course_number 
-		FROM courses;
+		SELECT courses.course_id, course_name, course_number 
+		FROM courses, sections, adminregistrations
+		WHERE 1
+		AND sections.course_id = courses.course_id
+		AND sections.section_id = adminregistrations.section_id
+		AND user_id = ?
 	";
 	
-	$result = $conn->query($query) or die("Couldn't execute query. " . $conn->error);
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'user_id' query. " . $conn->error);
+	$stmt->bind_param("i", $user_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->bind_result($course_id, $course_name, $course_number);
 	
-	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+	while ($stmt->fetch()) {
+	
 		echo "
 			<tr>
-				<td><a href='course.php?course_id=" . $row["course_id"] . "'>" . $row["course_name"] . "</a></td>
-				<td><a href='course.php?course_id=" . $row["course_id"] . "'>" . $row["course_number"] . "</a></td>
+				<td><a href=course.php?course_id=$course_id</a>$course_name</td>
+				<td><a href=course.php?course_id=$course_id</a>$course_number</td>
 			</tr>
+			
 		";
 	}
+	$stmt->close();
 
 ?>
 		</table>
