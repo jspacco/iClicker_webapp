@@ -3,16 +3,34 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 12, 2014 at 08:45 PM
+-- Generation Time: Jul 07, 2014 at 04:11 PM
 -- Server version: 5.5.24-log
 -- PHP Version: 5.4.3
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
 --
 -- Database: `cs147`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `adminregistrations`
+--
+
+CREATE TABLE IF NOT EXISTS `adminregistrations` (
+  `user_id` int(11) NOT NULL,
+  `section_id` int(10) unsigned NOT NULL,
+  `course_id` int(10) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -25,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `assignments` (
   `section_id` int(11) NOT NULL,
   `due` int(20) NOT NULL,
   PRIMARY KEY (`assignment_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -39,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `assignmentstoquestions` (
   `question_id` int(11) NOT NULL,
   `next_question` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`atq_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=45 ;
 
 -- --------------------------------------------------------
 
@@ -52,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `courses` (
   `course_name` varchar(100) NOT NULL,
   `course_number` varchar(10) NOT NULL,
   PRIMARY KEY (`course_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -87,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `ignore_question` tinyint(1) NOT NULL DEFAULT '0',
   `single_question` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`question_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1896 ;
 
 -- --------------------------------------------------------
 
@@ -129,8 +147,10 @@ CREATE TABLE IF NOT EXISTS `sections` (
   `course_id` int(11) NOT NULL,
   `section_number` int(11) NOT NULL,
   `year_offered` int(11) NOT NULL,
+  `display_screen` enum('full','right','left') NOT NULL DEFAULT 'full',
+  `threshold` decimal(4,3) NOT NULL DEFAULT '0.750',
   PRIMARY KEY (`section_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 -- --------------------------------------------------------
 
@@ -145,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   `session_tag` varchar(20) NOT NULL,
   `post_processed` tinyint(2) unsigned NOT NULL,
   PRIMARY KEY (`session_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=116 ;
 
 -- --------------------------------------------------------
 
@@ -163,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `students` (
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   PRIMARY KEY (`student_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=205 ;
 
 -- --------------------------------------------------------
 
@@ -176,4 +196,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
