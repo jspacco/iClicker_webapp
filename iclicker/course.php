@@ -32,7 +32,7 @@
 	if ($count==1) {
 		// look up the section_id then redirect
 		$section_id=getSectionForCourseId($conn, $course_id);
-		header("Location: section.php?section_id=$section_id?");
+		header("Location: section.php?section_id=$section_id");
 	}
 	
 	createHeader("Course");

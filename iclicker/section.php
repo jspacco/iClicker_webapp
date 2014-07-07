@@ -18,7 +18,7 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 ?>
 
 	<div>
-		<a href='adminsettings.php?section_id=<?=$section_id?>'>Settings</a>
+		<a href='adminsettings.php?section_id=<?= $section_id ?>'>Settings</a>
 		<h1>Sessions</h1>
 		<table>
 <?php	
@@ -26,12 +26,12 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 		SELECT session_id, session_date, post_processed 
 		FROM sessions 
 		WHERE section_id = ?
-		ORDER BY session_tag ASC;
+		ORDER BY session_tag ASC
 	";
 	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare sessions query. " . $conn->error);
+	$stmt = $conn->prepare($query) or die("Couldnt prepare sessions query. " . $conn->error);
 	$stmt->bind_param("i", $section_id);
-	$stmt->execute() or die("Couldn't execute sessions query. " . $conn->error);
+	$stmt->execute() or die("Couldnt execute sessions query. " . $conn->error);
 	
 $stmt->bind_result($session_id, $session_date, $post_processed);
 	// $result = $stmt->get_result();

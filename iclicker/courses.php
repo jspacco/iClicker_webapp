@@ -54,8 +54,8 @@
 	
 		echo "
 			<tr>
-				<td><a href=course.php?course_id=$course_id</a>$course_name</td>
-				<td><a href=course.php?course_id=$course_id</a>$course_number</td>
+				<td><a href='course.php?course_id=$course_id'>$course_name</a></td>
+				<td><a href='course.php?course_id=$course_id'>$course_number</a></td>
 			</tr>
 			
 		";
@@ -64,7 +64,7 @@
 
 ?>
 		</table>
-		<a href='createnewcourse.php?'>Create New Course</a>
+		<a href='createnewcourse.php'>Create New Course</a>
 	</div>
 </body>
 <?php
