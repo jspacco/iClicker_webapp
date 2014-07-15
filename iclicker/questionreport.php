@@ -13,22 +13,7 @@
 	$assignment_id = $_GET["assignment_id"];
 	$question_id = $_GET["question_id"];
 	
-	$query = "
-		SELECT student_id 
-		FROM students 
-		WHERE 1
-		AND username = ? 
-		AND	password = ?;
-	";
-
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'student_id' query. " . $conn->error);
-	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
-	$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
-
-	$stmt->bind_result($student_id);
-	$stmt->fetch();
-	$stmt->close();
-	
+	$student_id = getStudentIdFromCookie($conn);	
 	$section_id = getSectionIdByStudentId($conn, $student_id);
 ?>
 <h1>Question Report</h1>
@@ -149,6 +134,7 @@
 	";
 ?>
 <?php
+	logs($conn, $student_id);
 	$conn->close();
 	createFooter();
 ?>

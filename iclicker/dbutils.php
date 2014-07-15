@@ -54,39 +54,6 @@ function countSectionsByCourseId($conn, $course_id) {
 	return $count;
 }
 
-function countSectionsByUserId($conn, $course_id) {
-	// Returns: $count
-	$query = "
-		SELECT count(*) 
-		FROM adminregistrations 
-		WHERE course_id = ?;
-	";
-	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
-	$stmt->bind_param("i", $course_id);
-	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	
-	$stmt->bind_result($count);
-	$stmt->fetch();
-	return $count;
-}
-
-function getUserForCourseId($conn, $course_id) {
-	// Returns: $user_id
-	$query = "
-		SELECT user_id
-		FROM adminregistrations 
-		WHERE course_id = ?;
-	";
-	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
-	$stmt->bind_param("i", $course_id);
-	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	
-	$stmt->bind_result($user_id);
-	$stmt->fetch();
-	$stmt->close();
-	return $user_id;
-}
-
 function lookupSessionBySessionId($conn, $session_id) {
 	$query = "
 		SELECT session_id, section_id, session_date, session_tag, post_processed 
@@ -327,6 +294,103 @@ function getSectionIdByAssignmentId($conn, $assignment_id) {
 	return $section_id;
 	
 }
+
+function getWeeklyViewForStudents($conn, $section_id) {
+
+		$query = "
+			SELECT session_id, session_date  
+			FROM sessions 
+			WHERE section_id = ?
+			ORDER BY session_tag ASC;
+		";
+		
+		$stmt = $conn->prepare($query) or die("Couldn't prepare sessions query. " . $conn->error);
+		$stmt->bind_param("i", $section_id);
+		$stmt->execute() or die("Couldn't execute sessions query. " . $conn->error);
+		
+		$stmt->bind_result($session_id, $session_date);
+		
+		$dayOfWeek = 0;
+		$day = 0;
+		$month = 0;
+		$week = 0;
+		$dayOfYear = -1;
+		// special case to detect the first week!
+		$isFirstWeek = 1;
+		while ($stmt->fetch()) {
+			$date = DateTime::createFromFormat("m/d/y H:i", $session_date);
+			$newDayOfWeek = (int) date("w", $date->getTimestamp());
+			$newDay = (int) date("j", $date->getTimestamp());
+			$newMonth = (int) date("n", $date->getTimestamp());
+
+			if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $isFirstWeek) {
+				// special case to detect the first week
+				$isFirstWeek=0;
+				// new week
+				$week++;
+				echo "
+					</table>
+					<table class='collection'>
+					<tr>
+						<th>Week $week</th>
+						<th>
+								<input type='hidden' name='section_id' value='$section_id'>
+								<input type='hidden' name='week' value='$week'>
+						</th>
+					</tr>
+				";
+			}
+			$dayOfWeek = $newDayOfWeek;
+			$day = $newDay;
+			$month = $newMonth;
+			
+			$dayString = date("l", $date->getTimestamp());
+			
+			echo "
+				<tr>
+					<td><a href='studentsession.php?session_id=$session_id'>$dayString</a></td>
+					<td><a href='studentsession.php?session_id=$session_id'>$session_date</a></td>
+				</tr>
+			";
+		
+
+		}
+		$stmt->close();
+	}
+
+function getStudentIdFromCookie($conn) {
+	$query = "
+		SELECT student_id 
+		FROM students 
+		WHERE 1
+		AND username = ? 
+		AND	password = ?;
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'student_id' query. " . $conn->error);
+	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
+	$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
+	
+	$stmt->bind_result($student_id);
+	$stmt->fetch();
+	$stmt->close();
+	return $student_id;
+}
+	
+function logs($conn, $student_id) {
+	//.$_SERVER['HTTP_HOST']
+	$url_link = $_SERVER['REQUEST_URI'];
+
+	$query = "
+		INSERT INTO loggings (student_id, click_time, url_link)
+		VALUES (?, ?, ?);
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'log' query. " . $conn->error);
+	$stmt->bind_param("iis", $student_id, $date, $url_link);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);	
+
+	}
 
 /**s
 function deselectCheckbox(obj) {

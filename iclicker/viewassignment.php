@@ -39,21 +39,8 @@
 		<th>Answered</th>
 	</tr>
 <?php
-	$query = "
-		SELECT student_id 
-		FROM students 
-		WHERE 1
-		AND username = ? 
-		AND	password = ?;
-	";
 	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'student_id' query. " . $conn->error);
-	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
-	$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
-	
-	$stmt->bind_result($student_id);
-	$stmt->fetch();
-	$stmt->close();
+	$student_id = getStudentIdFromCookie($conn);
 	
 	$query = "
 		SELECT question_id 
@@ -120,6 +107,7 @@
 </table>
 <br>
 <?php
+	logs($conn, $student_id);
 	$conn->close();
 	createFooter(true, "studentpage.php");
 ?>

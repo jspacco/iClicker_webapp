@@ -37,8 +37,6 @@
 	
 	createHeader("Course");
 ?>
-<body>
-	<div>
 		<h1>Sections</h1>
 		<table class='collection'>
 			<tr>
@@ -63,22 +61,22 @@
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	
 	$stmt->bind_result($section_id, $section_number, $year_offered);
-
-	// $result = $stmt->get_result();
-	
-	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
+	$count = 0;
+	while ($stmt->fetch()) {
 		echo "
 			<tr>
 				<td><a href=section.php?section_id=$section_id>$section_number</a></td>
 				<td><a href=section.php?section_id=$section_id>$year_offered</a></td>
-			</tr>
-			
+			</tr>		
 		";
+		$count++;
 	}
+	if($count==1) {
+		header("Location: section.php?section_id=$section_id?");
+	}
+	
 ?>
 		</table>
-	</div>
-</body>
 <?php
 	$conn->close();
 	createFooter(true, "courses.php");
