@@ -70,7 +70,6 @@
 ?>
 		</table>
 		<a href='createnewcourse.php'>Create New Course</a>
-
 <?php
 	$conn->close();
 	createFooter();

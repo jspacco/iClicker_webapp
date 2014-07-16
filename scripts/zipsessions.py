@@ -30,7 +30,7 @@ def main():
                 sys.exit(1)
 
         if not config.has_section(selectedCourse):
-                print('No course config information for %s in sessions-config.ini' % (selectedCourse, selectedCourse))
+                print('No course config information for %s in sessions-config.ini' % selectedCourse)
                 sys.exit(1)
 
         URL = config.get(selectedCourse,'url')
