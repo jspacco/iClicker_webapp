@@ -11,6 +11,7 @@
 	$session_id = $_GET["session_id"];
 	list($session_id, $section_id, $session_date, $session_tag, $post_processed) = lookupSessionBySessionId($conn, $session_id);
 	createHeader("Session", true, "<a href='section.php?section_id=$section_id'> Back to Sessions and Assignments </a>");
+	$student_id = getStudentIdFromCookie($conn);
 
 ?>
 
@@ -24,22 +25,26 @@
 		<th>Type</th>
 		<th>Question Picture</th>
 		<th>Chart Picture</th>
-		<th>Answers</th>
-		
+		<th>Correct Answer(s)</th>
+		<th>My Answer(s)</th>	
 	</tr>
 	
 <?php
+
 	$query = "
-		SELECT question_id, question_number, screen_picture, chart_picture, correct_answer, single_question
-		FROM questions 
-		WHERE session_id = ?
+		SELECT questions.question_id, question_number, screen_picture, chart_picture, correct_answer, single_question, response
+		FROM questions, responses
+		WHERE 1
+		AND session_id = ?
+		AND student_id = ?
+		AND questions.question_id = responses.question_id
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
-	$stmt->bind_param("i", $session_id);
+	$stmt->bind_param("ii", $session_id, $student_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	
-	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $correct_answer, $single_question);
+	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $correct_answer, $single_question, $response);
 	
 	
 	$q = 1;
@@ -121,14 +126,13 @@
 				echo "<name='E[]' value='$question_id' $e>E";
 			}
 		echo "</td>";	
-		
+		echo "<td>$response</td>";
 		echo "</tr>";
+		
 	}
 	
 	$stmt->close();
-	
-	$student_id = getStudentIdFromCookie($conn);
-	
+		
 ?>
 </table>
 <?php
