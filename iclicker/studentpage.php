@@ -7,21 +7,8 @@
 	
 	createHeader("Student Page");
 	
-	$query = "
-		SELECT student_id 
-		FROM students 
-		WHERE 1
-		AND username = ? 
-		AND password = ?;
-	";
-
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'student_id' query. " . $conn->error);
-	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
-	$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
-
-	$stmt->bind_result($student_id);
-	$stmt->fetch();
-	$stmt->close();
+	$student_id = getStudentIdFromCookie($conn);
+	
 ?>
 <h1>Assignments</h1>
 <table class='collection'>
@@ -96,7 +83,7 @@
 	$query = "
 		SELECT section_id 
 		FROM registrations 
-		WHERE student_id=?
+		WHERE student_id = ?
 	";
 
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'student_id' query. " . $conn->error);
@@ -108,15 +95,17 @@
 
 	while ($stmt->fetch()) {
 		printClickerParticipation($conn, $student_id, $section_id);
+		echo "<br>";
+		echo "<h2>Review Questions</h2>";
+		getWeeklyViewForStudents($conn, $section_id);
 	}
-
+	
 	echo "
 	<br>
 	<a href='editstudentinfo.php'>Edit Info</a>
 	";
-
-	$stmt->close();
-
+	
+	logs($conn, $student_id);
 	$conn->close();
 	createFooter();
 ?>

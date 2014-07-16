@@ -38,7 +38,7 @@
 		FROM students 
 		WHERE 1
 		AND username = ? 
-		AND	password = ?;
+		AND	password = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't execute 'student_id' query. " . $conn->error);
@@ -130,6 +130,8 @@
 	<input type='submit' value='Submit'>
 </form>
 <?php
+	
+	logs($conn, $student_id);
 	$conn->close();
 	createFooter();
 ?>

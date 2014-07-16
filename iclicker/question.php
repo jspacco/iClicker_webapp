@@ -23,20 +23,20 @@
 	$question_id = $_GET["question_id"];
 	
 	$query = "
-		SELECT question_number, question_name, screen_picture, chart_picture, correct_answer, start_time, stop_time 
-		FROM questions 
-		WHERE question_id = ?;
+		SELECT question_number, question_name, screen_picture, chart_picture, correct_answer, start_time, stop_time, section_id 
+		FROM questions, sessions 
+		WHERE 1
+		AND question_id = ?
+		AND questions.session_id = sessions.session_id;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare questions query. " . $conn->error);
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute questions query. " . $conn->error);
 	
-	$stmt->bind_result($question_number, $question_name, $screen_picture, $chart_picture, $correct_answer, $start_time, $stop_time);
+	$stmt->bind_result($question_number, $question_name, $screen_picture, $chart_picture, $correct_answer, $start_time, $stop_time, $section_id);
 	
-	// $result = $stmt->get_result();
-	
-	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
+	while ($stmt->fetch()) {
 		echo "
 			<h1>" . $question_name . "</h1>
 			<table>

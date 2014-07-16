@@ -19,7 +19,8 @@
 	$due = mktime($hour, $minute, 0, $date[0], $date[1], $date[2]);
 	
 	$query = "
-		INSERT INTO assignments (section_id, due) VALUES (?, ?);
+		INSERT INTO assignments (section_id, due) 
+		VALUES (?, ?);
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'assignments' query. " . $conn->error);
@@ -36,7 +37,8 @@
 	
 	foreach ($questions as $question_id) {
 		$query = "
-			INSERT INTO assignmentstoquestions (assignment_id, question_id) VALUES (?, ?);
+			INSERT INTO assignmentstoquestions (assignment_id, question_id) 
+			VALUES (?, ?);
 		";
 		
 		$stmt = $conn->prepare($query) or die("Couldn't prepare 'atq' query. " . $conn->error);

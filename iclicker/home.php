@@ -21,7 +21,6 @@
 	
 	createHeader("Online i<Clicker Questions", false, false);
 ?>
-<body>
 	<div style="text-align: left;">
 		<h1>Online i>Clicker Questions</h1>
 		<img style="float: right;" src="img/logo.jpg"><br>
@@ -49,12 +48,11 @@
 		</form>
 	</div>
 	<div>
-	<a href="register.php">Click to register your clicker</a> <font color=red> (click here if you have never used this system before) </font>
+		<a href="register.php">Click to register your clicker</a> <font color=red> (click here if you have never used this system before) </font>
 	</div>
 	<div>
 		<a href="resetpassword.php">Reset Password</a><br>
 	</div>
-</body>
 <?php
 	$conn->close();
 ?>

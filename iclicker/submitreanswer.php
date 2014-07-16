@@ -30,42 +30,11 @@
 	}
 	$answer = trim($answer, ",");
 	
-	$user = $_COOKIE["Username"];
-	$pass = $_COOKIE["Password"];
+	$student_id = getStudentIdFromCookie($conn);
 	
 	$query = "
-		SELECT student_id FROM students 
-		WHERE username = ? 
-		AND password = ?;
-	";
-	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'select' query. " . $conn->error);
-	$stmt->bind_param("ss", $user, $pass);
-	$stmt->execute() or die("Couldn't execute 'select' query. " . $conn->error);
-	
-	$stmt->bind_result($student_id);
-	$stmt->fetch();
-	$stmt->close();
-	
-	// $result = $stmt->get_result();
-	
-	// $row = $result->fetch_array(MYSQLI_ASSOC);
-	
-	// $student_id = $row["student_id"];
-	
-	// $query = "
-		// DELETE FROM onlineresponses WHERE
-		// question_id = ? AND
-		// student_id = ?;
-	// ";
-	
-	// $stmt = $conn->prepare($query) or die("Couldn't prepare 'delete' query. " . $conn->error);
-	// $stmt->bind_param("ii", $question_id, $student_id);
-	// $stmt->execute() or die("Couldn't execute 'delete' query. " . $conn->error);
-	// $stmt->close();
-	
-	$query = "
-		INSERT INTO onlineresponses (question_id, student_id, response, start_time, end_time) VALUES (?, ?, ?, ?, ?);
+		INSERT INTO onlineresponses (question_id, student_id, response, start_time, end_time) 
+		VALUES (?, ?, ?, ?, ?);
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'insert' query. " . $conn->error);
@@ -78,6 +47,7 @@
 ?>
 <p>Answer submission unsuccessful!</p>
 <?php
+	logs($conn, $student_id);
 	$conn->close();
 	if (isset($_POST["assignment_id"])) {
 		$assignment_id = $_POST["assignment_id"];

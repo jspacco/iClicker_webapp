@@ -57,19 +57,17 @@
 	}
 	
 ?>
-<body>
-	<div>
 		<h1>Administrator Settings</h1>
-			<h2><?= "$course_name"?> <br> Section <?= "$section_number"?></h2>
+			<h2><?= "$course_name" ?> <br> Section <?= "$section_number" ?></h2>
 			<h5>These settings are only changed for this section.</h5>
 			<table class='collection'>
 			<form action='endeditadminsettings.php' method='post'>
 			<input type="hidden" name="section_id" value="<?= $_GET["section_id"] ?>"/>
 			<tr>
 					<td>Screen Display</td>
-					<td><input id='1' type='radio' name='display_screen' value='full' <?= $full?> ><label for='1'>Full Screen</label></td>
-					<td><input id='2' type='radio' name='display_screen' value='left' <?= $left?> ><label for='2'>Left Half</label></td>
-					<td><input id='3' type='radio' name='display_screen' value='right' <?= $right?> ><label for='3'>Right Half</label></td>
+					<td><input id='1' type='radio' name='display_screen' value='full' <?= $full ?> ><label for='1'>Full Screen</label></td>
+					<td><input id='2' type='radio' name='display_screen' value='left' <?= $left ?> ><label for='2'>Left Half</label></td>
+					<td><input id='3' type='radio' name='display_screen' value='right' <?= $right ?> ><label for='3'>Right Half</label></td>
 				</tr>
 				
 				<tr>
@@ -83,8 +81,6 @@
 					<td></td>
 				</tr>		
 			</table>
-	</div>
-</body>
 <?php
 	$conn->close();
 	createFooter();

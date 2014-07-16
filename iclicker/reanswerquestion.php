@@ -8,8 +8,10 @@
 		header("Location: login.php");
 	}
 	
-// create header without the <div class="main"> tag
-createHead("Reanswer Question", false);
+	// create header without the <div class="main"> tag
+	createHead("Reanswer Question", false);
+	
+	$student_id = getStudentIdFromCookie($conn);
 	
 	if (isset($_GET["assignment_id"])) {
 		$assignment_id = $_GET["assignment_id"];
@@ -90,7 +92,7 @@ createHead("Reanswer Question", false);
 	$stmt->bind_result($atq_id);
 	$stmt->fetch();
 	$stmt->close();	
-	$conn->close();
+	
 	
 	$begin_atq = $atq_id - $min_atq_id + 1;
 
@@ -143,13 +145,6 @@ createHead("Reanswer Question", false);
 </html>
 
 <?php
-	//createFooter(false);
-
-/*
-	if (isset($assignment_id)) {
-		createFooter(true, "viewassignment.php?assignment_id=$assignment_id");
-	} else {
-		createFooter();
-	}
-*/
+	logs($conn, $student_id);
+	$conn->close();
 ?>

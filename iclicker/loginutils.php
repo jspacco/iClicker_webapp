@@ -24,7 +24,7 @@
 					FROM users 
 					WHERE 1
 					AND username = ? 
-					AND	password = ?;
+					AND	password = ?
 				";
 				break;
 			case "student":
@@ -33,7 +33,7 @@
 					FROM students 
 					WHERE 1
 					AND username = ? 
-					AND	password = ?;
+					AND	password = ?
 				";
 				break;
 			default:

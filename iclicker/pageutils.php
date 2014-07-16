@@ -6,18 +6,18 @@ function createHead($title, $includeLogout = true, $extra = "") {
 	}
 ?>
 	<html>
-	 <head>
+	<head>
 		<link rel='stylesheet' type='text/css' href='css/stylesheet.css' />
 		<link rel='stylesheet' type='text/css' href='css/lightbox.css' />
 		<link rel='stylesheet' type='text/css' href='css/jquery-ui-1.10.3.custom.min.css' />
 		<script src='js/jquery-1.10.2.min.js'></script>
 		<script src='js/jquery-ui-1.10.3.custom.min.js'></script>
 		<script src='js/lightbox-2.6.min.js'></script>
-		<title><?=$title?></title>
-		<?=$extra?>
+		<title><?= $title ?></title>
+		<?= $extra ?>
 	 </head>
 	 <body>
-	 <header> <?=$logoutHtml?> </header>
+	 <header> <?= $logoutHtml ?> </header>
 	 
 <?php
 }
