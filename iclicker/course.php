@@ -72,7 +72,7 @@
 		$count++;
 	}
 	if($count==1) {
-		header("Location: section.php?section_id=$section_id?");
+		header("Location: section.php?section_id=$section_id");
 	}
 	
 ?>

@@ -41,11 +41,11 @@ if ($_FILES["file"]["error"] > 0) {
 echo "Upload: " . $_FILES["file"]["name"] . "<br>";
 echo "Type: " . $_FILES["file"]["type"] . "<br>";
 echo "Size: " . $_FILES["file"]["size"] . "<br>";
-echo "Stored in: " . $_FILES["file"]["tmp_name"] . "<br>";
+echo "Stored in " . $_FILES["file"]["tmp_name"] . "<br>";
 echo "<br>";
 		
 $file = $_FILES["file"]["tmp_name"];
-echo "Attempting to unzip " . $file . ".<br>";
+echo "Attempting to unzip " . $file . "<br>";
 $zip = zip_open($file);
 
 if (!is_resource($zip)) {
@@ -58,7 +58,8 @@ echo "<br>";
 while ($zip_entry = zip_read($zip)) {
 	if (zip_entry_open($zip, $zip_entry, "r")) {
 		echo "<b>" . zip_entry_name($zip_entry) . "</b><br>";
-					
+		$charL=substr(zip_entry_name($zip_entry), -15, -14);	
+		//echo "$charL";
 		switch (substr(zip_entry_name($zip_entry), -4)) {
 			case ".CSV":
 			case ".csv":
@@ -67,19 +68,19 @@ while ($zip_entry = zip_read($zip)) {
 				echo "Empty, skipping!<br><br>";
 				continue;
 			}
+			//Checking if a certain character is L, if it is not then ignore the file.
+			if (strcasecmp($charL, "L")!=0) {
+				echo "Ignoring config file, remoteID file, etc.<br><br>";
+				continue;
+			}
 			//echo "res is $res<br><br><p><p>";
 			if ($res !== FALSE && $res !== "") {
 				// uploading the csv
 				echo "zip entry name: " . zip_entry_name($zip_entry) . "<br><p><p>";
 				$path = explode("/", zip_entry_name($zip_entry));
 
-
-
 				$filename=array_pop($path);
 				$filename=str_replace(".csv", "", $filename);
-
-				//$foldername = explode("-", $path[0]); // split by / then by - to get course information
-				//$filename = $path[1];
 
 				echo "filename is $filename<br>";
 
@@ -191,10 +192,12 @@ while ($zip_entry = zip_read($zip)) {
 								
 				$session_id;
 				$query = "
-									SELECT session_id FROM sessions WHERE
-									section_id = ? AND
-									session_date = ?;
-								";
+					SELECT session_id 
+					FROM sessions 
+					WHERE 1
+					AND section_id = ? 
+					AND	session_date = ?
+				";
 								
 				$stmt = $conn->prepare($query) or die("Couldn't prepare 'sessions' statement. " . $conn->error);
 				$stmt->bind_param("is", $section_id, $session_date);
@@ -206,9 +209,9 @@ while ($zip_entry = zip_read($zip)) {
 								
 				if ($stmt->num_rows == 0) {
 					$query = "
-										INSERT INTO sessions (section_id, session_date, session_tag)
-										VALUES (?, ?, ?);
-									";
+						INSERT INTO sessions (section_id, session_date, session_tag)
+						VALUES (?, ?, ?);
+					";
 									
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'sessions insert' statement. " . $conn->error);
 					$stmt->bind_param("iss", $section_id, $session_date, $session_tag);
@@ -217,12 +220,12 @@ while ($zip_entry = zip_read($zip)) {
 
 					// Is this actually asking for last_update_id()?
 					$query = "
-										SELECT session_id 
-										FROM sessions 
-										WHERE 1
-										AND section_id = ? 
-										AND session_date = ? ;
-									";
+						SELECT session_id 
+						FROM sessions 
+						WHERE 1
+						AND section_id = ? 
+						AND session_date = ?
+					";
 									
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'sessions select id' statement. " . $conn->error);
 					$stmt->bind_param("is", $section_id, $session_date);
@@ -232,34 +235,27 @@ while ($zip_entry = zip_read($zip)) {
 					$stmt->fetch();
 					$stmt->close();
 									
-					// $result = $stmt->get_result();
-					// $row = $result->fetch_array(MYSQLI_ASSOC);
-					// $session_id = $row["session_id"];
 				} else {
 					echo "Data for this session already exists, removing...<br>";
 									
 					$stmt->bind_result($session_id);
 					$stmt->fetch();
 					$stmt->close();
-									
-					// $row = $result->fetch_array(MYSQLI_ASSOC);
-					// $session_id = $row["session_id"];
-									
+																	
 					// data for this session already exists, delete current session data and upload new session data
 									
 					// get the question_id's
 					$query = "
-										SELECT question_id FROM questions WHERE
-										session_id = ?;
-									";
+						SELECT question_id 
+						FROM questions 
+						WHERE session_id = ?
+					";
 									
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions select session id' statement. " . $conn->error);
 					$stmt->bind_param("i", $session_id);
 					$stmt->execute() or die("Couldn't execute 'questions select session id' statement. " . $conn->error);
 									
 					$stmt->bind_result($question_id);
-									
-					// $result = $stmt->get_result();
 									
 					$q_ids = array();
 									
@@ -268,15 +264,13 @@ while ($zip_entry = zip_read($zip)) {
 					}
 					$stmt->close();
 									
-					// while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
 					foreach ($q_ids as $question_id) {
-						// remove all information about each question
-										
+						// remove all information about each question										
 						// delete from responses
 						$query = "
-											DELETE FROM responses WHERE
-											question_id = ?;
-										";
+							DELETE FROM responses 
+							WHERE question_id = ?
+						";
 										
 						$stmt = $conn->prepare($query) or die("Couldn't prepare 'responses delete' statement. " . $conn->error);
 						$stmt->bind_param("i", $question_id);
@@ -285,9 +279,9 @@ while ($zip_entry = zip_read($zip)) {
 										
 						// delete from questions
 						$query = "
-											DELETE FROM questions WHERE
-											question_id = ?;
-										";
+							DELETE FROM questions 
+							WHERE question_id = ?
+						";
 										
 						$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions delete' statement. " . $conn->error);
 						$stmt->bind_param("i", $question_id);
@@ -321,9 +315,9 @@ while ($zip_entry = zip_read($zip)) {
 						$questions[$i]["stop_time"]="";
 					}
 					$query = "
-										INSERT INTO questions (session_id, question_number, question_name, screen_picture, chart_picture, correct_answer, start_time, stop_time)
-										VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-									";
+						INSERT INTO questions (session_id, question_number, question_name, screen_picture, chart_picture, correct_answer, start_time, stop_time)
+						VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+					";
 									
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions' statement. " . $conn->error);
 					$stmt->bind_param("iissssss", $session_id, $question_number, $questions[$i]["question_name"], $screen_picture, $chart_picture, $questions[$i]["correct_answer"], $questions[$i]["start_time"], $questions[$i]["stop_time"]);
@@ -340,9 +334,10 @@ while ($zip_entry = zip_read($zip)) {
 					// see if there is already a student entry
 					$student_id;
 					$query = "
-										SELECT student_id FROM students WHERE
-										iclicker_id = ?;
-									";
+						SELECT student_id 
+						FROM students 
+						WHERE iclicker_id = ?
+					";
 									
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'students' statement. " . $conn->error);
 					$stmt->bind_param("s", $responses[$i]["iclicker_id"]);
@@ -355,9 +350,9 @@ while ($zip_entry = zip_read($zip)) {
 					if ($stmt->num_rows == 0) {
 						// no record for this student, have to create one
 						$query = "
-											INSERT INTO students (iclicker_id)
-											VALUES (?);
-										";
+							INSERT INTO students (iclicker_id)
+							VALUES (?);
+						";
 										
 						$stmt = $conn->prepare($query) or die("Couldn't prepare 'students insert' statement. " . $conn->error);
 						$stmt->bind_param("s", $responses[$i]["iclicker_id"]);
@@ -365,9 +360,10 @@ while ($zip_entry = zip_read($zip)) {
 						$stmt->close();
 										
 						$query = "
-											SELECT student_id FROM students WHERE
-											iclicker_id = ?;
-										";
+							SELECT student_id 
+							FROM students 
+							WHERE iclicker_id = ?
+						";
 										
 						$stmt = $conn->prepare($query) or die("Couldn't prepare 'students' statement. " . $conn->error);
 						$stmt->bind_param("i", $responses[$i]["iclicker_id"]);
@@ -376,30 +372,23 @@ while ($zip_entry = zip_read($zip)) {
 						$stmt->bind_result($student_id);
 						$stmt->fetch();
 						$stmt->close();
-										
-						// $result = $stmt->get_result();
-										
-						// $row = $result->fetch_array(MYSQLI_ASSOC);
-						// $student_id = $row["student_id"];
+
 					} else {
 						$stmt->bind_result($student_id);
 						$stmt->fetch();
 						$stmt->close();
-										
-						// $row = $result->fetch_array(MYSQLI_ASSOC);
-						// $student_id = $row["student_id"];
 					}
 									
 					// have to select the question_id
 					$question_number = ($i % $num_questions) + 1;
 									
 					$query = "
-										SELECT question_id 
-										FROM questions 
-										WHERE 1
-										AND session_id = ? 
-										AND	question_number = ?;
-									";
+						SELECT question_id 
+						FROM questions 
+						WHERE 1
+						AND session_id = ? 
+						AND	question_number = ?
+					";
 									
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions select' statement. " . $conn->error);
 					$stmt->bind_param("ii", $session_id, $question_number);
@@ -408,15 +397,12 @@ while ($zip_entry = zip_read($zip)) {
 					$stmt->bind_result($question_id);
 					$stmt->fetch();
 									
-					// $result = $stmt->get_result();
-					// $row = $result->fetch_array(MYSQLI_ASSOC);
-					// $question_id = $row["question_id"];
 					$stmt->close();
 									
 					$query = "
-										INSERT INTO responses (question_id, student_id, number_of_attempts, first_response, time, response, final_answer_time)
-										VALUES (?, ?, ?, ?, ?, ?, ?);
-									";
+						INSERT INTO responses (question_id, student_id, number_of_attempts, first_response, time, response, final_answer_time)
+						VALUES (?, ?, ?, ?, ?, ?, ?);
+					";
 									
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'responses' statement. " . $conn->error);
 					$stmt->bind_param("iiisdsd", $question_id, $student_id, $responses[$i]["number_of_attempts"], $responses[$i]["first_response"], $responses[$i]["time"], $responses[$i]["response"], $responses[$i]["final_answer_time"]);
@@ -444,13 +430,7 @@ while ($zip_entry = zip_read($zip)) {
 					file_put_contents($dest, $res);
 					chmod($dest, 0744);
 				}
-			// Doesn't work
-							
-			// $folders = explode("/", zip_entry_name($zip_entry));
-			// $dest = "pictures/" . $folders[2];
-						
-			// $zip->extractTo($dest, zip_entry_name($zip_entry));
-			// echo "Copy to " . $dest . "<br>";
+
 			break;
 			default:
 				echo "Unsupported filetype for file: " . zip_entry_name($zip_entry) . "<br>";
@@ -462,27 +442,6 @@ while ($zip_entry = zip_read($zip)) {
 
 		
 zip_close($zip);
-		
-// Have to copy picture files here
-// Couldn't find any information on copying zip entries
-
-// Should refactor to use this format above
-// $zip = new ZipArchive();
-// $zip->open($file);
-		
-// while ($zip_entry = zip_read($zip)) {
-// $name = $zip->getNameIndex($i);
-// $path = pathinfo($name);
-			
-// if ($path["extension"] !== "jpg") {
-// continue;
-// }
-			
-// $dest = "pictures/" . $path["basename"];
-			
-// echo "Copying " . $name . " to " . $dest . "<br>";
-// $zip->extractTo($dest, array($name));
-// }
 
 ?>
 </div>
