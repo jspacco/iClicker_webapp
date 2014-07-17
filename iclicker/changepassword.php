@@ -22,33 +22,31 @@
 		$query = "
 			UPDATE students 
 			SET password = ? 
-			WHERE student_id = ?;
+			WHERE student_id = ?
 		";
 		
-		$stmt = $conn->prepare($query) or die("Couldn't prepare 'passwordchange' query. " . $conn->error);
+		$stmt=$conn->prepare($query) or die("Couldn't prepare 'passwordchange' query. " . $conn->error);
 		$stmt->bind_param("si", $newpassword, $student_id);
-		$result = $stmt->execute() or die("Couldn't execute 'passwordchange' query. " . $conn->error);
+		$result=$stmt->execute() or die("Couldn't execute 'passwordchange' query. " . $conn->error);
 		
 		if (!$result) {
 			$wasError = true;
 			$response = "An error occurred. Please try again.";
 		} else {
-			// we have to update the cookies password
+			//We have to update the cookies password
 			setLoginCookie($conn, $_COOKIE["Username"], $_POST["newpassword"], "student");
 		}
 	}
 	
-	// if we want we could redirect on successful password change
+	//Redirects to studentpage.php on successful password change
 	if (!$wasError) {
 		header("Location: home.php");
 	}
 
 	createHeader("Changing Password...");
-?>
-<?php
+	
 	echo $response . "<br>";
-?>
-<?php
+
 	$conn->close();
 	createFooter();
 ?>

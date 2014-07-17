@@ -17,7 +17,7 @@ function createHead($title, $includeLogout = true, $extra = "") {
 		<?= $extra ?>
 	 </head>
 	 <body>
-	 <header> <?= $logoutHtml ?> </header>
+	 <header><?= $logoutHtml ?></header>
 	 
 <?php
 }
@@ -41,9 +41,9 @@ function createHeader($title, $includeLogout = true, $extra = "") {
 		}
 		
 		echo "
-				<a href='home.php'>Back to Home</a>
-			</footer>
-			</body>
+					<a href='home.php'>Back to Home</a>
+					</footer>
+				</body>
 			</html>
 		";
 	}
@@ -54,7 +54,7 @@ function createHeader($title, $includeLogout = true, $extra = "") {
 		header("Connection: close");
 		header("Content-Length: ".strlen($endMessage));
 		echo $endMessage;
-		echo str_repeat("\r\n", 10); // just to be sure
+		echo str_repeat("\r\n", 10); //Just to be sure
 		flush();
 	}
 
@@ -68,38 +68,38 @@ function createHeader($title, $includeLogout = true, $extra = "") {
 		return date("l, F j, g:i a", $utc);
 	}
 
-function dayOfYear($session_date) {
-	date_default_timezone_set('America/Chicago');
-	$d = DateTime::createFromFormat("m/d/y H:i", $session_date);
-	return date("z", $d->getTimestamp()) + 1;
-}
+	function dayOfYear($session_date) {
+		date_default_timezone_set('America/Chicago');
+		$d = DateTime::createFromFormat("m/d/y H:i", $session_date);
+		return date("z", $d->getTimestamp()) + 1;
+	}
 
-function lastSunday($session_date) {
-	date_default_timezone_set('America/Chicago');
-	$d = DateTime::createFromFormat("m/d/y H:i", $session_date);
-	return date('z', strtotime('Last Sunday', $d->getTimestamp())) + 1;
-}
+	function lastSunday($session_date) {
+		date_default_timezone_set('America/Chicago');
+		$d = DateTime::createFromFormat("m/d/y H:i", $session_date);
+		return date('z', strtotime('Last Sunday', $d->getTimestamp())) + 1;
+	}
 
-function dayOfWeek($session_date) {
-	date_default_timezone_set('America/Chicago');
-	$d = DateTime::createFromFormat("m/d/y H:i", $session_date);
-	return date('l', $d->getTimestamp());
-}
+	function dayOfWeek($session_date) {
+		date_default_timezone_set('America/Chicago');
+		$d = DateTime::createFromFormat("m/d/y H:i", $session_date);
+		return date('l', $d->getTimestamp());
+	}
 
-function currentWeek($session_date, $dayOne) {
-	return (int)((dayOfYear($session_date) - $dayOne) / 7) + 1;
-}
+	function currentWeek($session_date, $dayOne) {
+		return (int)((dayOfYear($session_date) - $dayOne) / 7) + 1;
+	}
 
-function td($str) {
-	return "<td> $str </td>\n";
-}
+	function td($str) {
+		return "<td> $str </td>\n";
+	}
 
-function th($str) {
-	return "<th> $str </th>\n";
-}
+	function th($str) {
+		return "<th> $str </th>\n";
+	}
 
-function tr($str) {
-	return "<tr> $str </tr>\n";
-}
+	function tr($str) {
+		return "<tr> $str </tr>\n";
+	}
 
 ?>

@@ -5,8 +5,7 @@
 	$conn = connect();
 	
 	createHeader("End Registration", false);
-?>
-<?php
+
 	$iclicker = $_POST["iclicker_id"];
 	$iclicker_alt = "#" . $iclicker;
 	
@@ -24,30 +23,25 @@
 			SELECT distinct student_id 
 			FROM students 
 			WHERE iclicker_id = ? 
-			OR iclicker_id = ?;
+			OR iclicker_id = ?
 		";
 		
 		$stmt = $conn->prepare($query) or die("Couldn't prepare 'select' query. " . $conn->error);
 		$stmt->bind_param("ss", $iclicker, $iclicker_alt);
 		$stmt->execute() or die("Couldn't execute 'select' query. " . $conn->error);
-		
 		$stmt->store_result();
-		
-		// $result = $stmt->get_result();
 		
 		if ($stmt->num_rows > 0) {
 			$stmt->bind_result($student_id);
 			$stmt->fetch();
 			$stmt->close();
 			
-			// $row = $result->fetch_array(MYSQLI_ASSOC);
-			// $student_id = $row["student_id"];
-			
-			// verify the user hasn't been registered yet
+			//Verify the user hasn't been registered yet
+			//OLD STYLE QUERY
 			$query = "
 				SELECT username, password 
 				FROM students 
-				WHERE student_id = $student_id;
+				WHERE student_id = $student_id
 			";
 			
 			$result = $conn->query($query) or die("Couldn't execute 'namefree' query. " . $conn->error);
@@ -55,17 +49,16 @@
 			
 			if (trim($row["username"]) == "" && trim($row["password"]) == "") {
 				
-				// make sure the username isn't taken
+				//Make sure the username isn't taken
 				$query = "
 					SELECT username 
 					FROM students 
-					WHERE username = ?;
+					WHERE username = ?
 				";
 				
 				$stmt = $conn->prepare($query) or die("Couldn't prepare 'namecheck' query. " . $conn->error);
 				$stmt->bind_param("s", $username);
 				$stmt->execute() or die("Couldn't execute 'namecheck' query. " . $conn->error);
-				
 				$stmt->store_result();
 				
 				if ($stmt->num_rows == 0) {
@@ -73,7 +66,7 @@
 					$query = "
 						UPDATE students 
 						SET	username = ?, password = ? 
-						WHERE student_id = ?;
+						WHERE student_id = ?
 					";
 					
 					$stmt = $conn->prepare($query) or die("Couldn't prepare 'update' query. " . $conn->error);
@@ -82,6 +75,7 @@
 					
 					echo "Registration successful!.<br>";
 					$registrationSuccess = true;
+					
 				} else {
 					echo "That username has already been taken, please try again.<br>";
 				}
@@ -94,10 +88,7 @@
 	}
 	
 	?>
-	
-	echo "
-		Sign up for course(s).
-	";
+Sign up for course(s).
 <body>
 	<div>
 		<h2>Courses</h2>
@@ -107,9 +98,11 @@
 				<th>Number</th>
 			</tr>
 <?php
+
+	//OLD STYLE QUERY
 	$query = "
 		SELECT course_id, course_name, course_number 
-		FROM courses;
+		FROM courses
 	";
 	
 	$result = $conn->query($query) or die("Couldn't execute query. " . $conn->error);
@@ -126,9 +119,6 @@
 		</table>
 	</div>
 </body>	
-	
-	
-
 <?php
 	$conn->close();
 	createFooter(!$registrationSuccess, "register.php");

@@ -9,7 +9,6 @@
 	}
 	
 	createHeader("Edit Info");
-	
 ?>
 <script type="text/javascript">
 	jQuery(function(){
@@ -33,6 +32,7 @@
 	});
 </script>
 <?php
+
 	$query = "
 		SELECT student_id, school_id, email 
 		FROM students 
@@ -44,69 +44,59 @@
 	$stmt = $conn->prepare($query) or die("Couldn't execute 'student_id' query. " . $conn->error);
 	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
 	$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
-	
 	$stmt->bind_result($student_id, $school_id, $email);
 	$stmt->fetch();
 	$stmt->close();
-	
 ?>
-<h2>
-	Update Information
-</h2>
-
+<h2>Update Information</h2>
 <form action="endstudentedit.php" method="post">
 	School ID: <input type='text' name='school_id' value=<?php echo $school_id; ?>><br>
 	Email: <input type='text' name='email' value=<?php echo $email; ?>><br><br>
 	Select the course(s) you are enrolled in...<br>
-		<div>
-		<table class = 'collection'>
-		<tr>
-			<th>Enrolled?</th>
-			<th>Course</th>
-			<th>Section</th>
-			<th>Year Offered</th>
-		</tr>
+	<div>
+	<table class = 'collection'>
+	<tr>
+		<th>Enrolled?</th>
+		<th>Course</th>
+		<th>Section</th>
+		<th>Year Offered</th>
+	</tr>	
+<?php
+	$query = "
+		SELECT section_id, student_id
+		FROM registrations
+		WHERE student_id = ?
+	";
 		
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->bind_param("i", $student_id);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->bind_result($section_id, $student_id);
 	
-	<?php
-		$query = "
-			SELECT section_id, student_id
-			FROM registrations
-			WHERE student_id = ?
-		";
+	$regsect = array();
+	while ($stmt->fetch()){
+		array_push($regsect, $section_id);
+	};
 		
-		$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
-		$stmt->bind_param("i", $student_id);
-		$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->close();
 		
-		$stmt->bind_result($section_id, $student_id);
-		
-		$regsect = array();
-		while ($stmt->fetch()){
-			array_push($regsect, $section_id);
-		};
-		
-		$stmt->close();
-		
-		$query = "
-			SELECT section_id, course_name, section_number, year_offered
-			FROM sections, courses
-			WHERE sections.course_id = courses.course_id
-		";
-		
-		$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
-		$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-		
-		$stmt->bind_result($section_id, $course_name, $section_number, $year_offered);
-				
-		while($stmt->fetch()){		
-			$sect = "";
+	$query = "
+		SELECT section_id, course_name, section_number, year_offered
+		FROM sections, courses
+		WHERE sections.course_id = courses.course_id
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
+	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
+	$stmt->bind_result($section_id, $course_name, $section_number, $year_offered);
 			
-			if (in_array($section_id, $regsect)) {
-					$sect = "checked";
-			}
-			
-			echo "
+	while($stmt->fetch()){		
+		$sect = "";
+		if (in_array($section_id, $regsect)) {
+				$sect = "checked";
+		}
+		
+		echo "
 			<tr>
 				<td><input type='checkbox' name='checkedcourses[]' value='$section_id'$sect></td>
 				<td><input type='hidden' name='allcourses[]' value='$section_id'></td>
@@ -114,10 +104,10 @@
 				<td>$section_number</td>
 				<td>$year_offered</td>
 			</tr>
-			";
-		}
+		";
+	}
 		
-	?>
+?>
 	</table>
 	</div>	
 	<input type='submit' value='Update'>
@@ -130,7 +120,6 @@
 	<input type='submit' value='Submit'>
 </form>
 <?php
-	
 	logs($conn, $student_id);
 	$conn->close();
 	createFooter();

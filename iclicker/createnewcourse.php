@@ -10,15 +10,10 @@ if (!isCookieValidLoginWithType($conn, "admin")) {
 }
 
 createHeader("Add New Course");
-$c_name = "";
-$c_number = "";
-$s_number = "";
-$y_offered = "";
 
 ?>
-
-</script>
 	<table>
+	<h2>Create New Course</h2>
 	<form action='endcreatenewcourse.php' method='post'>
 		<tr>
 			<th>Course Name</th>
@@ -37,10 +32,12 @@ $y_offered = "";
 			<td><input type='text' name='year_offered'></td>
 		</tr>
 		<tr>
+			<td></td>
 			<td><input type='submit' value='Create This Course'></td>
 		</tr>
+	</table>
 
 <?php
-$conn->close();
-createFooter();
+	$conn->close();
+	createFooter();
 ?>

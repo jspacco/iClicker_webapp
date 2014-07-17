@@ -71,7 +71,6 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'beforeonlineresponses' query. " . $conn->error);
 	$stmt->bind_param("iii", $question_id, $student_id, $assignment_id);
 	$stmt->execute() or die("Couldn't execute 'beforeonlineresponses' query. " . $conn->error);
-	
 	$stmt->bind_result($beforeonlineresponse);
 	$stmt->fetch();
 	$stmt->close();
@@ -116,7 +115,6 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'next_question' query. " . $conn->error);
 	$stmt->bind_param("ii", $assignment_id, $question_id);
 	$stmt->execute() or die("Couldn't execute 'next_question' query. " . $conn->error);
-	
 	$stmt->bind_result($next_assignment, $next_question);
 	$stmt->fetch();
 	$stmt->close();

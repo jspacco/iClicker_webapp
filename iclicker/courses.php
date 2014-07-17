@@ -24,14 +24,13 @@
 	$stmt->close();	
 	
 	createHeader("Courses");
-	
 ?>
-		<h1>Courses</h1>
-		<table class='collection'>
-			<tr>
-				<th>Name</th>
-				<th>Number</th>
-			</tr>
+<h1>Courses</h1>
+<table class='collection'>
+	<tr>
+		<th>Name</th>
+		<th>Number</th>
+	</tr>
 <?php
 
 	$query = "
@@ -50,7 +49,6 @@
 	
 	$curr = -1;
 	while ($stmt->fetch()) {	
-		
 		if ($curr == $course_number) {
 			//If administrator teaches the same course with multiple sections, this will skip the the duplicate course
 		} 
@@ -67,11 +65,11 @@
 	}
 	$stmt->close();
 
-?>
-	</table>
-	<a href='createnewcourse.php?'>Create New Course</a>
+	echo "
+		</table>
+		<a href='createnewcourse.php?'>Create New Course</a>
+	";
 
-<?php
 	$conn->close();
 	createFooter();
 ?>

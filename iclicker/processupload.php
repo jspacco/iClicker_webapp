@@ -6,7 +6,6 @@ $conn = connect();
 	
 checkAdmin($conn);
 
-// Let's assume that the section ID is a post parameter
 /*
 How to increase memory in php.ini:
 

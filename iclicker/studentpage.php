@@ -34,7 +34,6 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'assignments' query. " . $conn->error);
 	$stmt->bind_param("i", $student_id);
 	$stmt->execute() or die("Couldn't execute 'assignments' query. " . $conn->error);
-	
 	$stmt->bind_result($assignment_id, $due);
 	
 	$assignments = array();

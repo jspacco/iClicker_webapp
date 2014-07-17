@@ -19,14 +19,16 @@
 </script>
 <h1>Edit Assignment</h1>
 <?php
+	
 	$query = "
-		SELECT due FROM assignments WHERE assignment_id = ?;
+		SELECT due 
+		FROM assignments 
+		WHERE assignment_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'assignments' query. " . $conn->error);
 	$stmt->bind_param("i", $assignment_id);
 	$stmt->execute() or die("Couldn't execute 'assignments' query. " . $conn->error);
-	
 	$stmt->bind_result($due);
 	$stmt->fetch();
 	$stmt->close();

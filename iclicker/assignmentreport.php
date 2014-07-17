@@ -12,25 +12,21 @@
 	createHeader("Assignment Report");
 	
 	$assignment_id = $_GET["assignment_id"];
-?>
-<?php
 
 	$section_id = getSectionIdByAssignmentId($conn, $assignment_id);
 	
 	$query = "
 		SELECT question_id 
 		FROM assignmentstoquestions 
-		WHERE assignment_id = ?;
+		WHERE assignment_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions' query. " . $conn->error);
 	$stmt->bind_param("i", $assignment_id);
 	$stmt->execute() or die("Couldn't execute 'questions' query. " . $conn->error);
-	
 	$stmt->bind_result($question_id);
 	
 	$questions = array();
-	
 	while ($stmt->fetch()) {
 		array_push($questions, $question_id);
 	}
@@ -53,10 +49,11 @@
 	foreach ($questions as $question_id) {
 		$num_questions++;
 		
+		//OLD STYLE QUERY
 		$query = "
 			SELECT question_number, question_name, screen_picture, correct_answer
 			FROM questions 
-			WHERE question_id = $question_id;
+			WHERE question_id = $question_id
 		";
 		
 		$result = $conn->query($query) or die("Couldn't execute 'correct answer' query. " . $conn->error);
@@ -70,11 +67,13 @@
 				<td><a href='pictures/$section_id/$arr[screen_picture]' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$section_id/$arr[screen_picture]' alt='Picture of screen' width='175' height='100'></td>
 		";
 		
+		//OLD STYLE QUERY
 		$query = "
-			SELECT DISTINCT response, question_id, student_id FROM onlineresponses 
+			SELECT DISTINCT response, question_id, student_id 
+			FROM onlineresponses 
 			WHERE onlineresponses.question_id = $question_id 
 			AND end_time < (SELECT due FROM assignments WHERE assignment_id = $assignment_id)
-			GROUP BY student_id, question_id;
+			GROUP BY student_id, question_id
 		";
 		
 		$result = $conn->query($query) or die("Couldn't execute 'responses' query. " . $conn->error);
@@ -82,9 +81,9 @@
 		$num_partial = 0;
 		$num_correct = 0;
 		$answers = 0;
+		
 		while ($row = $result->fetch_assoc()) {
 			$ret = isCorrect($row["response"], $arr["correct_answer"]);
-			
 			if ($ret >= 1) {
 				$num_partial++;
 			}
@@ -95,8 +94,8 @@
 		}
 		
 		echo "
-				<td>$num_partial/$answers</td>
-				<td>$num_correct/$answers</td>
+			<td>$num_partial/$answers</td>
+			<td>$num_correct/$answers</td>
 			</tr>
 		";
 	}
@@ -113,36 +112,38 @@
 		<th>Unanswered Online</th>
 	</tr>
 <?php
-$query = "
-	SELECT DISTINCT students.student_id, students.school_id, students.iclicker_id FROM students, responses, assignmentstoquestions, assignments 
-	WHERE students.student_id = responses.student_id 
-	AND responses.question_id = assignmentstoquestions.question_id 
-	AND assignmentstoquestions.assignment_id = assignments.assignment_id 
-	AND assignments.assignment_id = $assignment_id;
+	//OLD STYLE QUERY
+	$query = "
+		SELECT DISTINCT students.student_id, students.school_id, students.iclicker_id 
+		FROM students, responses, assignmentstoquestions, assignments 
+		WHERE 1
+		AND students.student_id = responses.student_id 
+		AND responses.question_id = assignmentstoquestions.question_id 
+		AND assignmentstoquestions.assignment_id = assignments.assignment_id 
+		AND assignments.assignment_id = $assignment_id
 	";
-	
-$stmt=$conn->prepare($query) or die("Couldn't prepare 'students' query. " . $conn->error);
-$stmt->execute();
-$stmt->bind_result($student_id, $school_id, $iclicker_id);
+		
+	$stmt=$conn->prepare($query) or die("Couldn't prepare 'students' query. " . $conn->error);
+	$stmt->execute();
+	$stmt->bind_result($student_id, $school_id, $iclicker_id);
 
-$students = array();
-	
-while ($stmt->fetch()) {
-	array_push($students, array($student_id, $school_id, $iclicker_id));
-}
+	$students = array();		
+	while ($stmt->fetch()) {
+		array_push($students, array($student_id, $school_id, $iclicker_id));
+	}
 
-	
-$query = "
-	SELECT DISTINCT questions.question_id, questions.correct_answer 
-	FROM questions, assignmentstoquestions 
-	WHERE questions.question_id = assignmentstoquestions.question_id 
-	AND assignmentstoquestions.assignment_id = $assignment_id;
+	//OLD STYLE QUERY
+	$query = "
+		SELECT DISTINCT questions.question_id, questions.correct_answer 
+		FROM questions, assignmentstoquestions 
+		WHERE 1
+		AND questions.question_id = assignmentstoquestions.question_id 
+		AND assignmentstoquestions.assignment_id = $assignment_id
 	";
 	
 	$result = $conn->query($query) or die("Couldn't execute 'questions' query. " . $conn->error);
 	
-	$questions = array();
-	
+	$questions = array();	
 	while ($row = $result->fetch_assoc()) {
 		$questions[$row["question_id"]] = $row["correct_answer"];
 	}
@@ -159,8 +160,9 @@ $query = "
 			$query = "
 				SELECT DISTINCT response 
 				FROM responses 
-				WHERE student_id = $student_id 
-				AND question_id = $question_id;
+				WHERE 1
+				AND student_id = $student_id 
+				AND question_id = $question_id
 			";
 			
 			$result = $conn->query($query) or die("Couldn't execute 'original answer' query. " . $conn->error);
@@ -180,7 +182,7 @@ $query = "
 				WHERE onlineresponses.student_id = $student_id 
 				AND onlineresponses.question_id = $question_id 
 				AND end_time < (SELECT due FROM assignments WHERE assignment_id = $assignment_id)
-				ORDER BY end_time DESC LIMIT 1;
+				ORDER BY end_time DESC LIMIT 1
 			";
 			
 			$result = $conn->query($query) or die("Couldn't execute 'answer' query. " . $conn->error);
@@ -188,7 +190,6 @@ $query = "
 			$row = $result->fetch_assoc();
 			if ($row["response"] != NULL) {
 				$ret = isCorrect($row["response"], $correct_answer);
-				
 				if ($ret >= 1) {
 					$num_partial++;
 				}
@@ -214,8 +215,9 @@ $query = "
 	}
 ?>
 </table>
-<?php echo "<a href='editassignment.php?assignment_id=$assignment_id'>Edit Assignment</a>"; ?>
 <?php
+	echo "<a href='editassignment.php?assignment_id=$assignment_id'>Edit Assignment</a>";
+	
 	$conn->close();
 	createFooter();
 ?>

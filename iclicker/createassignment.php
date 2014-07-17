@@ -66,13 +66,11 @@ $firstWeek=1;
 $lastWeek=0;
 while ($stmt->fetch()) {
 	$currentWeek = currentWeek($session_date, $dayOne);
-	//echo "<tr>".td("current week: $currentWeek")."</tr>";
-	//echo "<tr>".td("day one: $dayOne")."</tr>";
 	if ($firstWeek || $currentWeek>$lastWeek) {
 		$firstWeek=0;
 		echo "
 			<tr>
-				<th><a name='week$currentWeek'>'Week' $currentWeek</a></th>
+				<th><a name='$currentWeek'>'Week' $currentWeek</a></th>
 				<td></td>
 				<td></td>
 				<td></td>

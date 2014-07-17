@@ -30,12 +30,9 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'select' query. " . $conn->error);
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute 'select' query. " . $conn->error);
-	
 	$stmt->bind_result($question_name, $screen_picture);	
 	$stmt->fetch();
 	$stmt->close();
-	
-	//	$conn->close();
 	
 	$start_time = time();
 	
@@ -46,9 +43,9 @@
 		AND questions.session_id = sessions.session_id
 		AND sessions.section_id = sections.section_id
 	";
+	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	
 	$stmt->bind_result($display_screen);
 	$stmt->fetch();
 	$stmt->close();
@@ -74,7 +71,6 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'atq_id' query. " . $conn->error);
 	$stmt->bind_param("i", $assignment_id);
 	$stmt->execute() or die("Couldn't execute 'atq_id' query. " . $conn->error);
-
 	$stmt->bind_result($min_atq_id);
 	$stmt->fetch();
 	$stmt->close();	
@@ -88,18 +84,13 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'atq_id' query. " . $conn->error);
 	$stmt->bind_param("ii", $assignment_id, $question_id);
 	$stmt->execute() or die("Couldn't execute 'atq_id' query. " . $conn->error);
-
 	$stmt->bind_result($atq_id);
 	$stmt->fetch();
 	$stmt->close();	
 	
-	
-	$begin_atq = $atq_id - $min_atq_id + 1;
-
-	
+	$begin_atq = $atq_id - $min_atq_id + 1;	
 ?>
-
-<h1><?="Question #$begin_atq"?></h1>
+	<h1><?="Question #$begin_atq"?></h1>
 	<img src="<?="pictures/$section_id/$screen_picture"?>" width="700px" height="500px"/>
 
 	<form action="submitreanswer.php" method="post">
@@ -140,8 +131,8 @@
 
 	</p>
 
-</div>
-</body>
+	</div>
+	</body>
 </html>
 
 <?php

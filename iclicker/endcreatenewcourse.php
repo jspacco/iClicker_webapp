@@ -15,13 +15,14 @@ $y_offered = $_POST["year_offered"];
 
 	$query = "
 		INSERT INTO courses (course_name, course_number)
-		VALUES (?, ?);
+		VALUES (?, ?)
 	";
 
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'insert courses' statement" . $conn->error);
 	$stmt->bind_param('si', $c_name, $c_number);
 	$stmt->execute() or die("Couldn't execute 'insert courses' statement" . $conn->error);
 	
+	//Gets last auto incremented id
 	$query = "
 		SELECT LAST_INSERT_ID()
 	";
