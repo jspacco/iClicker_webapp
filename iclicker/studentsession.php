@@ -32,7 +32,7 @@
 <?php
 
 	$query = "
-		SELECT questions.question_id, question_number, screen_picture, chart_picture, correct_answer, single_question, response
+		SELECT questions.question_id, question_number, screen_picture, chart_picture, correct_answer, ignore_question, single_question, response
 		FROM questions, responses
 		WHERE 1
 		AND session_id = ?
@@ -44,7 +44,7 @@
 	$stmt->bind_param("ii", $session_id, $student_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
 	
-	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $correct_answer, $single_question, $response);
+	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $correct_answer, $ignore_question, $single_question, $response);
 	
 	
 	$q = 1;
@@ -58,15 +58,34 @@
 		}	
 		
 		echo "<tr>";
+		$ignore = "";
+		$single = "";
 		
-		echo "
-			<td><a href='question.php?question_id=$question_id'>Question $num</a></td>
-		";		
+		if ($ignore_question == 1) {
+			$ignore = "checked";
+		}
+		if ($single_question == 1) {
+			$single = "checked";
+		}
 		
-		
+		if ($ignore_question != 1) {
 			echo "
-				<td>$type</td>
+				<!--<td><input type='checkbox' name='ignore[]' value='$question_id'$ignore></td>-->
+				<td><a href='question.php?question_id=$question_id'>Question $num</a></td>
+			";		
+		}
+		
+		if ($single_question == 1) {
+			echo "
+				<td>SV</td>
 			";
+		} else {
+			if ($ignore_question != 1) {
+				echo "
+					<td>$type</td>
+				";
+			}
+		}
 		
 		
 		$a = "";
@@ -91,25 +110,15 @@
 			$e = "checked";
 		}
 		
-		echo "
-			<td><a href='pictures/$section_id/$screen_picture' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$section_id/$screen_picture' alt='Picture of screen' width='175' height='100'></td>
-			<td><a href='pictures/$section_id/$chart_picture' title='Chart of responses' data-lightbox='$question_id'><img src='pictures/$section_id/$chart_picture' rel='lightbox' title='Chart of responses' width='175' height='100'></td>
-		";
+		if ($ignore_question != 1) {
+			echo "
+				<td><a href='pictures/$section_id/$screen_picture' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$section_id/$screen_picture' alt='Picture of screen' width='175' height='100'></td>
+				<td><a href='pictures/$section_id/$chart_picture' title='Chart of responses' data-lightbox='$question_id'><img src='pictures/$section_id/$chart_picture' rel='lightbox' title='Chart of responses' width='175' height='100'></td>
+			";
+		}
 		
-		/*
-		echo "
-			<td>
-				<input type='checkbox' name='A[]' value='$question_id' $a>A
-				<input type='checkbox' name='B[]' value='$question_id' $b>B
-				<input type='checkbox' name='C[]' value='$question_id' $c>C
-				<input type='checkbox' name='D[]' value='$question_id' $d>D
-				<input type='checkbox' name='E[]' value='$question_id' $e>E
-				<input type='hidden' name='id[]' value='$question_id'>
-			</td>
-		";
-		*/
-		
-		echo "<td>";
+		if ($ignore_question != 1) {
+			echo "<td>";
 			if ($a == "checked") {
 				echo "<name='A[]' value='$question_id' $a>A";
 			}
@@ -125,10 +134,27 @@
 			if ($e == "checked") {
 				echo "<name='E[]' value='$question_id' $e>E";
 			}
+		}
+		
 		echo "</td>";	
-		echo "<td>$response</td>";
+		
+		if ($ignore_question != 1) {
+			echo "<td>$response</td>";
+		}
+		
 		echo "</tr>";
 		
+		if ($ignore_question != 1) {
+			if ($single_question == 1) {
+					$q++;
+			}
+			if ($q % 2 === 1) {
+				$iv_id = $question_id;
+			} else {
+				$num++;
+			}
+			$q++;
+		}
 	}
 	
 	$stmt->close();
