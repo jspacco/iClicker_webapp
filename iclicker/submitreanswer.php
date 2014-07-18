@@ -9,8 +9,7 @@
 	}
 	
 	createHeader("Submitting answer...");
-?>
-<?php
+	
 	$assignment_id = $_POST["assignment_id"];
 	$question_id = $_POST["question_id"];
 	$answers = $_POST["answers"];
@@ -19,14 +18,11 @@
 	$answer = "";
 	
 	foreach ($answers as $a) {
-		if ($a == 'A' ||
-			$a == 'B' ||
-			$a == 'C' ||
-			$a == 'D' ||
-			$a == 'E')
+		if ($a == 'A' || $a == 'B' || $a == 'C' || $a == 'D' ||	$a == 'E') {
 			$answer = $answer . $a . ",";
-		else
+		} else {
 			continue;
+		}
 	}
 	$answer = trim($answer, ",");
 	
@@ -34,7 +30,7 @@
 	
 	$query = "
 		INSERT INTO onlineresponses (question_id, student_id, response, start_time, end_time) 
-		VALUES (?, ?, ?, ?, ?);
+		VALUES (?, ?, ?, ?, ?)
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'insert' query. " . $conn->error);
@@ -44,9 +40,7 @@
 	if ($result) {
 		header("Location: questionreport.php?question_id=$question_id&assignment_id=$assignment_id");
 	}
-?>
-<p>Answer submission unsuccessful!</p>
-<?php
+	
 	logs($conn, $student_id);
 	$conn->close();
 	if (isset($_POST["assignment_id"])) {

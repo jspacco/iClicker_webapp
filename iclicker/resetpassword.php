@@ -10,10 +10,11 @@
 		// they're resetting their password
 		$username = $_POST["username"];
 		
+		//OLD STYLE QUERY
 		$query = "
 			SELECT student_id, email, password
 			FROM students
-			WHERE username = '$username';
+			WHERE username = '$username'
 		";
 		
 		$result = $conn->query($query) or die("Couldn't execute 'username check' query. " . $conn->error);
@@ -30,6 +31,7 @@
 				$newpass = uniqid();
 				$encpass = getEncrypted($newpass);
 				
+				//OLD STYLE QUERY
 				$query = "
 					UPDATE students
 					SET password = '$encpass'
@@ -62,6 +64,7 @@
 						// mail failed to send
 						echo "Mail failed to send, unresetting password.<br>";
 						
+						//OLD STYLE QUERY
 						$query = "
 							UPDATE students
 							SET password = '$oldpass'
@@ -108,9 +111,7 @@
 			</form>
 		";
 	}
-?>
 
-<?php
 	$conn->close();
 	createFooter();
 ?>

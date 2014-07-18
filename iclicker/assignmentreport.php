@@ -46,6 +46,20 @@
 		<th>Correct</th>
 	</tr>
 <?php
+
+	$query = "
+		SELECT due 
+		FROM assignments 
+		WHERE assignment_id = ?
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'due' query. " . $conn->error);
+	$stmt->bind_param("i", $assignment_id);
+	$stmt->execute() or die("Couldn't execute 'responses' query. " . $conn->error);
+	$stmt->bind_result($due);
+	$stmt->fetch();
+	$stmt->close();
+	
 	foreach ($questions as $question_id) {
 		$num_questions++;
 		
@@ -72,7 +86,7 @@
 			SELECT DISTINCT response, question_id, student_id 
 			FROM onlineresponses 
 			WHERE onlineresponses.question_id = $question_id 
-			AND end_time < (SELECT due FROM assignments WHERE assignment_id = $assignment_id)
+			AND end_time < '$due'
 			GROUP BY student_id, question_id
 		";
 		
@@ -181,7 +195,7 @@
 				FROM onlineresponses 
 				WHERE onlineresponses.student_id = $student_id 
 				AND onlineresponses.question_id = $question_id 
-				AND end_time < (SELECT due FROM assignments WHERE assignment_id = $assignment_id)
+				AND end_time < '$due'
 				ORDER BY end_time DESC LIMIT 1
 			";
 			

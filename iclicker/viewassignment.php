@@ -15,13 +15,12 @@
 	$query = "
 		SELECT section_id, due 
 		FROM assignments 
-		WHERE assignment_id = ?;
+		WHERE assignment_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'assignments' query. " . $conn->error);
 	$stmt->bind_param("i", $assignment_id);
 	$stmt->execute() or die("Couldn't execute 'assignments' query. " . $conn->error);
-	
 	$stmt->bind_result($section_id, $due);
 	$stmt->fetch();
 	$stmt->close();
@@ -45,20 +44,19 @@
 	$query = "
 		SELECT question_id 
 		FROM assignmentstoquestions 
-		WHERE assignmentstoquestions.assignment_id = ?;
+		WHERE assignment_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'questions' query. " . $conn->error);
 	$stmt->bind_param("i", $assignment_id);
 	$stmt->execute() or die("Couldn't execute 'questions' query. " . $conn->error);
-	
 	$stmt->bind_result($question_id);
 	
 	$questions = array();
-	
 	while ($stmt->fetch()) {
 		array_push($questions, $question_id);
 	}
+	
 	$stmt->close();
 	
 	$i = 1;
@@ -68,7 +66,7 @@
 			FROM onlineresponses 
 			WHERE 1
 			AND question_id = ?	
-			AND	student_id = ?;
+			AND	student_id = ?
 		";
 
 		$stmt = $conn->prepare($query) or die("Couldn't prepare 'responses' query. " . $conn->error);
@@ -103,10 +101,9 @@
 		
 		$i++;
 	}
-?>
-</table>
-<br>
-<?php
+	
+	echo "</table><br>";
+	
 	logs($conn, $student_id);
 	$conn->close();
 	createFooter(true, "studentpage.php");

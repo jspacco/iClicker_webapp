@@ -13,10 +13,7 @@
 	createHeader("Session", true, "<a href='section.php?section_id=$section_id'> Back to Sessions and Assignments </a>");
 
 ?>
-
-<h1>
-	Questions <?=$session_date?>
-</h1>
+<h1> Questions <?= $session_date ?></h1>
 <table>
 <form action='endeditsession.php' method='post'>
 	<input type="hidden" name="session_id" value="<?= $_GET["session_id"] ?>"/>
@@ -30,18 +27,17 @@
 		<th>Answers</th>
 		<th>Compare</th>
 	</tr>
-	
 <?php
+
 	$query = "
 		SELECT question_id, question_number, screen_picture, chart_picture, correct_answer, ignore_question, single_question 
 		FROM questions 
-		WHERE session_id = ?;
+		WHERE session_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
 	$stmt->bind_param("i", $session_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	
 	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $correct_answer, $ignore_question, $single_question);
 	
 	$q = 1;
@@ -74,16 +70,17 @@
 			";
 			
 		*/
-			if ($q % 2 == 1) {
-				echo "
-				<td><input type='checkbox' name='single[]' value='$question_id'$single></td>
-				";
-			} else {
-				//echo blank spot where GV as SV checkbox would be
-				echo "     
-					<td></td>
-				";
-			}
+		
+		if ($q % 2 == 1) {
+			echo "
+			<td><input type='checkbox' name='single[]' value='$question_id'$single></td>
+			";
+		} else {
+			//echo blank spot where GV as SV checkbox would be
+			echo "     
+				<td></td>
+			";
+		}
 		
 		echo "
 			<td><input type='checkbox' name='ignore[]' value='$question_id'$ignore></td>
@@ -148,26 +145,23 @@
 			} else {
 				if ($single_question != 1) {
 					echo "
-						<td><a href='compare.php?iv=$iv_id&gv=$question_id'>Compare</a></td>
+						<td><a href='compare.php?iv=$iv_id&gv=$question_id&section_id=$section_id'>Compare</a></td>
 					";
 				}
 				$num++;
 			}
 			$q++;
 		}
-		
 		echo "</tr>";
 	}
 ?>
 </table>
-	<p>
-	<input type='submit' value='Update'>
-	</p>
+	<p><input type='submit' value='Update'></p>
 </form>
 <?php
 	$conn->close();
-if (isset($_GET['message'])) {
-	echo "<h2> $_GET[message] </h2>";
-}
-createFooter(true, "section.php?section_id=$section_id");
+	if (isset($_GET['message'])) {
+		echo "<h2> $_GET[message] </h2>";
+	}
+	createFooter(true, "section.php?section_id=$section_id");
 ?>

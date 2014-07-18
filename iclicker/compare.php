@@ -10,66 +10,59 @@
 	
 	createHeader("Compare");
 ?>
-<body>
-	<div>
-		<h1>Comparison</h1>
-		<table>
-			<tr>
-				<th>Vote Type</th>
-				<th>Screen Picture</th>
-				<th>Chart Picture</th>
-				<th>Answers</th>
-				<th>In-Class Scores</th>
-				<th>Online Scores</th>
-			</tr>
+<h1>Comparison</h1>
+<table>
+	<tr>
+		<th>Vote Type</th>
+		<th>Screen Picture</th>
+		<th>Chart Picture</th>
+		<th>Answers</th>
+		<th>In-Class Scores</th>
+		<th>Online Scores</th>
+	</tr>
 <?php
 	$iv_id = $_GET["iv"];
 	$gv_id = $_GET["gv"];
+	$section_id = $_GET["section_id"];
 	
 	$iv_votes = array();
 	$gv_votes = array();
 
 	$query = "
-		SELECT screen_picture, chart_picture, correct_answer, response, student_id FROM questions, responses WHERE
-		responses.question_id = questions.question_id AND
-		questions.question_id = ?;
+		SELECT screen_picture, chart_picture, correct_answer, response, student_id 
+		FROM questions, responses 
+		WHERE 1
+		AND responses.question_id = questions.question_id 
+		AND	questions.question_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare IV query. " . $conn->error);
 	$stmt->bind_param("i", $iv_id);
 	$stmt->execute() or die("Couldn't execute IV query. " . $conn->error);
-	
 	$stmt->bind_result($iv_screen_picture, $iv_chart_picture, $iv_correct_answer, $iv_response, $iv_student_id);
-	$stmt->fetch();
-	
-	// $iv_result = $stmt->get_result();
-	// $iv_row = $iv_result->fetch_array(MYSQLI_ASSOC);
 	
 	$iv_votes[$iv_student_id] = $iv_response;
-
-	while ($stmt->fetch()/*$row = $iv_result->fetch_array(MYSQLI_ASSOC)*/) {
+	while ($stmt->fetch()) {
 		$iv_votes[$iv_student_id] = $iv_response;
 	}
 	
+	$stmt->close();
+	
 	$query = "
-		SELECT screen_picture, chart_picture, correct_answer, response, student_id FROM questions, responses WHERE
-		responses.question_id = questions.question_id AND
-		questions.question_id = ?;
+		SELECT screen_picture, chart_picture, correct_answer, response, student_id 
+		FROM questions, responses 
+		WHERE 1
+		AND responses.question_id = questions.question_id 
+		AND	questions.question_id = ?
 	";
 
 	$stmt = $conn->prepare($query) or die("Couldn't prepare GV query. " . $conn->error);
 	$stmt->bind_param("i", $gv_id);
 	$stmt->execute() or die("Couldn't execute GV query. " . $conn->error);
-
 	$stmt->bind_result($gv_screen_picture, $gv_chart_picture, $gv_correct_answer, $gv_response, $gv_student_id);
-	$stmt->fetch();
-	
-	// $gv_result = $stmt->get_result();
-	// $gv_row = $gv_result->fetch_array(MYSQLI_ASSOC);
 	
 	$gv_votes[$gv_student_id] = $gv_response;
-
-	while($stmt->fetch()/*$row = $gv_result->fetch_array(MYSQLI_ASSOC)*/) {
+	while($stmt->fetch()) {
 		$gv_votes[$gv_student_id] = $gv_response;
 	}
 	
@@ -99,21 +92,19 @@
 	$gv_online = array();
 	
 	$query = "
-		SELECT student_id, response FROM onlineresponses WHERE
-		question_id = ?;
+		SELECT student_id, response 
+		FROM onlineresponses 
+		WHERE question_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'online responses' query. " . $conn->error);
 	$stmt->bind_param("i", $iv_id);
 	$stmt->execute() or die("Couldn't execute 'online responses' query. " . $conn->error);
-	
 	$stmt->bind_result($online_id, $onlineresponse);
 	
 	while ($stmt->fetch()) {
 		$iv_online[$online_id] = $onlineresponse;
 	}
-	
-	$stmt->close();
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'online responses' query. " . $conn->error);
 	$stmt->bind_param("i", $gv_id);
@@ -214,6 +205,7 @@
 	";
 	
 	function countRow($from, $answer, $iv, $gv) {
+		
 		$s = "
 			<th>" . $from . "</th>" .
 			countFromTo($from, "A", $answer, $iv, $gv) . 
@@ -251,10 +243,7 @@
 		
 		return $s;
 	}
-?>
-	</div>
-</body>
-<?php
+
 	$conn->close();
 	createFooter();
 ?>

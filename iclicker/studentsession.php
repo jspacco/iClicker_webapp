@@ -14,10 +14,7 @@
 	$student_id = getStudentIdFromCookie($conn);
 
 ?>
-
-<h1>
-	Questions <?= $session_date ?>
-</h1>
+<h1>Questions <?= $session_date ?></h1>
 <table>
 	<input type="hidden" name="session_id" value="<?= $_GET["session_id"] ?>"/>
 	<tr>
@@ -43,9 +40,7 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
 	$stmt->bind_param("ii", $session_id, $student_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	
 	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $correct_answer, $ignore_question, $single_question, $response);
-	
 	
 	$q = 1;
 	$num = 1;
@@ -70,8 +65,7 @@
 		
 		if ($ignore_question != 1) {
 			echo "
-				<!--<td><input type='checkbox' name='ignore[]' value='$question_id'$ignore></td>-->
-				<td><a href='question.php?question_id=$question_id'>Question $num</a></td>
+				<td>Question $num</td>
 			";		
 		}
 		
@@ -86,7 +80,6 @@
 				";
 			}
 		}
-		
 		
 		$a = "";
 		$b = "";
@@ -159,9 +152,8 @@
 	
 	$stmt->close();
 		
-?>
-</table>
-<?php
+	echo "</table>";
+
 	logs($conn, $student_id);
 	$conn->close();
 	if (isset($_GET['message'])) {

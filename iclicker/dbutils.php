@@ -365,6 +365,26 @@ function getWeeklyViewForStudents($conn, $section_id) {
 		echo "</table>";
 		$stmt->close();
 	}
+	
+function getUserIdFromCookie($conn) {
+	
+	$query = "
+		SELECT user_id 
+		FROM users 
+		WHERE 1
+		AND username = ? 
+		AND	password = ?
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'student_id' query. " . $conn->error);
+	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
+	$stmt->execute() or die("Couldn't execute 'student_id' query. " . $conn->error);
+	$stmt->bind_result($user_id);
+	$stmt->fetch();
+	$stmt->close();
+	
+	return $user_id;
+}
 
 function getStudentIdFromCookie($conn) {
 	

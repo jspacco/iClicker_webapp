@@ -16,11 +16,9 @@
 
 createHeader("Section",true, "<a href='home.php'> Home </a>");
 ?>
-
-	<div>
-		<a href='adminsettings.php?section_id=<?= $section_id ?>'>Settings</a>
-		<h1>Sessions</h1>
-		<table>
+<a href='adminsettings.php?section_id=<?= $section_id ?>'>Settings</a>
+<h1>Sessions</h1>
+<table>
 <?php	
 	$query = "
 		SELECT session_id, session_date, post_processed 
@@ -32,7 +30,6 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 	$stmt = $conn->prepare($query) or die("Couldnt prepare sessions query. " . $conn->error);
 	$stmt->bind_param("i", $section_id);
 	$stmt->execute() or die("Couldnt execute sessions query. " . $conn->error);
-	
 	$stmt->bind_result($session_id, $session_date, $post_processed);
 	
 	$dayOfWeek = 0;
@@ -40,7 +37,7 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 	$month = 0;
 	$week = 0;
 	$dayOfYear = -1;
-	// special case to detect the first week!
+	//Special case to detect the first week!
 	$isFirstWeek=1;
 	while ($stmt->fetch()) {
 		$date = DateTime::createFromFormat("m/d/y H:i", $session_date);
@@ -48,18 +45,16 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 		$newDay = (int) date("j", $date->getTimestamp());
 		$newMonth = (int) date("n", $date->getTimestamp());
 
-		//if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $newMonth > $month) {
 		if ($newDayOfWeek < $dayOfWeek || $newDay >= $day + 7 || $isFirstWeek) {
-			// special case to detect the first week
+			//Special case to detect the first week
 			$isFirstWeek=0;
-			// new week
+			//New week
 			$week++;
 			echo "
 				</table>
 				<table class='collection'>
 				<tr>
 					<th> Updated? </th>
-
 					<th>Week $week</th>
 					<th>
 						<form action='createassignment.php#week$week' method='get'>
@@ -74,7 +69,6 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 		$dayOfWeek = $newDayOfWeek;
 		$day = $newDay;
 		$month = $newMonth;
-		
 		$dayString = date("l", $date->getTimestamp());
 		$postProcessedString="";
 		if ($post_processed) {
@@ -99,16 +93,16 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 		<th>Due Date</th>
 	</tr>
 <?php
+	
 	$query = "
 		SELECT assignment_id, due 
 		FROM assignments 
-		WHERE section_id = ?;
+		WHERE section_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'assignments' query. " . $conn->error);
 	$stmt->bind_param("i", $section_id);
 	$stmt->execute() or die("Couldn't execute 'assignments' query. " . $conn->error);
-	
 	$stmt->bind_result($assignment_id, $due);
 	
 	$assignments = array();
@@ -118,14 +112,17 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 	$stmt->close();
 	
 	foreach ($assignments as $assignment_id => $due) {
+	
+		//OLD STYLE QUERY
 		$query = "
 			SELECT atq_id 
 			FROM assignmentstoquestions 
-			WHERE assignment_id = $assignment_id;
+			WHERE assignment_id = $assignment_id
 		";
 		
 		$result = $conn->query($query) or die("Couldn't execute 'atq' query. " . $conn->error);
 		$count = mysqli_num_rows($result);
+		
 		echo "
 			<tr>
 				<td><a href='assignmentreport.php?assignment_id=$assignment_id' >$count</a></td>
@@ -135,50 +132,45 @@ createHeader("Section",true, "<a href='home.php'> Home </a>");
 	}
 ?>
 </table>
-<br>
-<a href='createassignment.php?section_id=<?php echo $section_id; ?>'>Create Assignment</a>
-<br>
+<br><a href='createassignment.php?section_id=<?php echo $section_id; ?>'>Create Assignment</a><br>
 <h1>Students</h1>
 <table class='collection'>
 	<tr>
 		<th>School ID</th>
 		<th>iClicker ID</th>
 		<th>Name</th>
-	<th> Username </th>
+		<th>Username</th>
 	</tr>
 <?php
 
-$query = "
-	SELECT distinct students.student_id, iclicker_id, school_id, first_name, last_name, username 
-	FROM students, sections, sessions, questions, responses 
-	WHERE students.student_id = responses.student_id 
-	AND responses.question_id = questions.question_id 
-	AND questions.session_id = sessions.session_id
-	AND sessions.section_id = sections.section_id 
-	AND sections.section_id = ?;
+	$query = "
+		SELECT distinct students.student_id, iclicker_id, school_id, first_name, last_name, username 
+		FROM students, sections, sessions, questions, responses 
+		WHERE students.student_id = responses.student_id 
+		AND responses.question_id = questions.question_id 
+		AND questions.session_id = sessions.session_id
+		AND sessions.section_id = sections.section_id 
+		AND sections.section_id = ?
 	";
 
-$stmt = $conn->prepare($query) or die("Couldn't prepare students query. " . $conn->error);
-$stmt->bind_param("i", $section_id);
-$stmt->execute() or die("Couldn't execute students query. " . $conn->error);
-$stmt->bind_result($student_id, $iclicker_id, $school_id, $first_name, $last_name, $username);
+	$stmt = $conn->prepare($query) or die("Couldn't prepare students query. " . $conn->error);
+	$stmt->bind_param("i", $section_id);
+	$stmt->execute() or die("Couldn't execute students query. " . $conn->error);
+	$stmt->bind_result($student_id, $iclicker_id, $school_id, $first_name, $last_name, $username);
 
-while ($stmt->fetch()) {
-	echo "
-	<tr>
-		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$school_id</a></td>
-		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$iclicker_id</a></td>
-		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$first_name $last_name</a></td>
-		<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$username</a></td>
-	</tr>
-";
-}
-
-
+	while ($stmt->fetch()) {
+		echo "
+		<tr>
+			<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$school_id</a></td>
+			<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$iclicker_id</a></td>
+			<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$first_name $last_name</a></td>
+			<td><a href='student.php?student_id=$student_id&section_id=$section_id'>$username</a></td>
+		</tr>
+	";
+	}
 	
 	echo "</table>";
-?>
-<?php
+
 	$conn->close();
 	createFooter();
 ?>

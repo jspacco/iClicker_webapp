@@ -15,14 +15,11 @@ if (!isCookieValidLoginWithType($conn, "admin")) {
 
 createHead("Student", true, "<a href='section.php?section_id=$section_id'> Back to Sessions and Assignments </a>");
 
-echo "<div>\n";
-
+echo "<div class='main'>\n";
 echo "<h2>username: $username <br> clicker: $iclicker_id</h2>";
 
-// create a temporary table of counts
 printClickerParticipation($conn, $student_id, $section_id);
 
 $conn->close();
 createFooter();
-
 ?>
