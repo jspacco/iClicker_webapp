@@ -7,7 +7,7 @@ function closeConn($conn) {
 function connect() {
         $dbhost = 'localhost';
         $dbuser = 'root';
-        $dbpass = '';
+        $dbpass = 'root';
         //$dbname = 'iclicker';
         $dbname = 'cs147';
 
