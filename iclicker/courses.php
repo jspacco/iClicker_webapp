@@ -71,5 +71,5 @@
 	";
 
 	$conn->close();
-	createFooter();
+	//createFooter();
 ?>

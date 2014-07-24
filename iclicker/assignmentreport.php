@@ -44,6 +44,8 @@
 		<th>Picture</th>
 		<th>Partially Correct</th>
 		<th>Correct</th>
+		<th>Rating</th>
+		<th>Feedback</th>
 	</tr>
 <?php
 
@@ -86,9 +88,9 @@
 			SELECT DISTINCT response, question_id, student_id 
 			FROM onlineresponses 
 			WHERE onlineresponses.question_id = $question_id 
-			AND end_time < '$due'
 			GROUP BY student_id, question_id
 		";
+		//AND end_time < '$due'
 		
 		$result = $conn->query($query) or die("Couldn't execute 'responses' query. " . $conn->error);
 		
@@ -107,9 +109,47 @@
 			$answers++;
 		}
 		
+		$query = "
+			SELECT count(*) 
+			FROM onlineresponses 
+			WHERE question_id = ?
+		";
+		
+		$stmt = $conn->prepare($query) or die("Couldn't prepare 'count' query. " . $conn->error);
+		$stmt->bind_param("i", $question_id);
+		$stmt->execute() or die("Couldn't execute 'count' query. " . $conn->error);
+		$stmt->bind_result($studentCount);
+		$stmt->fetch();
+		$stmt->close();
+		
+		$query = "
+			SELECT rating 
+			FROM onlineresponses 
+			WHERE question_id = ?
+		";
+		
+		$stmt = $conn->prepare($query) or die("Couldn't prepare 'rating' query. " . $conn->error);
+		$stmt->bind_param("i", $question_id);
+		$stmt->execute() or die("Couldn't execute 'rating' query. " . $conn->error);
+		$stmt->bind_result($rating);
+		
+		$total = 0;
+		while($stmt->fetch()){
+			$total+=$rating;
+		}
+		$stmt->close();
+		
+		if ($studentCount == 0) {
+			$avgRating = "Not Yet Rated";
+		} else {
+			$avgRating=bcdiv("$total", "$studentCount");
+			$avgRating=round($avgRating, 2);
+		}
 		echo "
 			<td>$num_partial/$answers</td>
 			<td>$num_correct/$answers</td>
+			<td>$avgRating</td>
+			<td><a href='feedback.php?question_id=$question_id'>Feedback</a></td>
 			</tr>
 		";
 	}
@@ -195,9 +235,9 @@
 				FROM onlineresponses 
 				WHERE onlineresponses.student_id = $student_id 
 				AND onlineresponses.question_id = $question_id 
-				AND end_time < '$due'
 				ORDER BY end_time DESC LIMIT 1
 			";
+			//AND end_time < '$due'
 			
 			$result = $conn->query($query) or die("Couldn't execute 'answer' query. " . $conn->error);
 			

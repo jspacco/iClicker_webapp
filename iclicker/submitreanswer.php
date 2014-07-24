@@ -16,6 +16,8 @@
 	$start_time = $_POST["start_time"];
 	$time = time();
 	$answer = "";
+	$feedback = $_POST["feedback"];
+	$rating = $_POST["rating"];
 	
 	foreach ($answers as $a) {
 		if ($a == 'A' || $a == 'B' || $a == 'C' || $a == 'D' ||	$a == 'E') {
@@ -29,12 +31,12 @@
 	$student_id = getStudentIdFromCookie($conn);
 	
 	$query = "
-		INSERT INTO onlineresponses (question_id, student_id, response, start_time, end_time) 
-		VALUES (?, ?, ?, ?, ?)
+		INSERT INTO onlineresponses (question_id, student_id, response, start_time, end_time, feedback, rating) 
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'insert' query. " . $conn->error);
-	$stmt->bind_param("iisii", $question_id, $student_id, $answer, $start_time, $time);
+	$stmt->bind_param("iisiisi", $question_id, $student_id, $answer, $start_time, $time, $feedback, $rating);
 	$result = $stmt->execute() or die("Couldn't execute 'insert' query. " . $conn->error);
 	
 	if ($result) {

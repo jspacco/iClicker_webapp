@@ -78,7 +78,9 @@
 	$query = "
 		SELECT atq_id
 		FROM assignmentstoquestions
-		WHERE assignment_id = ? AND question_id = ?
+		WHERE 1
+		AND assignment_id = ? 
+		AND question_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'atq_id' query. " . $conn->error);
@@ -88,6 +90,28 @@
 	$stmt->fetch();
 	$stmt->close();	
 	
+	$query = "
+		SELECT rating
+		FROM onlineresponses
+		WHERE 1
+		AND student_id = ? 
+		AND question_id = ?
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'getratings' query. " . $conn->error);
+	$stmt->bind_param("ii", $student_id, $question_id);
+	$stmt->execute() or die("Couldn't execute 'getratings' query. " . $conn->error);
+	$stmt->bind_result($rating1);
+	
+	$zero = "";
+	$one = "";
+	$two = "";
+	$three = "";
+	$four = "";
+	$five = "";
+	
+	$stmt->fetch();
+	$rating=$rating1;
 	$begin_atq = $atq_id - $min_atq_id + 1;	
 ?>
 	<h1><?="Question #$begin_atq"?></h1>
@@ -117,20 +141,34 @@
 		<td><input type="checkbox" name="answers[]" value="E">E</td>
 		<td></td>
 	</tr>
+	<tr>	
+		<td>Question Rating<br></td>
+		<td>
+		<input id='295' type='radio' name='rating' value='0' <?= $zero ?> ><label for='295'>0</label>
+		<input id='296' type='radio' name='rating' value='1' <?= $one ?> ><label for='296'>1</label>
+		<input id='297' type='radio' name='rating' value='2' <?= $two ?> ><label for='297'>2</label>
+		<input id='298' type='radio' name='rating' value='3' <?= $three ?> ><label for='298'>3</label>
+		<input id='299' type='radio' name='rating' value='4' <?= $four ?> ><label for='299'>4</label>
+		<input id='300' type='radio' name='rating' value='5' <?= $five ?> ><label for='300'>5</label>
+		</td>
+	</tr>
+	<tr>	
+		<td>Feedback (Optional)<br></td>
+		<td><input type="text" name="feedback" maxlength="255" size="255"></td>
+	</tr>
+	
 	<tr>
 		<td>
-			<input type="hidden" name="assignment_id" value="<?=$assignment_id?>">
-			<input type="hidden" name="question_id" value="<?=$question_id?>">
-			<input type="hidden" name="start_time" value="<?=$start_time?>">
+			<input type="hidden" name="assignment_id" value="<?= $assignment_id ?>">
+			<input type="hidden" name="question_id" value="<?= $question_id ?>">
+			<input type="hidden" name="start_time" value="<?= $start_time ?>">
 		</td>
 		<td><input type="submit" value="Submit"></td>
 	</tr>
 	</table>
 	</fieldset>
 	</form>
-
 	</p>
-
 	</div>
 	</body>
 </html>
