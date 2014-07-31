@@ -8,20 +8,7 @@
 		header("Location: home.php");
 	}
 
-	$query = "
-		SELECT user_id 
-		FROM users 
-		WHERE 1
-		AND username = ? 
-		AND	password = ?
-	";
-	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'user_id' query. " . $conn->error);
-	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
-	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	$stmt->bind_result($user_id);
-	$stmt->fetch();
-	$stmt->close();	
+	$user_id = getUserIdFromCookie($conn);
 	
 	createHeader("Courses");
 ?>

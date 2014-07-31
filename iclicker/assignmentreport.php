@@ -36,7 +36,8 @@
 ?>
 <h1>Assignment Report</h1>
 <h2>Questions</h2>
-<table>
+<table border=1 align='center'>
+
 	<tr>
 		<th>Question</th>
 		<th>Name</th>
@@ -89,8 +90,8 @@
 			FROM onlineresponses 
 			WHERE onlineresponses.question_id = $question_id 
 			GROUP BY student_id, question_id
+			AND end_time < '$due'
 		";
-		//AND end_time < '$due'
 		
 		$result = $conn->query($query) or die("Couldn't execute 'responses' query. " . $conn->error);
 		
@@ -156,7 +157,7 @@
 ?>
 </table>
 <h2>Students</h2>
-<table>
+<table border=1 align='center'>
 	<tr>
 		<th>iClicker ID</th>
 		<th>Student ID</th>
@@ -233,12 +234,13 @@
 			$query = "
 				SELECT response 
 				FROM onlineresponses 
-				WHERE onlineresponses.student_id = $student_id 
+				WHERE 1
+				AND onlineresponses.student_id = $student_id 
 				AND onlineresponses.question_id = $question_id 
-				ORDER BY end_time DESC LIMIT 1
+				ORDER BY end_time
+				AND end_time < '$due'
 			";
-			//AND end_time < '$due'
-			
+						
 			$result = $conn->query($query) or die("Couldn't execute 'answer' query. " . $conn->error);
 			
 			$row = $result->fetch_assoc();

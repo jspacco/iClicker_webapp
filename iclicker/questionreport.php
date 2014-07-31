@@ -17,8 +17,9 @@
 	$section_id = getSectionIdByStudentId($conn, $student_id);
 ?>
 <h1>Question Report</h1>
-<table>
+	<table border=1 align='center'>
 	<tr>
+	
 		<th>Picture</th>
 		<th>Correct Answer</th>
 		<th>In-class Answer</th>
@@ -158,5 +159,6 @@
 <?php
 	logs($conn, $student_id);
 	$conn->close();
+	echo "<a href='viewassignment.php?assignment_id=$assignment_id'>Back to Assignment</a>";
 	createFooter();
 ?>

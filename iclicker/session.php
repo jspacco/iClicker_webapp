@@ -14,7 +14,7 @@
 
 ?>
 <h1> Questions <?= $session_date ?></h1>
-<table>
+<table border=1>
 <form action='endeditsession.php' method='post'>
 	<input type="hidden" name="session_id" value="<?= $_GET["session_id"] ?>"/>
 	<tr>
@@ -142,6 +142,7 @@
 			}
 			if ($q % 2 === 1) {
 				$iv_id = $question_id;
+				echo "<td>";
 			} else {
 				if ($single_question != 1) {
 					echo "
