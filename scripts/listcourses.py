@@ -3,7 +3,6 @@
 import urllib2
 
 def main():
- 
         listcourses_url='http://localhost:8888/iClicker_webapp/iclicker/listcourses.php'
         print wget(listcourses_url)
         return

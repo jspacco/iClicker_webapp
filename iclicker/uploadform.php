@@ -13,28 +13,17 @@ if (!isset($section_id)) {
 
 list($course_id, $course_name, $course_number) = lookupCourseBySectionId($conn, $section_id);
 
-$conn->close();
-
 createHeader("Upload New Session or Sessions");
 ?>
-<div>
-
-Uploading new session or sessions for <?= $course_name ?> with course_id <?= $course_id ?>
-</div>
-
+<div>Uploading new session or sessions for <?= $course_name ?> with course_id <?= $course_id ?></div>
 <div>
 	<form action="processupload.php" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="section_id" value="<?= $_GET["section_id"] ?>"/>
-	<p>
-	<label>Filename:</label>
-	<input name="file" type="file">
-	</p>
-	<p>
-	<input type="submit" value="Submit">
-	</p>
+	<p><label>Filename:</label><input name="file" type="file"></p>
+	<p><input type="submit" value="Submit"></p>
 	</form>
 </div>
 <?php
-
-createFooter();
+	$conn->close();
+	createFooter();
 ?>

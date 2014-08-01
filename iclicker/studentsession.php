@@ -11,12 +11,10 @@
 	$session_id = $_GET["session_id"];
 	list($session_id, $section_id, $session_date, $session_tag, $post_processed) = lookupSessionBySessionId($conn, $session_id);
 	createHeader("Session", true, "<a href='section.php?section_id=$section_id'> Back to Sessions and Assignments </a>");
+	$student_id = getStudentIdFromCookie($conn);
 
 ?>
-
-<h1>
-	Questions <?= $session_date ?>
-</h1>
+<h1>Questions <?= $session_date ?></h1>
 <table>
 	<input type="hidden" name="session_id" value="<?= $_GET["session_id"] ?>"/>
 	<tr>
@@ -24,23 +22,25 @@
 		<th>Type</th>
 		<th>Question Picture</th>
 		<th>Chart Picture</th>
-		<th>Answers</th>
-		
+		<th>Correct Answer(s)</th>
+		<th>My Answer(s)</th>	
 	</tr>
 	
 <?php
+
 	$query = "
-		SELECT question_id, question_number, screen_picture, chart_picture, correct_answer, single_question
-		FROM questions 
-		WHERE session_id = ?
+		SELECT questions.question_id, question_number, screen_picture, chart_picture, correct_answer, ignore_question, single_question, response
+		FROM questions, responses
+		WHERE 1
+		AND session_id = ?
+		AND student_id = ?
+		AND questions.question_id = responses.question_id
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
-	$stmt->bind_param("i", $session_id);
+	$stmt->bind_param("ii", $session_id, $student_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	
-	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $correct_answer, $single_question);
-	
+	$stmt->bind_result($question_id, $question_number, $screen_picture, $chart_picture, $correct_answer, $ignore_question, $single_question, $response);
 	
 	$q = 1;
 	$num = 1;
@@ -53,16 +53,33 @@
 		}	
 		
 		echo "<tr>";
+		$ignore = "";
+		$single = "";
 		
-		echo "
-			<td><a href='question.php?question_id=$question_id'>Question $num</a></td>
-		";		
+		if ($ignore_question == 1) {
+			$ignore = "checked";
+		}
+		if ($single_question == 1) {
+			$single = "checked";
+		}
 		
-		
+		if ($ignore_question != 1) {
 			echo "
-				<td>$type</td>
-			";
+				<td>Question $num</td>
+			";		
+		}
 		
+		if ($single_question == 1) {
+			echo "
+				<td>SV</td>
+			";
+		} else {
+			if ($ignore_question != 1) {
+				echo "
+					<td>$type</td>
+				";
+			}
+		}
 		
 		$a = "";
 		$b = "";
@@ -86,25 +103,15 @@
 			$e = "checked";
 		}
 		
-		echo "
-			<td><a href='pictures/$section_id/$screen_picture' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$section_id/$screen_picture' alt='Picture of screen' width='175' height='100'></td>
-			<td><a href='pictures/$section_id/$chart_picture' title='Chart of responses' data-lightbox='$question_id'><img src='pictures/$section_id/$chart_picture' rel='lightbox' title='Chart of responses' width='175' height='100'></td>
-		";
+		if ($ignore_question != 1) {
+			echo "
+				<td><a href='pictures/$section_id/$screen_picture' title='Picture of screen' data-lightbox='$question_id'><img src='pictures/$section_id/$screen_picture' alt='Picture of screen' width='175' height='100'></td>
+				<td><a href='pictures/$section_id/$chart_picture' title='Chart of responses' data-lightbox='$question_id'><img src='pictures/$section_id/$chart_picture' rel='lightbox' title='Chart of responses' width='175' height='100'></td>
+			";
+		}
 		
-		/*
-		echo "
-			<td>
-				<input type='checkbox' name='A[]' value='$question_id' $a>A
-				<input type='checkbox' name='B[]' value='$question_id' $b>B
-				<input type='checkbox' name='C[]' value='$question_id' $c>C
-				<input type='checkbox' name='D[]' value='$question_id' $d>D
-				<input type='checkbox' name='E[]' value='$question_id' $e>E
-				<input type='hidden' name='id[]' value='$question_id'>
-			</td>
-		";
-		*/
-		
-		echo "<td>";
+		if ($ignore_question != 1) {
+			echo "<td>";
 			if ($a == "checked") {
 				echo "<name='A[]' value='$question_id' $a>A";
 			}
@@ -120,18 +127,33 @@
 			if ($e == "checked") {
 				echo "<name='E[]' value='$question_id' $e>E";
 			}
+		}
+		
 		echo "</td>";	
 		
+		if ($ignore_question != 1) {
+			echo "<td>$response</td>";
+		}
+		
 		echo "</tr>";
+		
+		if ($ignore_question != 1) {
+			if ($single_question == 1) {
+					$q++;
+			}
+			if ($q % 2 === 1) {
+				$iv_id = $question_id;
+			} else {
+				$num++;
+			}
+			$q++;
+		}
 	}
 	
 	$stmt->close();
-	
-	$student_id = getStudentIdFromCookie($conn);
-	
-?>
-</table>
-<?php
+		
+	echo "</table>";
+
 	logs($conn, $student_id);
 	$conn->close();
 	if (isset($_GET['message'])) {

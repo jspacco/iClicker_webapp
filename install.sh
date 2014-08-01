@@ -5,7 +5,7 @@
 #
 
 #SERVER='jspacco@cs.knox.edu:webpage/iclicker'
-SERVER='jspacco@cs.knox.edu:webpage/jspacco/cs141'
+SERVER='jspacco@cs.knox.edu:webpage/jspacco/pits'
 
 cd iclicker
 

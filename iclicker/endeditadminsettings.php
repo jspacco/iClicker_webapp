@@ -19,7 +19,6 @@ $section_id = $_POST["section_id"];
 		SET display_screen = ?, threshold = ?
 		WHERE section_id = ?
 	";
-
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare update statement" . $conn->error);
 	$stmt->bind_param('sdi', $display_screen, $threshold, $section_id);

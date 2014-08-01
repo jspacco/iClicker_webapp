@@ -21,6 +21,5 @@
 </body>
 <?php
 	$conn->close();
-	
 	createFooter();
 ?>

@@ -12,7 +12,6 @@
 		"<script type='text/javascript' src='jquery-1.10.2.min.js'></script>
 		<script type='text/javascript' src='jquery.tablesorter.min.js'></script>");
 ?>
-<body>
 	<script type='text/javascript'>
 		$(document).ready(function() {
 			$('#responsestable').tablesorter();
@@ -26,14 +25,13 @@
 		SELECT question_number, question_name, screen_picture, chart_picture, correct_answer, start_time, stop_time, section_id 
 		FROM questions, sessions 
 		WHERE 1
+		AND questions.session_id = sessions.session_id
 		AND question_id = ?
-		AND questions.session_id = sessions.session_id;
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare questions query. " . $conn->error);
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute questions query. " . $conn->error);
-	
 	$stmt->bind_result($question_number, $question_name, $screen_picture, $chart_picture, $correct_answer, $start_time, $stop_time, $section_id);
 	
 	while ($stmt->fetch()) {
@@ -84,16 +82,15 @@
 		FROM students, responses 
 		WHERE 1
 		AND students.student_id = responses.student_id 
-		AND	responses.question_id = ?;
+		AND	responses.question_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare responses query. " . $conn->error);
 	$stmt->bind_param("i", $question_id);
 	$stmt->execute() or die("Couldn't execute responses query. " . $conn->error);
-	
 	$stmt->bind_result($school_id, $iclicker_id, $last_name, $first_name, $number_of_attempts, $first_response, $time, $response, $final_answer_time);
 	
-	while ($stmt->fetch()/*$row = $result->fetch_array(MYSQLI_ASSOC)*/) {
+	while ($stmt->fetch()) {
 		echo "
 			<tr>
 				<td>" . $school_id . "</td>
@@ -111,7 +108,6 @@
 		</tbody>
 		</table>
 	</div>
-</body>
 <?php
 	$conn->close();
 	createFooter();

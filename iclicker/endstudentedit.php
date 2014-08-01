@@ -10,7 +10,6 @@
 	
 	$school_id = $_POST["school_id"];
 	$email = $_POST["email"];
-	
 	$student_id = getStudentIdFromCookie($conn);
 	
 	$query = "
@@ -22,7 +21,6 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare query. " . $conn->error);
 	$stmt->bind_param("i", $student_id);
 	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	
 	$stmt->bind_result($section_id);
 	
 	$regsect = array();
@@ -61,10 +59,11 @@
 			$stmt->close();
 		}
 	}
+	
 	$query = "
 		UPDATE students 
 		SET email = ?, school_id = ? 
-		WHERE student_id = ?;
+		WHERE student_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't execute 'email' query. " . $conn->error);

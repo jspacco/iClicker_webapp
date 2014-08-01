@@ -1,6 +1,6 @@
 <?php
-	// returns 0 if incorrect, 1 if partially correct, 2 if completely correct
-	// partially correct and incorrect answers are treated as partially correct
+	//Returns 0 if incorrect, 1 if partially correct, 2 if completely correct
+	//Partially correct and incorrect answers are treated as partially correct
 	function isCorrect($answer, $correct) {
 		$cor = true;
 		$partial = false;

@@ -30,7 +30,7 @@
 	$query = "
 		SELECT screen_picture, correct_answer 
 		FROM questions 
-		WHERE question_id = ?;
+		WHERE question_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'question' query. " . $conn->error);
@@ -46,7 +46,7 @@
 		FROM responses 
 		WHERE 1
 		AND question_id = ? 
-		AND	student_id = ?;
+		AND	student_id = ?
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'response' query. " . $conn->error);
@@ -64,13 +64,13 @@
 		AND question_id = ? 
 		AND	student_id = ? 
 		AND	end_time < (SELECT due FROM assignments WHERE assignment_id = ?)
-		ORDER BY end_time DESC LIMIT 1;
+		ORDER BY end_time
+		DESC LIMIT 1
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'beforeonlineresponses' query. " . $conn->error);
 	$stmt->bind_param("iii", $question_id, $student_id, $assignment_id);
 	$stmt->execute() or die("Couldn't execute 'beforeonlineresponses' query. " . $conn->error);
-	
 	$stmt->bind_result($beforeonlineresponse);
 	$stmt->fetch();
 	$stmt->close();
@@ -81,7 +81,8 @@
 		WHERE 1
 		AND question_id = ? 
 		AND	student_id = ?
-		ORDER BY end_time DESC LIMIT 1;
+		ORDER BY end_time 
+		DESC LIMIT 1
 	";
 	
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'afteronlineresponses' query. " . $conn->error);
@@ -114,7 +115,6 @@
 	$stmt = $conn->prepare($query) or die("Couldn't prepare 'next_question' query. " . $conn->error);
 	$stmt->bind_param("ii", $assignment_id, $question_id);
 	$stmt->execute() or die("Couldn't execute 'next_question' query. " . $conn->error);
-	
 	$stmt->bind_result($next_assignment, $next_question);
 	$stmt->fetch();
 	$stmt->close();

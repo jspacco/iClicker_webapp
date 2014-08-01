@@ -2,7 +2,6 @@
 	require_once("pageutils.php");
 	createHeader("Register", false, "<script type='text/javascript' src='jquery-1.10.2.min.js'></script>");
 ?>
-<body>
 	<script type="text/javascript">
 		jQuery(function(){
 			$("#register").click(function(){
@@ -63,7 +62,6 @@
 		</fieldset>
 		</form>
 	</div>
-</body>
 <?php
 	createFooter();
 ?>

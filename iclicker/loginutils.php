@@ -44,10 +44,7 @@
 		$user = strtolower($user);
 		$stmt->bind_param("ss", $user, $pass);
 		$stmt->execute() or die("Couldn't execute 'login check' query. " . $conn->error);
-		
 		$stmt->store_result();
-		
-		// $result = $stmt->get_result();
 		
 		return $stmt->num_rows > 0;
 	}
