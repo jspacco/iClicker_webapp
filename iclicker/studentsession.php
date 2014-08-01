@@ -15,7 +15,7 @@
 
 ?>
 <h1>Questions <?= $session_date ?></h1>
-<table>
+	<table border=1 align='center'>
 	<input type="hidden" name="session_id" value="<?= $_GET["session_id"] ?>"/>
 	<tr>
 		<th>#</th>

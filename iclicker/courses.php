@@ -8,20 +8,7 @@
 		header("Location: home.php");
 	}
 
-	$query = "
-		SELECT user_id 
-		FROM users 
-		WHERE 1
-		AND username = ? 
-		AND	password = ?
-	";
-	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'user_id' query. " . $conn->error);
-	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
-	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	$stmt->bind_result($user_id);
-	$stmt->fetch();
-	$stmt->close();	
+	$user_id = getUserIdFromCookie($conn);
 	
 	createHeader("Courses");
 ?>
@@ -65,18 +52,11 @@
 	}
 	$stmt->close();
 
-<<<<<<< HEAD
-?>
-		</table>
-		<a href='createnewcourse.php'>Create New Course</a>
-<?php
-=======
 	echo "
 		</table>
 		<a href='createnewcourse.php?'>Create New Course</a>
 	";
 
->>>>>>> dbc08b92be0a029d6c639c9db2511d8ecbe7e50e
 	$conn->close();
 	createFooter();
 ?>

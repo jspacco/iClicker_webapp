@@ -8,21 +8,7 @@
 		header("Location: home.php");
 	}
 	
-	$query = "
-		SELECT user_id 
-		FROM users 
-		WHERE 1
-		AND username = ? 
-		AND	password = ?
-	";
-	
-	$stmt = $conn->prepare($query) or die("Couldn't prepare 'user_id' query. " . $conn->error);
-	$stmt->bind_param("ss", $_COOKIE["Username"], $_COOKIE["Password"]);
-	$stmt->execute() or die("Couldn't execute query. " . $conn->error);
-	$stmt->bind_result($user_id);
-	$stmt->fetch();
-	$stmt->close();
-	
+	$user_id = getUserIdFromCookie($conn);	
 	$course_id = $_GET["course_id"];
 
 	//Check if there is only one section for this course, if so, redirect directly to the proper section

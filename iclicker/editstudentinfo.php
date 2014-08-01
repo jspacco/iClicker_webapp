@@ -54,7 +54,8 @@
 	Email: <input type='text' name='email' value=<?php echo $email; ?>><br><br>
 	Select the course(s) you are enrolled in...<br>
 	<div>
-	<table class = 'collection'>
+	<table class='collection' border=1>
+		
 	<tr>
 		<th>Enrolled?</th>
 		<th>Course</th>
@@ -99,7 +100,7 @@
 		echo "
 			<tr>
 				<td><input type='checkbox' name='checkedcourses[]' value='$section_id'$sect></td>
-				<td><input type='hidden' name='allcourses[]' value='$section_id'></td>
+				<input type='hidden' name='allcourses[]' value='$section_id'>
 				<td>$course_name</td>
 				<td>$section_number</td>
 				<td>$year_offered</td>

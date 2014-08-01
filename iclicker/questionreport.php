@@ -17,8 +17,9 @@
 	$section_id = getSectionIdByStudentId($conn, $student_id);
 ?>
 <h1>Question Report</h1>
-<table>
+	<table border=1 align='center'>
 	<tr>
+	
 		<th>Picture</th>
 		<th>Correct Answer</th>
 		<th>In-class Answer</th>
@@ -26,7 +27,7 @@
 		<th>Most Recent Online Answer</th>
 	</tr>
 <?php
-	// we do this with multiple queries in case they didn't answer the question in class
+
 	$query = "
 		SELECT screen_picture, correct_answer 
 		FROM questions 
@@ -105,7 +106,29 @@
 ?>
 </table>
 <br>
+<h2>Student Feedback</h2>
 <?php
+	$query = "
+		SELECT feedback 
+		FROM onlineresponses 
+		WHERE question_id = ?
+	";
+	
+	$stmt = $conn->prepare($query) or die("Couldn't prepare 'feedback' query. " . $conn->error);
+	$stmt->bind_param("i", $question_id);
+	$stmt->execute() or die("Couldn't execute 'feedback' query. " . $conn->error);
+	$stmt->bind_result($feedback);
+	
+	while ($stmt->fetch()) {	
+		if ($feedback != "") {
+			echo"
+				- $feedback
+				<br>
+			";
+		}
+	}
+	$stmt->close();
+
 	$query = "
 		SELECT assignment_id, question_id 
 		FROM assignmentstoquestions 
@@ -136,5 +159,6 @@
 <?php
 	logs($conn, $student_id);
 	$conn->close();
+	echo "<a href='viewassignment.php?assignment_id=$assignment_id'>Back to Assignment</a>";
 	createFooter();
 ?>
