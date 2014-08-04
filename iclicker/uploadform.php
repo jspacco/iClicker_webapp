@@ -15,7 +15,7 @@ list($course_id, $course_name, $course_number) = lookupCourseBySectionId($conn, 
 
 createHeader("Upload New Session or Sessions");
 ?>
-<div>Uploading new session or sessions for <?= $course_name ?> with course_id <?= $course_id ?></div>
+<div>Uploading new session(s) for <?= $course_name ?></div>
 <div>
 	<form action="processupload.php" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="section_id" value="<?= $_GET["section_id"] ?>"/>

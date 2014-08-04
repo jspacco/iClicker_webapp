@@ -237,8 +237,8 @@
 				WHERE 1
 				AND onlineresponses.student_id = $student_id 
 				AND onlineresponses.question_id = $question_id 
-				ORDER BY end_time
 				AND end_time < '$due'
+				ORDER BY end_time DESC LIMIT 1
 			";
 						
 			$result = $conn->query($query) or die("Couldn't execute 'answer' query. " . $conn->error);
@@ -275,5 +275,6 @@
 	echo "<a href='editassignment.php?assignment_id=$assignment_id'>Edit Assignment</a>";
 	
 	$conn->close();
-	createFooter();
+	//createFooter();
+	createFooter(true, "section.php?section_id=$section_id");
 ?>

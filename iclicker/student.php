@@ -21,5 +21,5 @@ echo "<h2>username: $username <br> clicker: $iclicker_id</h2>";
 printClickerParticipation($conn, $student_id, $section_id);
 
 $conn->close();
-createFooter();
+createFooter(true, "section.php?section_id=$section_id");
 ?>
