@@ -111,6 +111,7 @@
 	$five = "";
 	
 	$stmt->fetch();
+	$stmt->close();
 	$rating=$rating1;
 	$begin_atq = $atq_id - $min_atq_id + 1;	
 ?>
