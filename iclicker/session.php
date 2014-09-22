@@ -142,16 +142,20 @@
 			}
 			if ($q % 2 === 1) {
 				$iv_id = $question_id;
-				echo "<td>";
+				echo "<td></td>";
 			} else {
 				if ($single_question != 1) {
 					echo "
 						<td><a href='compare.php?iv=$iv_id&gv=$question_id&section_id=$section_id'>Compare</a></td>
 					";
+				} else {
+					echo "<td></td>";
 				}
 				$num++;
 			}
 			$q++;
+		} else {
+			echo "<td></td>";
 		}
 		echo "</tr>";
 	}

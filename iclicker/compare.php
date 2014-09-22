@@ -11,7 +11,7 @@
 	createHeader("Compare");
 ?>
 <h1>Comparison</h1>
-<table>
+<table border=1 align=center>
 	<tr>
 		<th>Vote Type</th>
 		<th>Screen Picture</th>
@@ -245,5 +245,5 @@
 	}
 
 	$conn->close();
-	createFooter();
+	createFooter(true, "section.php?section_id=$section_id");
 ?>

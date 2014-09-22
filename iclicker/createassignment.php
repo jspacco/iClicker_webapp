@@ -138,5 +138,5 @@ createHeader("Create Assignment");
 </table>
 <?php
 	$conn->close();
-	createFooter();
+	createFooter(true, "section.php?section_id=$section_id");
 ?>

@@ -159,5 +159,5 @@
 	if (isset($_GET['message'])) {
 		echo "<h2> $_GET[message] </h2>";
 	}
-	createFooter(true, "section.php?section_id=$section_id");
+	createFooter();
 ?>
